@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "933230896423",
+    "firebase_url": "https://wewin-1fdf3.firebaseio.com",
+    "project_id": "wewin-1fdf3",
+    "storage_bucket": "wewin-1fdf3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933230896423:android:5d08459ea64d53d7",
+        "android_client_info": {
+          "package_name": "com.project.android.wewin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933230896423-8dght0et8dpu6349t3buhnhhd2kl98dn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.android.wewin",
+            "certificate_hash": "8e751a484ca9fb8f8ab0150388021ba6499876ff"
+          }
+        },
+        {
+          "client_id": "933230896423-mn6fuq1hgtqabg9rfck2a6j8v297ln7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvXgx5gNzvbCM39btI1zIWzCLqGyfZTwA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933230896423-mn6fuq1hgtqabg9rfck2a6j8v297ln7r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
