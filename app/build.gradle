@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.project.android.wewin"
         minSdkVersion 21
@@ -21,7 +21,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-auth:11.0.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -36,11 +35,10 @@ dependencies {
     compile 'android.arch.lifecycle:runtime:1.0.3'
     compile 'android.arch.lifecycle:extensions:1.0.0'
     compile 'android.arch.persistence.room:runtime:1.0.0'
+
+    compile 'com.wilddog.client:wilddog-auth-android:2.0.7'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
 }
-
-
-apply plugin: 'com.google.gms.google-services'

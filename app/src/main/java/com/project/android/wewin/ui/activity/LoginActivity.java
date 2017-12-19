@@ -1,9 +1,7 @@
 package com.project.android.wewin.ui.activity;
 
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -17,12 +15,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.project.android.wewin.R;
+import com.wilddog.wilddogauth.WilddogAuth;
+import com.wilddog.wilddogauth.core.Task;
+import com.wilddog.wilddogauth.core.listener.OnCompleteListener;
+import com.wilddog.wilddogauth.core.result.AuthResult;
+import com.wilddog.wilddogauth.model.WilddogUser;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -34,10 +32,13 @@ import butterknife.ButterKnife;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "EmailPassword";
-    private static final String USER_NAME = "username";
+    
 
-    private FirebaseAuth mAuth;
+    private WilddogAuth wilddogAuth;
 
+    @BindView(R.id.login_toolbar)
+    Toolbar toolbar;
+    
     @BindView(R.id.login_form)
     ScrollView loginForm;
     @BindView(R.id.email)
@@ -46,11 +47,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     EditText mPasswordView;
     @BindView(R.id.email_sign_in_button)
     CircularProgressButton mEmailSignInButton;
+    @BindView(R.id.email_sign_up_button)
+    CircularProgressButton mEmailSignUpButton;
     @BindView(R.id.reset_password)
     TextView resetPassword;
-    @BindView(R.id.login_toolbar)
-    Toolbar toolbar;
-
+    @BindView(R.id.to_sign_up)
+    TextView toSignUp;
+    
     @BindView(R.id.signed_in)
     LinearLayout signedIn;
     @BindView(R.id.user_userid)
@@ -58,9 +61,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.user_email)
     TextView userEmail;
     @BindView(R.id.sign_out_button)
-    Button signOutButton;
-    @BindView(R.id.verify_email_button)
-    Button verifyEmailButton;
+    Button mSignOutButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,34 +70,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        mAuth = FirebaseAuth.getInstance();
+        wilddogAuth = WilddogAuth.getInstance();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
-        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
-        if (pref.getString(USER_NAME, "") == "") {
-            mEmailSignInButton.setText(R.string.action_sign_up);
-        } else {
-            mEmailSignInButton.setText(R.string.action_sign_in);
-            resetPassword.setVisibility(View.VISIBLE);
-            mEmailView.setText(pref.getString(USER_NAME, ""));
-        }
 
         mEmailSignInButton.setOnClickListener(this);
+        mEmailSignUpButton.setOnClickListener(this);
         resetPassword.setOnClickListener(this);
-        signOutButton.setOnClickListener(this);
-        verifyEmailButton.setOnClickListener(this);
+        toSignUp.setOnClickListener(this);
+        mSignOutButton.setOnClickListener(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        WilddogUser currentUser = wilddogAuth.getCurrentUser();
         updateUI(currentUser);
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(WilddogUser user) {
         if (user != null) {
             loginForm.setVisibility(View.GONE);
             signedIn.setVisibility(View.VISIBLE);
@@ -113,24 +109,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.email_sign_in_button:
-                if (getResources().getString(R.string.action_sign_up)
-                        .equals(mEmailSignInButton.getText().toString())) {
-                    createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
-                } else {
-                    signIn(mEmailView.getText().toString(), mPasswordView.getText().toString());
-                }
+                signIn(mEmailView.getText().toString(), mPasswordView.getText().toString());
+                break;
+
+            case R.id.email_sign_up_button:
+                createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
                 break;
 
             case R.id.reset_password:
                 resetPassword(mEmailView.getText().toString());
                 break;
 
+            case R.id.to_sign_up:
+                Log.d(TAG, "onClick: 11111111");
+                mEmailSignUpButton.setVisibility(View.VISIBLE);
+                mEmailSignInButton.setVisibility(View.GONE);
+                resetPassword.setVisibility(View.GONE);
+                toSignUp.setVisibility(View.GONE);
             case R.id.sign_out_button:
                 signOut();
-                break;
-
-            case R.id.verify_email_button:
-                sendEmailVerification();
                 break;
 
             default:
@@ -144,38 +141,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        mEmailSignInButton.startAnimation();
+        mEmailSignUpButton.startAnimation();
 
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+        wilddogAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                    public void onComplete(Task<AuthResult> var1) {
+                        if (var1.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
-                            mEmailSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                            mEmailSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                            SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
-                            editor.putString(USER_NAME, email);
-                            editor.apply();
+                            mEmailSignUpButton.setVisibility(View.GONE);
+                            mEmailSignInButton.setVisibility(View.VISIBLE);
+                            resetPassword.setVisibility(View.VISIBLE);
+                            toSignUp.setVisibility(View.VISIBLE);
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            WilddogUser user = wilddogAuth.getCurrentUser();
+                            user.sendEmailVerification();
                             updateUI(user);
+
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            mEmailSignInButton.revertAnimation();
+                            Log.w(TAG, "createUserWithEmail:failure", var1.getException());
+                            mEmailSignUpButton.revertAnimation();
 
                             Toast.makeText(LoginActivity.this, getString(R.string.error_create_user),
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-
                     }
                 });
-        // [END create_user_with_email]
     }
 
     private void signIn(String email, String password) {
@@ -186,68 +182,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mEmailSignInButton.startAnimation();
 
-        // [START sign_in_with_email]
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+        wilddogAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                    public void onComplete(Task<AuthResult> var1) {
+                        if (var1.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             mEmailSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            WilddogUser user = wilddogAuth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Log.w(TAG, "signInWithEmail:failure", var1.getException());
                             mEmailSignInButton.revertAnimation();
 
                             Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_password),
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-
                     }
                 });
-        // [END sign_in_with_email]
     }
 
     private void signOut() {
-        mAuth.signOut();
+        wilddogAuth.signOut();
         updateUI(null);
+        mEmailView.setText("");
+        mPasswordView.setText("");
+        mEmailSignInButton.revertAnimation();
+        mEmailSignUpButton.revertAnimation();
     }
 
-    private void sendEmailVerification() {
-        // Disable button
-        verifyEmailButton.setEnabled(false);
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-                        verifyEmailButton.setEnabled(true);
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this,
-                                    getString(R.string.send_email_to) + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(LoginActivity.this, getString(R.string.send_email_fail),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END send_email_verification]
-    }
 
     private void resetPassword(final String email) {
         if (TextUtils.isEmpty(email)) {
@@ -255,10 +222,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        mAuth.sendPasswordResetEmail(email)
+        wilddogAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(Task<Void> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this,
                                     getString(R.string.send_email_to) + email,
@@ -299,9 +266,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
 
         mEmailSignInButton.dispose();
+        mEmailSignUpButton.dispose();
     }
-
-
 
 
     /*EventBus.getDefault().register(this);

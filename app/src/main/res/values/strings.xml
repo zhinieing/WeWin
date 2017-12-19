@@ -9,11 +9,14 @@
     <!-- Strings related to login -->
     <string name="prompt_email">邮箱</string>
     <string name="prompt_password">密码</string>
-    <string name="reset_password">重置密码</string>
+
     <string name="action_sign_in">登录</string>
     <string name="action_sign_up">注册</string>
     <string name="action_return">返回</string>
     <string name="action_sign_in_short">Sign in</string>
+
+    <string name="reset_password">忘记密码?</string>
+    <string name="to_signup">注册WeWin</string>
 
     <string name="error_username_required">邮箱不能为空</string>
     <string name="error_password_required">密码不能为空</string>
@@ -23,7 +26,6 @@
     <string name="send_email_to">发送邮件至</string>
     <string name="send_email_fail">发送邮件失败</string>
     <string name="sign_out">退出登录</string>
-    <string name="verify_email">邮箱验证</string>
 
     <string name="account_balance">Account Balance</string>
     <string name="balance_currency">$</string>

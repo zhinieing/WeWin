@@ -18,6 +18,7 @@
 
     <ScrollView
         android:id="@+id/login_form"
+        android:layout_below="@id/login_toolbar"
         android:padding="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -86,21 +87,62 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/white" />
 
-            <TextView
-                android:id="@+id/reset_password"
-                android:paddingTop="@dimen/activity_horizontal_margin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:clickable="true"
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/email_sign_up_button"
                 android:visibility="gone"
-                android:text="@string/reset_password"
-                android:textColor="@color/colorPrimaryDark"/>
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/button_shape_default_rounded"
+                android:layout_marginTop="16dp"
+                app:spinning_bar_color="@android:color/white"
+                app:spinning_bar_width="3dp"
+                app:spinning_bar_padding="6dp"
+                app:initialCornerAngle="50dp"
+                app:finalCornerAngle="50dp"
+                android:text="@string/action_sign_up"
+                android:textStyle="bold"
+                android:textColor="@android:color/white" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/reset_password"
+                    android:paddingTop="@dimen/activity_horizontal_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:text="@string/reset_password"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+                <TextView
+                    android:id="@+id/to_sign_up"
+                    android:paddingTop="@dimen/activity_horizontal_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:text="@string/to_signup"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
+
+
+
     
     <LinearLayout
         android:id="@+id/signed_in"
+        android:layout_below="@id/login_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -116,26 +158,13 @@
             android:id="@+id/user_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            
-            <Button
-                android:id="@+id/sign_out_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:text="@string/sign_out"/>
 
-            <Button
-                android:id="@+id/verify_email_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:text="@string/verify_email"/>
-        </LinearLayout>
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/sign_out"/>
         
     </LinearLayout>
 </LinearLayout>
