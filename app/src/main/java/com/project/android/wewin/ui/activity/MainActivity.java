@@ -53,12 +53,11 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     FloatingActionButton fab;
 
     private static final int POS_PERSON = 0;
-    private static final int POS_CENTER = 1;
-    private static final int POS_CONTACT = 2;
-    private static final int POS_LIKE = 3;
-    private static final int POS_SET = 4;
-    private static final int POS_HELP = 5;
-    private static final int POS_EXIT = 7;
+    private static final int POS_CONTACT = 1;
+    private static final int POS_LIKE = 2;
+    private static final int POS_SET = 3;
+    private static final int POS_HELP = 4;
+    private static final int POS_EXIT = 6;
 
 
     private String[] screenTitles;
@@ -179,13 +178,12 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         //http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg
         DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
-                createPersonItemFor("", "小明"),
-                createItemFor(POS_CENTER),
+                createPersonItemFor("http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg", "小明"),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
                 createItemFor(POS_SET),
                 createItemFor(POS_HELP),
-                new SpaceItem(48),
+                new SpaceItem(30),
                 createItemFor(POS_EXIT)));
         adapter.setListener(this);
 

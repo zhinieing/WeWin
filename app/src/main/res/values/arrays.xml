@@ -3,7 +3,6 @@
 
     <string-array name="ld_activityScreenTitles">
         <item />
-        <item>@string/side_person</item>
         <item>@string/side_contact</item>
         <item>@string/side_like</item>
         <item>@string/side_set</item>
@@ -14,7 +13,6 @@
 
     <array name="ld_activityScreenIcons">
         <item>0</item>
-        <item>@drawable/ic_side_person</item>
         <item>@drawable/ic_side_contact</item>
         <item>@drawable/ic_side_like</item>
         <item>@drawable/ic_side_set</item>

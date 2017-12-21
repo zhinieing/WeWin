@@ -1,18 +1,14 @@
 package com.project.android.wewin.ui.menu;
 
-import android.net.Uri;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import com.project.android.wewin.utils.Util;
 
 /**
  * Created by pengming on 20/12/2017.
@@ -36,18 +32,9 @@ public class PersonItem extends DrawerItem<PersonItem.ViewHolder> {
 
     @Override
     public void bindViewHolder(ViewHolder holder) {
-        RequestOptions requestOptions = new RequestOptions()
-                .placeholder(R.drawable.ic_person_img)
-                .error(R.drawable.ic_person_img);
-
-        Glide.with(MyApplication.getContext())
-                .load(Uri.parse(imageUrl))
-                .apply(requestOptions)
-                .apply(RequestOptions.bitmapTransform(new CropCircleTransformation()))
-                .into(holder.imageView);
+        Util.loadCircleImage(imageUrl, holder.imageView);
 
         holder.username.setText(username);
-
     }
 
     public class ViewHolder extends DrawerAdapter.ViewHolder {
