@@ -27,8 +27,10 @@ import com.project.android.wewin.ui.adapter.ViewPagerAdapter;
 import com.project.android.wewin.ui.fragment.MainFragment;
 import com.project.android.wewin.ui.menu.DrawerAdapter;
 import com.project.android.wewin.ui.menu.DrawerItem;
+import com.project.android.wewin.ui.menu.PersonItem;
 import com.project.android.wewin.ui.menu.SimpleItem;
 import com.project.android.wewin.ui.menu.SpaceItem;
+import com.wilddog.wilddogauth.WilddogAuth;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
@@ -50,11 +52,13 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
-    private static final int POS_DASHBOARD = 0;
-    private static final int POS_ACCOUNT = 1;
-    private static final int POS_MESSAGES = 2;
-    private static final int POS_CART = 3;
-    private static final int POS_LOGOUT = 5;
+    private static final int POS_PERSON = 0;
+    private static final int POS_CENTER = 1;
+    private static final int POS_CONTACT = 2;
+    private static final int POS_LIKE = 3;
+    private static final int POS_SET = 4;
+    private static final int POS_HELP = 5;
+    private static final int POS_EXIT = 7;
 
 
     private String[] screenTitles;
@@ -63,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private MenuItem prevMenuItem;
 
     private SlidingRootNav slidingRootNav;
+
+    private WilddogAuth wilddogAuth;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -127,7 +133,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         setSupportActionBar(toolbar);
 
+        wilddogAuth = WilddogAuth.getInstance();
 
+        //底部导航栏设置
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         disableShiftMode(navigation);
 
@@ -146,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         navigation.setItemIconTintList(csl);
 
 
+
+        //Viewpager页面设置
         mainViewpager.addOnPageChangeListener(mOnPageChangeListener);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(MainFragment.newInstance(1));
@@ -154,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         mainViewpager.setAdapter(viewPagerAdapter);
 
 
+
+        //侧边导航栏设置
         slidingRootNav = new SlidingRootNavBuilder(this)
                 .withToolbarMenuToggle(toolbar)
                 .withMenuOpened(false)
@@ -162,17 +174,19 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 .withMenuLayout(R.layout.menu_left_drawer)
                 .inject();
 
-
         screenIcons = loadScreenIcons();
         screenTitles = loadScreenTitles();
 
+        //http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg
         DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
-                createItemFor(POS_DASHBOARD),
-                createItemFor(POS_ACCOUNT),
-                createItemFor(POS_MESSAGES),
-                createItemFor(POS_CART),
+                createPersonItemFor("", "小明"),
+                createItemFor(POS_CENTER),
+                createItemFor(POS_CONTACT),
+                createItemFor(POS_LIKE),
+                createItemFor(POS_SET),
+                createItemFor(POS_HELP),
                 new SpaceItem(48),
-                createItemFor(POS_LOGOUT)));
+                createItemFor(POS_EXIT)));
         adapter.setListener(this);
 
         RecyclerView list = findViewById(R.id.list);
@@ -210,15 +224,18 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         }
     }
 
+    //侧边栏点击事件
     @Override
     public void onItemSelected(int position) {
-        if (position == POS_LOGOUT) {
-            finish();
+        if (position == POS_EXIT) {
+            wilddogAuth.signOut();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            //finish();
         }
         slidingRootNav.closeMenu();
 
         switch (position) {
-            case POS_DASHBOARD:
+            case POS_PERSON:
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
             default:
@@ -232,6 +249,10 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 .withTextTint(color(R.color.textColorPrimary))
                 .withSelectedIconTint(color(R.color.colorAccent))
                 .withSelectedTextTint(color(R.color.colorAccent));
+    }
+
+    private PersonItem createPersonItemFor(String imageUrl, String username){
+        return new PersonItem(imageUrl, username);
     }
 
     private String[] loadScreenTitles() {

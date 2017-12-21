@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 
 /**
  * A login screen that offers login via email/password.
+ * @author pengming
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Toolbar toolbar;
     
     @BindView(R.id.login_form)
-    ScrollView loginForm;
+    LinearLayout loginForm;
     @BindView(R.id.email)
     AutoCompleteTextView mEmailView;
     @BindView(R.id.password)
@@ -60,8 +61,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView userUserid;
     @BindView(R.id.user_email)
     TextView userEmail;
-    @BindView(R.id.sign_out_button)
-    Button mSignOutButton;
 
 
     @Override
@@ -81,7 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEmailSignUpButton.setOnClickListener(this);
         resetPassword.setOnClickListener(this);
         toSignUp.setOnClickListener(this);
-        mSignOutButton.setOnClickListener(this);
     }
 
     @Override
@@ -121,13 +119,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.to_sign_up:
-                Log.d(TAG, "onClick: 11111111");
                 mEmailSignUpButton.setVisibility(View.VISIBLE);
                 mEmailSignInButton.setVisibility(View.GONE);
                 resetPassword.setVisibility(View.GONE);
                 toSignUp.setVisibility(View.GONE);
-            case R.id.sign_out_button:
-                signOut();
                 break;
 
             default:
@@ -158,9 +153,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             resetPassword.setVisibility(View.VISIBLE);
                             toSignUp.setVisibility(View.VISIBLE);
 
+                            Toast.makeText(LoginActivity.this,
+                                    getString(R.string.send_confirm_email_to) + email,
+                                    Toast.LENGTH_SHORT).show();
+
                             WilddogUser user = wilddogAuth.getCurrentUser();
                             user.sendEmailVerification();
-                            updateUI(user);
+
+                            finish();
 
                         } else {
                             Log.w(TAG, "createUserWithEmail:failure", var1.getException());
@@ -192,8 +192,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             mEmailSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                            WilddogUser user = wilddogAuth.getCurrentUser();
-                            updateUI(user);
+                            finish();
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", var1.getException());
                             mEmailSignInButton.revertAnimation();
@@ -206,14 +205,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void signOut() {
-        wilddogAuth.signOut();
-        updateUI(null);
-        mEmailView.setText("");
-        mPasswordView.setText("");
-        mEmailSignInButton.revertAnimation();
-        mEmailSignUpButton.revertAnimation();
-    }
 
 
     private void resetPassword(final String email) {
@@ -228,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(Task<Void> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this,
-                                    getString(R.string.send_email_to) + email,
+                                    getString(R.string.send_reset_email_to) + email,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "sendPasswordResetEmail", task.getException());

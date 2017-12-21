@@ -14,22 +14,22 @@ import com.wilddog.wilddogcore.WilddogOptions;
 public class MyApplication extends Application{
 
     private static MyApplication INSTANCE = null;
-    //private static Context context;
+    private static Context context;
 
     public static MyApplication getInstance() {
         return INSTANCE;
     }
 
-    /*public static Context getContext() {
+    public static Context getContext() {
         return context;
-    }*/
+    }
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
-        //context = getApplicationContext();
+        context = getApplicationContext();
 
         AppDatabaseManager.getInstance().createDB(this);
 
