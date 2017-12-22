@@ -35,4 +35,23 @@
     <string name="side_help">帮助与反馈</string>
     <string name="side_exit">退出</string>
 
+    <string name="title">标题:</string>
+    <string name="homework_content">描述一下作业内容</string>
+    <string name="deadline">截止日期</string>
+    <string name="send_to">发送给:</string>
+    <string name="add">添加</string>
+    <string name="confirm_release">确认发布</string>
+    <string name="addition_info">附加信息：</string>
+    <string name="price">价格</string>
+    <string name="variety">分类</string>
+    <string name="release">发布</string>
+    <string name="content">内容</string>
+    <string name="reply">回复</string>
+    <string name="link1">附件1链接</string>
+    <string name="reply_content">回复内容</string>
+    <string name="attachment">附件:</string>
+    <string name="release_date">发布时间</string>
+    <string name="view_count">浏览次数</string>
+    <string name="user_name">User Name</string>
+    <string name="help_and_feedback">帮助与反馈</string>
 </resources>

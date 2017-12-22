@@ -196,6 +196,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //todo 根据fragment判断启动ReleaseHomeworkActivity还是ReleaseTaskActivity
+
+                startActivity(new Intent(MainActivity.this,ReleaseHomeworkActivity.class));
                 Toast.makeText(MainActivity.this, "fab", Toast.LENGTH_SHORT).show();
             }
         });
