@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         //http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg
         DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
-                createPersonItemFor("http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg", "小明"),
+                createPersonItemFor(Uri.parse("http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg"), "小明"),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
                 createItemFor(POS_SET),
@@ -249,8 +250,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 .withSelectedTextTint(color(R.color.colorAccent));
     }
 
-    private PersonItem createPersonItemFor(String imageUrl, String username){
-        return new PersonItem(imageUrl, username);
+    private PersonItem createPersonItemFor(Uri imageUri, String username){
+        return new PersonItem(imageUri, username);
     }
 
     private String[] loadScreenTitles() {

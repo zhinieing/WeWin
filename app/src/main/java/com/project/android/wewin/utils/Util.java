@@ -33,13 +33,13 @@ public class Util {
         return false;
     }
 
-    public static void loadCircleImage(String imageUrl, ImageView imageView){
+    public static void loadCircleImage(Uri imageUri, ImageView imageView){
         RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.ic_person_img)
                 .error(R.drawable.ic_person_img);
 
         Glide.with(MyApplication.getContext())
-                .load(Uri.parse(imageUrl))
+                .load(imageUri)
                 .apply(requestOptions)
                 .apply(RequestOptions.bitmapTransform(new CropCircleTransformation()))
                 .into(imageView);

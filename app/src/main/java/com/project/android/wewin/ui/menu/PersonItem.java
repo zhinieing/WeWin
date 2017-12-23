@@ -1,6 +1,7 @@
 package com.project.android.wewin.ui.menu;
 
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,11 @@ import com.project.android.wewin.utils.Util;
  */
 
 public class PersonItem extends DrawerItem<PersonItem.ViewHolder> {
-    private String imageUrl;
+    private Uri imageUri;
     private String username;
 
-    public PersonItem(String imageUrl, String username){
-        this.imageUrl = imageUrl;
+    public PersonItem(Uri imageUri, String username){
+        this.imageUri = imageUri;
         this.username = username;
     }
 
@@ -32,7 +33,7 @@ public class PersonItem extends DrawerItem<PersonItem.ViewHolder> {
 
     @Override
     public void bindViewHolder(ViewHolder holder) {
-        Util.loadCircleImage(imageUrl, holder.imageView);
+        Util.loadCircleImage(imageUri, holder.imageView);
 
         holder.username.setText(username);
     }

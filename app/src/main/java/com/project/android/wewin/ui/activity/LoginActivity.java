@@ -10,12 +10,13 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.utils.Util;
 import com.wilddog.wilddogauth.WilddogAuth;
 import com.wilddog.wilddogauth.core.Task;
 import com.wilddog.wilddogauth.core.listener.OnCompleteListener;
@@ -28,18 +29,18 @@ import butterknife.ButterKnife;
 
 /**
  * A login screen that offers login via email/password.
+ *
  * @author pengming
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "EmailPassword";
-    
 
     private WilddogAuth wilddogAuth;
 
     @BindView(R.id.login_toolbar)
     Toolbar toolbar;
-    
+
     @BindView(R.id.login_form)
     LinearLayout loginForm;
     @BindView(R.id.email)
@@ -54,9 +55,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView resetPassword;
     @BindView(R.id.to_sign_up)
     TextView toSignUp;
-    
+
     @BindView(R.id.signed_in)
     LinearLayout signedIn;
+    @BindView(R.id.user_photo)
+    ImageView userPhoto;
+    @BindView(R.id.user_modify)
+    Button userModify;
     @BindView(R.id.user_userid)
     TextView userUserid;
     @BindView(R.id.user_email)
@@ -80,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEmailSignUpButton.setOnClickListener(this);
         resetPassword.setOnClickListener(this);
         toSignUp.setOnClickListener(this);
+        userModify.setOnClickListener(this);
     }
 
     @Override
@@ -94,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             loginForm.setVisibility(View.GONE);
             signedIn.setVisibility(View.VISIBLE);
 
+            Util.loadCircleImage(user.getPhotoUrl(), userPhoto);
             userUserid.setText(user.getUid());
             userEmail.setText(user.getEmail());
         } else {
@@ -204,7 +211,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
-
 
 
     private void resetPassword(final String email) {
