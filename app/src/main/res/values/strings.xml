@@ -66,4 +66,5 @@
     <string name="view_count">浏览次数</string>
     <string name="user_name">User Name</string>
     <string name="help_and_feedback">帮助与反馈</string>
+    <string name="title_activity_contact">ContactActivity</string>
 </resources>
