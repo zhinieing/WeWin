@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -32,11 +33,15 @@ import com.project.android.wewin.ui.menu.PersonItem;
 import com.project.android.wewin.ui.menu.SimpleItem;
 import com.project.android.wewin.ui.menu.SpaceItem;
 import com.wilddog.wilddogauth.WilddogAuth;
+import com.wilddog.wilddogauth.model.WilddogUser;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private SlidingRootNav slidingRootNav;
 
     private WilddogAuth wilddogAuth;
+
+    private DrawerAdapter drawerAdapter;
+    private List<DrawerItem> items;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -177,21 +185,25 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         screenIcons = loadScreenIcons();
         screenTitles = loadScreenTitles();
 
-        //http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg
-        DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
-                createPersonItemFor(Uri.parse("http://7xwels.com1.z0.glb.clouddn.com/cover/IMG_20160520_001714.jpg"), "小明"),
+
+        items = new ArrayList<DrawerItem>();
+        items.addAll(Arrays.asList(
+                createPersonItemFor(Uri.parse(""), ""),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
                 createItemFor(POS_SET),
                 createItemFor(POS_HELP),
                 new SpaceItem(30),
                 createItemFor(POS_EXIT)));
-        adapter.setListener(this);
+
+        drawerAdapter = new DrawerAdapter(items);
+        drawerAdapter.setListener(this);
+
 
         RecyclerView list = findViewById(R.id.list);
         list.setNestedScrollingEnabled(false);
         list.setLayoutManager(new LinearLayoutManager(this));
-        list.setAdapter(adapter);
+        list.setAdapter(drawerAdapter);
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +215,26 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 Toast.makeText(MainActivity.this, "fab", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        WilddogUser currentUser = wilddogAuth.getCurrentUser();
+
+        updateUI(currentUser);
+    }
+
+
+    private void updateUI(WilddogUser user){
+        if (user != null) {
+            PersonItem personItem = (PersonItem) items.get(0);
+            personItem.setImageUri(user.getPhotoUrl());
+            personItem.setUsername(user.getDisplayName());
+
+            drawerAdapter.notifyDataSetChanged();
+        }
     }
 
 

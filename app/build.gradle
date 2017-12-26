@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -33,11 +34,20 @@ dependencies {
 
     compile 'br.com.simplepass:loading-button-android:1.8.2'
     compile 'com.yarolegovich:sliding-root-nav:1.1.0'
+    compile 'com.jph.takephoto:takephoto_library:4.0.3'
+    compile 'com.google.code.gson:gson:2.8.2'
+
     compile 'com.wilddog.client:wilddog-auth-android:2.0.7'
+    compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+
+    /*compile 'cn.bmob.android:bmob-sdk:3.5.8'
+    compile 'cn.bmob.android:http-legacy:1.0'*/
 
     compile 'android.arch.lifecycle:runtime:1.0.3'
     compile 'android.arch.lifecycle:extensions:1.0.0'
     compile 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
 
     testCompile 'junit:junit:4.12'
     compile 'com.jakewharton:butterknife:8.8.1'
@@ -47,6 +57,4 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.4.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
-    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
 }

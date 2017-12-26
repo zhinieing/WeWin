@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.ui.adapter.TaskRvAdapter;
-import com.project.android.wewin.data.remote.model.User;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,6 @@ public class TaskFragment extends Fragment {
     Unbinder unbinder;
 
     private TaskRvAdapter taskRvAdapter;
-    private ArrayList<User> users;
 
     public TaskFragment() {
 
@@ -57,13 +55,8 @@ public class TaskFragment extends Fragment {
         taskList.setLayoutManager(llm);
         taskList.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
-        users = new ArrayList<User>();
-        for(int i = 0; i < 15; i++){
-            User user = new User("pengming" + i % 10, "123456" + i % 10);
-            users.add(user);
-        }
 
-        taskRvAdapter = new TaskRvAdapter(container.getContext(), users);
+        taskRvAdapter = new TaskRvAdapter(container.getContext());
         taskList.setAdapter(taskRvAdapter);
 
         return view;

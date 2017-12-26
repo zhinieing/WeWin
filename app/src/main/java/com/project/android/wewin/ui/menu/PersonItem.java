@@ -19,6 +19,14 @@ public class PersonItem extends DrawerItem<PersonItem.ViewHolder> {
     private Uri imageUri;
     private String username;
 
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public PersonItem(Uri imageUri, String username){
         this.imageUri = imageUri;
         this.username = username;

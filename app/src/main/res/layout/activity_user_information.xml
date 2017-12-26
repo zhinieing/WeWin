@@ -7,23 +7,24 @@
     android:orientation="vertical"
     tools:context="com.project.android.wewin.ui.activity.UserInformation">
 
-    <android.support.v7.widget.Toolbar
+    <Toolbar
         android:id="@+id/modify_user_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize">
 
-    </android.support.v7.widget.Toolbar>
+    </Toolbar>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/divideColor"/>
 
     <LinearLayout
         android:id="@+id/modifying_user_photo"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
+        android:clickable="true"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -46,12 +47,13 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/divideColor"/>
 
     <LinearLayout
         android:id="@+id/modifying_user_display_name"
         android:orientation="horizontal"
         android:padding="@dimen/activity_horizontal_margin"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -70,6 +72,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/divideColor"/>
 
 </LinearLayout>

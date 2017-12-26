@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.project.android.wewin.R;
-import com.project.android.wewin.data.remote.model.User;
 
 import java.util.ArrayList;
 
@@ -18,38 +17,35 @@ import java.util.ArrayList;
 
 public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder> {
     private Context context;
-    private ArrayList<User> users;
 
-    public TaskRvAdapter(Context context, ArrayList<User> users){
+
+    public TaskRvAdapter(Context context){
         this.context = context;
-        this.users = users;
+
     }
 
     @Override
     public TaskRvAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_task, parent, false);
-        ViewHolder viewHolder = new ViewHolder(itemView);
-        return viewHolder;
+
+        return null;
     }
 
     @Override
     public void onBindViewHolder(TaskRvAdapter.ViewHolder holder, int position) {
-        holder.userNameTV.setText(users.get(position).getUserName());
-        holder.passWordTV.setText(users.get(position).getPassWord());
+
     }
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView userNameTV, passWordTV;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
-            userNameTV = itemView.findViewById(R.id.tv_username);
-            passWordTV = itemView.findViewById(R.id.tv_password);
+
         }
     }
 }

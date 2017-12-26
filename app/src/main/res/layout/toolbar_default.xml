@@ -6,7 +6,6 @@
     android:background="@color/colorPrimary"
     app:layout_scrollFlags="scroll|enterAlways"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-
     >
 
     <TextView

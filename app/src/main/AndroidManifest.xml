@@ -28,6 +28,8 @@
             android:name=".ui.activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName=".ui.activity.MainActivity"></activity>
+        <activity android:name=".ui.activity.UserInformation"
+            android:parentActivityName=".ui.activity.LoginActivity"/>
         <activity android:name=".ui.activity.ReleaseHomeworkActivity" />
         <activity android:name=".ui.activity.ReleaseTaskActivity" />
         <activity android:name=".ui.activity.DetailActivity" />

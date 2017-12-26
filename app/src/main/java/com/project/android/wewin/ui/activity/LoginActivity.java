@@ -1,5 +1,6 @@
 package com.project.android.wewin.ui.activity;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -130,6 +131,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mEmailSignInButton.setVisibility(View.GONE);
                 resetPassword.setVisibility(View.GONE);
                 toSignUp.setVisibility(View.GONE);
+                break;
+
+            case R.id.user_modify:
+                startActivity(new Intent(this, UserInformation.class));
                 break;
 
             default:
