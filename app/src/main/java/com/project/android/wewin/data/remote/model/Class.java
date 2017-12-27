@@ -2,17 +2,23 @@ package com.project.android.wewin.data.remote.model;
 
 import java.util.List;
 
+import cn.bmob.v3.BmobObject;
+
 /**
- * Created by pengming on 26/12/2017.
+ *
+ * @author pengming
+ * @date 26/12/2017
  */
 
-public class Class {
+public class Class extends BmobObject{
     private String className;
     private String creatorId;
     private String classIcon;
     private Integer studentSize;
     private Integer teacherSize;
     private List<GroupInfo> groupInfos;
+
+    public Class() {}
 
     public String getClassName() {
         return className;

@@ -1,13 +1,19 @@
 package com.project.android.wewin.data.remote.model;
 
+import cn.bmob.v3.BmobObject;
+
 /**
- * Created by pengming on 26/12/2017.
+ *
+ * @author pengming
+ * @date 26/12/2017
  */
 
-public class GroupMember {
+public class GroupMember extends BmobObject{
     private String userId;
     private String userName;
     private String groupId;
+
+    public GroupMember() {}
 
     public String getUserId() {
         return userId;

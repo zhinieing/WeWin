@@ -7,6 +7,8 @@ import com.project.android.wewin.data.local.db.AppDatabaseManager;
 import com.wilddog.wilddogcore.WilddogApp;
 import com.wilddog.wilddogcore.WilddogOptions;
 
+import cn.bmob.v3.Bmob;
+
 
 /**
  * Created by pengming on 2017/11/24.
@@ -34,7 +36,7 @@ public class MyApplication extends Application{
 
         AppDatabaseManager.getInstance().createDB(this);
 
-        //Bmob.initialize(this, "b69feccd348afa82300261a7e587e7f2", "bmob");
+        Bmob.initialize(this, "b69feccd348afa82300261a7e587e7f2", "bmob");
 
         WilddogOptions options = new WilddogOptions.Builder().setSyncUrl("https://wd7253182455nvohji.wilddogio.com").build();
         WilddogApp.initializeApp(this, options);

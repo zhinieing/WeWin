@@ -18,19 +18,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    /*packagingOptions {
-        exclude 'META-INF/DEPENDENCIES.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
+    packagingOptions {
         exclude 'META-INF/rxjava.properties'
-        exclude 'META-INF/rxjava.PROPERTIES'
-        exclude 'META-INF/RXJAVA.properties'
-        exclude 'META-INF/RXJAVA.PROPERTIES'
-        exclude 'META-INF/rxjava'
-        exclude 'META-INF/RXJAVA'
-    }*/
+    }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
