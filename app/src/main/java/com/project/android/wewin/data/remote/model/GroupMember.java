@@ -11,6 +11,8 @@ import cn.bmob.v3.BmobObject;
 public class GroupMember extends BmobObject{
     private String userId;
     private String userName;
+    private String userPhoto;
+    private String userEmail;
     private String groupId;
 
     public GroupMember() {}
@@ -29,6 +31,22 @@ public class GroupMember extends BmobObject{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserPhoto() {
+        return userPhoto;
+    }
+
+    public void setUserPhoto(String userPhoto) {
+        this.userPhoto = userPhoto;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getGroupId() {

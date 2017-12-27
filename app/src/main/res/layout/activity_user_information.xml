@@ -22,8 +22,8 @@
     <LinearLayout
         android:id="@+id/modifying_user_photo"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
         android:clickable="true"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
@@ -52,7 +52,7 @@
     <LinearLayout
         android:id="@+id/modifying_user_display_name"
         android:orientation="horizontal"
-        android:padding="@dimen/activity_horizontal_margin"
+        android:padding="@dimen/padding_medium"
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

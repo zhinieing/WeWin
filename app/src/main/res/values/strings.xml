@@ -66,5 +66,15 @@
     <string name="view_count">浏览次数</string>
     <string name="user_name">User Name</string>
     <string name="help_and_feedback">帮助与反馈</string>
+
     <string name="title_activity_contact">ContactActivity</string>
+    <string name="contact_add_user">添加联系人</string>
+
+    <string name="contact_add_class">添加班级</string>
+    <string name="alert_class_name">输入班级名称</string>
+    <string name="alert_class_auth">选择您的身份：</string>
+    <string name="alert_class_teacher">老师</string>
+    <string name="alert_class_student">学生</string>
+
+    <string name="contact_add_group">添加群组</string>
 </resources>

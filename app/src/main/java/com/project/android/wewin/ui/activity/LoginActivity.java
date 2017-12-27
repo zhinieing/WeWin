@@ -117,26 +117,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.email_sign_in_button:
                 signIn(mEmailView.getText().toString(), mPasswordView.getText().toString());
                 break;
-
             case R.id.email_sign_up_button:
                 createAccount(mEmailView.getText().toString(), mPasswordView.getText().toString());
                 break;
-
             case R.id.reset_password:
                 resetPassword(mEmailView.getText().toString());
                 break;
-
             case R.id.to_sign_up:
                 mEmailSignUpButton.setVisibility(View.VISIBLE);
                 mEmailSignInButton.setVisibility(View.GONE);
                 resetPassword.setVisibility(View.GONE);
                 toSignUp.setVisibility(View.GONE);
                 break;
-
             case R.id.user_modify:
                 startActivity(new Intent(this, UserInformation.class));
                 break;
-
             default:
         }
     }

@@ -47,7 +47,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     private static String SecretKey = "7oEW82Mfv9KI6mhOHdfad_yqsLdphUKEwxhwVkwQ";
 
     @BindView(R.id.modify_user_toolbar)
-    Toolbar modifyUserToolbar;
+    Toolbar toolbar;
     @BindView(R.id.modified_user_photo)
     ImageView modifiedUserPhoto;
     @BindView(R.id.modifying_user_photo)
@@ -69,7 +69,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
         wilddogAuth = WilddogAuth.getInstance();
 
-        setActionBar(modifyUserToolbar);
+        setActionBar(toolbar);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle(R.string.modify_user_information);
 
@@ -109,18 +109,15 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                             case 0:
                                 takePhoto.onPickFromCaptureWithCrop(imageUri, cropOptions);
                                 break;
-
                             case 1:
                                 takePhoto.onPickFromGalleryWithCrop(imageUri, cropOptions);
                                 break;
-
                             default:
                         }
                     }
                 });
 
                 dialog.initDialog();
-
                 break;
 
             case R.id.modifying_user_display_name:
@@ -153,9 +150,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
                 myDialog = builder.create();
                 myDialog.show();
-
                 break;
-
             default:
         }
     }
