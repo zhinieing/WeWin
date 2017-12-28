@@ -4,7 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class DataRepository {
         return INSTANCE;
     }
 
-    public LiveData<List<HomeWork>> getHomeWorkList(int index) {
+    public LiveData<List<HomeWorkRoom>> getHomeWorkList(int index) {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getHomeWorkList(index);
         } else {

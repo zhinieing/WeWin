@@ -6,7 +6,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class AppDatabaseManager {
 
     private final MutableLiveData<Boolean> mIsLoadingHomeWorkList = new MutableLiveData<>();
 
-    private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
+    private final MutableLiveData<List<HomeWorkRoom>> mHomeWorkList = new MutableLiveData<>();
 
     private static AppDatabaseManager INSTANCE = null;
 
@@ -52,13 +52,13 @@ public class AppDatabaseManager {
         }.execute(context.getApplicationContext());
     }
 
-    public void insertHomeWorkList(final List<HomeWork> homeWorkList) {
+    public void insertHomeWorkList(final List<HomeWorkRoom> homeWorkRoomList) {
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... voids) {
                 mDB.beginTransaction();
                 try {
-                    mDB.homeWorkDao().insertHomeWorkList(homeWorkList);
+                    mDB.homeWorkDao().insertHomeWorkList(homeWorkRoomList);
                     mDB.setTransactionSuccessful();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -70,12 +70,12 @@ public class AppDatabaseManager {
         }.execute();
     }
 
-    public LiveData<List<HomeWork>> loadHomeWorkList() {
+    public LiveData<List<HomeWorkRoom>> loadHomeWorkList() {
         mIsLoadingHomeWorkList.setValue(true);
-        new AsyncTask<Void, Void, List<HomeWork>>() {
+        new AsyncTask<Void, Void, List<HomeWorkRoom>>() {
             @Override
-            protected List<HomeWork> doInBackground(Void... voids) {
-                List<HomeWork> results = new ArrayList<>();
+            protected List<HomeWorkRoom> doInBackground(Void... voids) {
+                List<HomeWorkRoom> results = new ArrayList<>();
                 mDB.beginTransaction();
                 try {
                     results.addAll(mDB.homeWorkDao().loadAllHomeWorks());
@@ -89,14 +89,14 @@ public class AppDatabaseManager {
             }
 
             @Override
-            protected void onPostExecute(List<HomeWork> aVoid) {
+            protected void onPostExecute(List<HomeWorkRoom> aVoid) {
                 super.onPostExecute(aVoid);
                 mIsLoadingHomeWorkList.setValue(false);
                 mHomeWorkList.setValue(aVoid);
             }
 
             @Override
-            protected void onCancelled(List<HomeWork> aVoid) {
+            protected void onCancelled(List<HomeWorkRoom> aVoid) {
                 super.onCancelled(aVoid);
                 mIsLoadingHomeWorkList.setValue(false);
             }

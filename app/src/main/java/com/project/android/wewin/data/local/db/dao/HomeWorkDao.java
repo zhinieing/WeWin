@@ -5,7 +5,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ import java.util.List;
 public interface HomeWorkDao {
 
     @Query("SELECT * FROM homeworks")
-    List<HomeWork> loadAllHomeWorks();
+    List<HomeWorkRoom> loadAllHomeWorks();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertHomeWorkList(List<HomeWork> homeworks);
+    void insertHomeWorkList(List<HomeWorkRoom> homework);
 
 
 }

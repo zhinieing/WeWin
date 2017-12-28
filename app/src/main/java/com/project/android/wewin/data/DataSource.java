@@ -2,7 +2,7 @@ package com.project.android.wewin.data;
 
 import android.arch.lifecycle.LiveData;
 
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface DataSource {
 
-    LiveData<List<HomeWork>> getHomeWorkList(int index);
+    LiveData<List<HomeWorkRoom>> getHomeWorkList(int index);
 
     LiveData<Boolean> isLoadingHomeWorkList();
 

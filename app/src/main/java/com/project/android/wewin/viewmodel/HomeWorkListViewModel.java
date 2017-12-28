@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.data.DataRepository;
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
@@ -25,22 +25,22 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Integer> mHomeWorkPageIndex = new MutableLiveData<>();
 
-    private final LiveData<List<HomeWork>> mHomeWorkList;
+    private final LiveData<List<HomeWorkRoom>> mHomeWorkList;
 
     private DataRepository mHomeWorkDataRepository = null;
 
     public HomeWorkListViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mHomeWorkDataRepository = homeWorkDataRepository;
-        mHomeWorkList = Transformations.switchMap(mHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWork>>>() {
+        mHomeWorkList = Transformations.switchMap(mHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWorkRoom>>>() {
             @Override
-            public LiveData<List<HomeWork>> apply(Integer input) {
+            public LiveData<List<HomeWorkRoom>> apply(Integer input) {
                 return mHomeWorkDataRepository.getHomeWorkList(input);
             }
         });
     }
 
-    public LiveData<List<HomeWork>> getHomeWorkListLiveData(){
+    public LiveData<List<HomeWorkRoom>> getHomeWorkListLiveData(){
         return mHomeWorkList;
     }
 

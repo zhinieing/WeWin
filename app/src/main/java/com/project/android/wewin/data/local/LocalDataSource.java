@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import com.project.android.wewin.data.DataSource;
 import com.project.android.wewin.data.local.db.AppDatabaseManager;
-import com.project.android.wewin.data.local.db.entity.HomeWork;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class LocalDataSource implements DataSource{
 
 
     @Override
-    public LiveData<List<HomeWork>> getHomeWorkList(int index) {
+    public LiveData<List<HomeWorkRoom>> getHomeWorkList(int index) {
         return AppDatabaseManager.getInstance().loadHomeWorkList();
     }
 

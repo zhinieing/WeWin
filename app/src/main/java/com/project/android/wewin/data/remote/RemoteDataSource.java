@@ -4,8 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.project.android.wewin.data.DataSource;
-import com.project.android.wewin.data.local.db.entity.HomeWork;
-import com.project.android.wewin.data.remote.api.ApiManager;
+import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<Boolean> mIsLoadingHomeWorkList = new MutableLiveData<>();
 
-    private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
+    private final MutableLiveData<List<HomeWorkRoom>> mHomeWorkList = new MutableLiveData<>();
 
 
     private RemoteDataSource() {
@@ -39,7 +38,7 @@ public class RemoteDataSource implements DataSource {
 
 
     @Override
-    public LiveData<List<HomeWork>> getHomeWorkList(int index) {
+    public LiveData<List<HomeWorkRoom>> getHomeWorkList(int index) {
         return null;
     }
 

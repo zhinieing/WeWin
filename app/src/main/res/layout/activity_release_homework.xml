@@ -37,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
+            android:maxLines="1"
             android:textSize="@dimen/text_size_huge" />
     </LinearLayout>
 
@@ -64,7 +65,7 @@
                 android:background="@null"
                 android:gravity="top"
                 android:hint="@string/homework_content"
-                android:lines="10"
+                android:minLines="7"
                 android:textSize="@dimen/text_size_huge" />
 
             <RelativeLayout
@@ -85,16 +86,25 @@
 
                 <Button
                     android:id="@+id/release_deadline"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
                     android:layout_marginRight="15dp"
                     android:background="@drawable/shape"
                     android:text="@string/deadline"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/text_size_large" />
             </RelativeLayout>
+
+            <LinearLayout
+                android:layout_margin="15dp"
+                android:id="@+id/release_attachment_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"

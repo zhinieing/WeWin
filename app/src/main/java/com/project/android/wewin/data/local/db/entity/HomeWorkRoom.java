@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
  */
 
 @Entity(tableName = "homeworks")
-public class HomeWork {
+public class HomeWorkRoom {
     @NonNull
     @PrimaryKey
     private String id;
@@ -22,15 +22,15 @@ public class HomeWork {
 
     private String[] images;
 
-    public HomeWork() {
+    public HomeWorkRoom() {
     }
 
-    public HomeWork(HomeWork homeWork) {
-        this.id = homeWork.getId();
-        this.type = homeWork.getType();
-        this.ga_prefix = homeWork.getGa_prefix();
-        this.title = homeWork.getTitle();
-        this.images = homeWork.getImages();
+    public HomeWorkRoom(HomeWorkRoom homeWorkRoom) {
+        this.id = homeWorkRoom.getId();
+        this.type = homeWorkRoom.getType();
+        this.ga_prefix = homeWorkRoom.getGa_prefix();
+        this.title = homeWorkRoom.getTitle();
+        this.images = homeWorkRoom.getImages();
     }
 
     public String[] getImages() {
