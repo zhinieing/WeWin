@@ -10,12 +10,11 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/login_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:contentInsetStart="0.0dp">
+        android:layout_height="?attr/actionBarSize">
 
     </android.support.v7.widget.Toolbar>
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:id="@+id/login_form"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
@@ -45,10 +44,10 @@
             android:textStyle="bold"
             android:textColor="@android:color/white" />
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
 
-    <!--<LinearLayout
+    <LinearLayout
         android:id="@+id/login_form"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
@@ -59,11 +58,133 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_margin="@dimen/padding_large"
+            android:layout_marginBottom="@dimen/padding_large"
             android:src="@drawable/ic_login_icon"
             android:layout_gravity="center_horizontal"/>
 
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
+            android:background="@drawable/button_login"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="50dp"
+            android:layout_marginBottom="@dimen/padding_medium">
+
+            <TextView
+                android:layout_marginLeft="@dimen/padding_large"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:text="@string/phone_pre"
+                android:textColor="@color/textColorPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="1dp"
+                android:background="@color/textColorPrimary"
+                android:layout_height="30dp" />
+
+            <EditText
+                android:id="@+id/login_phone"
+                android:layout_marginLeft="@dimen/padding_medium"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:hint="@string/prompt_phone"
+                android:textColor="@color/textColorPrimary"
+                android:background="@null"
+                android:maxLines="1"
+                android:inputType="phone|number"
+                android:textSize="@dimen/text_size_large"
+                android:maxLength="11"
+                android:textCursorDrawable="@color/textColorPrimary"
+                style="?android:attr/textViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_password"
+            android:background="@drawable/button_login"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="50dp"
+            android:layout_marginBottom="@dimen/padding_medium">
+
+            <ImageView
+                android:layout_marginLeft="@dimen/padding_large"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:src="@drawable/ic_login_password"
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
+
+            <View
+                android:layout_width="1dp"
+                android:background="@color/textColorPrimary"
+                android:layout_height="30dp" />
+
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_marginLeft="@dimen/padding_medium"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:hint="@string/prompt_password"
+                android:textColor="@color/textColorPrimary"
+                android:background="@null"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:textSize="@dimen/text_size_large"
+                android:textCursorDrawable="@color/textColorPrimary"
+                style="?android:attr/textViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_confirm"
+            android:visibility="gone"
+            android:background="@drawable/button_login"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="50dp"
+            android:layout_marginBottom="@dimen/padding_medium">
+
+            <ImageView
+                android:layout_marginLeft="@dimen/padding_large"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:src="@drawable/ic_login_confirm"
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
+
+            <View
+                android:layout_width="1dp"
+                android:background="@color/textColorPrimary"
+                android:layout_height="30dp" />
+
+            <EditText
+                android:id="@+id/login_confirm"
+                android:layout_marginLeft="@dimen/padding_medium"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:hint="@string/prompt_confirm"
+                android:textColor="@color/textColorPrimary"
+                android:background="@null"
+                android:maxLines="1"
+                android:textSize="@dimen/text_size_large"
+                android:textCursorDrawable="@color/textColorPrimary"
+                style="?android:attr/textViewStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/login_get_confirm"
+                android:background="@drawable/button_user_modify"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:text="@string/prompt_get_confirm"
+                android:textColor="@color/textColorPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp" />
+
+        </LinearLayout>
+
+        <!--<android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -97,10 +218,10 @@
                 android:maxLines="1"
                 android:singleLine="true" />
 
-        </android.support.design.widget.TextInputLayout>
+        </android.support.design.widget.TextInputLayout>-->
 
         <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
-            android:id="@+id/email_sign_in_button"
+            android:id="@+id/phone_sign_in_button"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -116,7 +237,7 @@
             android:textColor="@android:color/white" />
 
         <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
-            android:id="@+id/email_sign_up_button"
+            android:id="@+id/phone_sign_up_button"
             android:visibility="gone"
             android:layout_gravity="center"
             android:layout_width="match_parent"
@@ -139,13 +260,13 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/reset_password"
+                android:id="@+id/confirm_login"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:clickable="true"
-                android:text="@string/reset_password"
+                android:text="@string/confirm_login"
                 android:textColor="@color/colorPrimaryDark"/>
 
             <TextView
@@ -160,43 +281,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>-->
-
-    
-    <LinearLayout
-        android:id="@+id/signed_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_medium"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/user_photo"
-            android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:paddingBottom="@dimen/padding_medium"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
-
-            <Button
-                android:id="@+id/user_modify"
-                android:background="@drawable/button_user_modify"
-                android:drawableLeft="@drawable/ic_user_modify"
-                android:gravity="center_vertical"
-                android:text="@string/user_information_modify"
-                android:textSize="@dimen/text_size_mini"
-                android:paddingLeft="@dimen/padding_medium"
-                android:paddingRight="@dimen/padding_medium"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp" />
-
-        </RelativeLayout>
     </LinearLayout>
+
 
 </LinearLayout>

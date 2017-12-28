@@ -44,7 +44,7 @@ public class MyApplication extends Application{
     }
 
     public void register2WX() {
-        api = WXAPIFactory.createWXAPI(this, Constants.WEIXIN_APP_ID, true);
+        api = WXAPIFactory.createWXAPI(this, Constants.WEIXIN_APP_ID, false);
         api.registerApp(Constants.WEIXIN_APP_ID);
     }
 }

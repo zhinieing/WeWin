@@ -19,12 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.adapter.ViewPagerAdapter;
 import com.project.android.wewin.ui.fragment.MainFragment;
 import com.project.android.wewin.ui.menu.DrawerAdapter;
@@ -32,8 +31,6 @@ import com.project.android.wewin.ui.menu.DrawerItem;
 import com.project.android.wewin.ui.menu.PersonItem;
 import com.project.android.wewin.ui.menu.SimpleItem;
 import com.project.android.wewin.ui.menu.SpaceItem;
-import com.wilddog.wilddogauth.WilddogAuth;
-import com.wilddog.wilddogauth.model.WilddogUser;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
@@ -45,6 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobUser;
 //The main screen for WeWin
 
 public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnItemSelectedListener {
@@ -73,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     private SlidingRootNav slidingRootNav;
 
-    private WilddogAuth wilddogAuth;
 
     private DrawerAdapter drawerAdapter;
     private List<DrawerItem> items;
@@ -141,7 +138,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         setSupportActionBar(toolbar);
 
-        wilddogAuth = WilddogAuth.getInstance();
+        MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
 
         //底部导航栏设置
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -186,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         screenTitles = loadScreenTitles();
 
 
-        items = new ArrayList<DrawerItem>();
-        items.addAll(Arrays.asList(
+        //todo 设置头像和昵称
+        drawerAdapter = new DrawerAdapter(Arrays.asList(
                 createPersonItemFor(Uri.parse(""), ""),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
@@ -195,8 +193,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 createItemFor(POS_HELP),
                 new SpaceItem(30),
                 createItemFor(POS_EXIT)));
-
-        drawerAdapter = new DrawerAdapter(items);
         drawerAdapter.setListener(this);
 
 
@@ -214,26 +210,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 startActivity(new Intent(MainActivity.this,ReleaseHomeworkActivity.class));
             }
         });
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        WilddogUser currentUser = wilddogAuth.getCurrentUser();
-
-        updateUI(currentUser);
-    }
-
-
-    private void updateUI(WilddogUser user){
-        if (user != null) {
-            PersonItem personItem = (PersonItem) items.get(0);
-            personItem.setImageUri(user.getPhotoUrl());
-            personItem.setUsername(user.getDisplayName());
-
-            drawerAdapter.notifyDataSetChanged();
-        }
     }
 
 
@@ -261,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     @Override
     public void onItemSelected(int position) {
         if (position == POS_EXIT) {
-            wilddogAuth.signOut();
+            MyUser.logOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             //finish();
         }

@@ -72,7 +72,7 @@ public final class Constants {
     /**
      * 微信平台的AppSecret
      */
-    public static final String WEIXIN_APP_SECRET ="a964c2d1bcc6f562130f31b208e5d2b7";
+    public static final String WEIXIN_APP_SECRET ="151f2902ebfceaa00eafa026d25e688c";
 
     /**
      *  微信平台的grant type，固定值：authorization_code

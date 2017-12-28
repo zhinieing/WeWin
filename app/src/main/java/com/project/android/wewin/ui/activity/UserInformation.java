@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import com.jph.takephoto.compress.CompressConfig;
 import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Auth;
 import com.project.android.wewin.utils.Constants;
 import com.project.android.wewin.utils.MyAlertDialog;
@@ -28,11 +30,6 @@ import com.project.android.wewin.utils.Util;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
-import com.wilddog.wilddogauth.WilddogAuth;
-import com.wilddog.wilddogauth.core.Task;
-import com.wilddog.wilddogauth.core.listener.OnCompleteListener;
-import com.wilddog.wilddogauth.core.request.UserProfileChangeRequest;
-import com.wilddog.wilddogauth.model.WilddogUser;
 
 import org.json.JSONObject;
 
@@ -42,6 +39,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobUser;
 
 public class UserInformation extends TakePhotoActivity implements View.OnClickListener {
 
@@ -57,8 +55,8 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     LinearLayout modifyingUserDisplayName;
 
     private TakePhoto takePhoto;
-    private WilddogAuth wilddogAuth;
-    private WilddogUser currentUser;
+
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,24 +64,24 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         setContentView(R.layout.activity_user_information);
         ButterKnife.bind(this);
 
-        wilddogAuth = WilddogAuth.getInstance();
-
         setActionBar(toolbar);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle(R.string.modify_user_information);
 
-        modifyingUserPhoto.setOnClickListener(this);
-        modifyingUserDisplayName.setOnClickListener(this);
+        user = BmobUser.getCurrentUser(MyUser.class);
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        currentUser = wilddogAuth.getCurrentUser();
 
-        Util.loadCircleImage(currentUser.getPhotoUrl(), modifiedUserPhoto);
-        modifiedUserDisplayName.setText(currentUser.getDisplayName());
+    private void initView() {
+
+        modifyingUserPhoto.setOnClickListener(this);
+        modifyingUserDisplayName.setOnClickListener(this);
+
+        //todo 更新用户名
+        //Util.loadCircleImage(user.getPhotoUrl(), modifiedUserPhoto);
+        //modifiedUserDisplayName.setText(user.getDisplayName());
+
     }
 
     @Override
@@ -122,7 +120,8 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             case R.id.modifying_user_display_name:
                 View alertView = LayoutInflater.from(this).inflate(R.layout.alert_modify_username, null);
                 final EditText editText = alertView.findViewById(R.id.alert_modified_username);
-                editText.setText(currentUser.getDisplayName());
+                //todo 更新用户名
+                //editText.setText(user.getDisplayName());
 
                 AlertDialog myDialog;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -132,11 +131,8 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         modifiedUserDisplayName.setText(editText.getText().toString());
+                        //todo 更新用户名
 
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(editText.getText().toString())
-                                .build();
-                        updateUser(profileUpdates);
                     }
                 });
 
@@ -189,28 +185,11 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
                 Util.loadCircleImage(Uri.parse(imgPath), modifiedUserPhoto);
 
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setPhotoUri(Uri.parse(imgPath))
-                        .build();
-                updateUser(profileUpdates);
+                //todo 更新用户头像
             }
         }, null);
     }
 
 
-    private void updateUser(UserProfileChangeRequest profileUpdates){
-
-        currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(Task<Void> var1) {
-                        if (var1.isSuccessful()) {
-
-                        } else {
-                            Toast.makeText(UserInformation.this, getString(R.string.toast_update_user_fail), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
 }
 

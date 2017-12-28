@@ -1,22 +1,31 @@
 package com.project.android.wewin.ui.activity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.project.android.wewin.R;
-import com.project.android.wewin.utils.Util;
-import com.wilddog.wilddogauth.model.WilddogUser;
+import com.project.android.wewin.data.remote.model.MyUser;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobSMS;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.LogInListener;
+import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * A login screen that offers login via email/password.
@@ -25,21 +34,35 @@ import butterknife.ButterKnife;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private Boolean passwordLogin = true;
 
     @BindView(R.id.login_toolbar)
     Toolbar toolbar;
+    @BindView(R.id.login_phone)
+    EditText loginPhone;
+    @BindView(R.id.ll_password)
+    LinearLayout llPassword;
+    @BindView(R.id.login_password)
+    EditText loginPassword;
 
-    @BindView(R.id.login_form)
-    RelativeLayout loginForm;
-    @BindView(R.id.wexin_login)
-    CircularProgressButton wexinLogin;
 
-    @BindView(R.id.signed_in)
-    LinearLayout signedIn;
-    @BindView(R.id.user_photo)
-    ImageView userPhoto;
-    @BindView(R.id.user_modify)
-    Button userModify;
+    @BindView(R.id.ll_confirm)
+    LinearLayout llConfirm;
+    @BindView(R.id.login_confirm)
+    EditText loginConfirm;
+    @BindView(R.id.login_get_confirm)
+    Button loginGetConfirm;
+
+    @BindView(R.id.phone_sign_in_button)
+    CircularProgressButton phoneSignInButton;
+    @BindView(R.id.phone_sign_up_button)
+    CircularProgressButton phoneSignUpButton;
+
+    @BindView(R.id.confirm_login)
+    TextView confirmLogin;
+    @BindView(R.id.to_sign_up)
+    TextView toSignUp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,49 +74,198 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        initView();
 
-        wexinLogin.setOnClickListener(this);
-        userModify.setOnClickListener(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
-
-    private void updateUI(WilddogUser user) {
+        MyUser user = BmobUser.getCurrentUser(MyUser.class);
         if (user != null) {
-            loginForm.setVisibility(View.GONE);
-            signedIn.setVisibility(View.VISIBLE);
-
-            Util.loadCircleImage(user.getPhotoUrl(), userPhoto);
-
-        } else {
-            loginForm.setVisibility(View.VISIBLE);
-            signedIn.setVisibility(View.GONE);
+            startActivity(new Intent(this, MainActivity.class));
         }
+
+    }
+
+
+    private void initView() {
+        loginGetConfirm.setOnClickListener(this);
+        phoneSignInButton.setOnClickListener(this);
+        phoneSignUpButton.setOnClickListener(this);
+        confirmLogin.setOnClickListener(this);
+        toSignUp.setOnClickListener(this);
     }
 
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.wexin_login:
-                wexinLogin.startAnimation();
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.login_get_confirm:
+                getConfirmSMS(loginPhone.getText().toString());
                 break;
-            case R.id.user_modify:
-                startActivity(new Intent(this, UserInformation.class));
+            case R.id.phone_sign_in_button:
+                if (passwordLogin) {
+                    signIn(loginPhone.getText().toString(), loginPassword.getText().toString());
+                } else {
+                    signIn(loginPhone.getText().toString(), loginConfirm.getText().toString());
+                }
+                break;
+            case R.id.phone_sign_up_button:
+                signUp(loginPhone.getText().toString(), loginPassword.getText().toString(), loginConfirm.getText().toString());
+                break;
+            case R.id.confirm_login:
+                passwordLogin = !passwordLogin;
+                if (passwordLogin) {
+                    confirmLogin.setText(R.string.confirm_login);
+                    llConfirm.setVisibility(View.GONE);
+                    llPassword.setVisibility(View.VISIBLE);
+                } else {
+                    confirmLogin.setText(R.string.password_login);
+                    llConfirm.setVisibility(View.VISIBLE);
+                    llPassword.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.to_sign_up:
+                llPassword.setVisibility(View.VISIBLE);
+                llConfirm.setVisibility(View.VISIBLE);
+                phoneSignUpButton.setVisibility(View.VISIBLE);
+                phoneSignInButton.setVisibility(View.GONE);
+                confirmLogin.setVisibility(View.GONE);
+                toSignUp.setVisibility(View.GONE);
                 break;
             default:
         }
     }
 
+    private void getConfirmSMS(String phone) {
+
+
+        BmobSMS.requestSMSCode(phone, "一键注册或登录模板", new QueryListener<Integer>() {
+            @Override
+            public void done(Integer integer, BmobException e) {
+                if (e == null) {
+                    Log.d("wewin", "短信id:" + integer);
+                    Toast.makeText(LoginActivity.this, getString(R.string.send_sms_success),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void signIn(String phone, String password) {
+
+        if (passwordLogin) {
+            if (!validatePasswordForm()) {
+                return;
+            }
+
+            phoneSignInButton.startAnimation();
+
+            BmobUser.loginByAccount(phone, password, new LogInListener<MyUser>() {
+                @Override
+                public void done(MyUser user, BmobException e) {
+                    if (e == null) {
+                        phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
+
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        phoneSignInButton.revertAnimation();
+
+                        Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_password),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            if (!validateCodeForm()) {
+                return;
+            }
+
+            phoneSignInButton.startAnimation();
+
+            BmobUser.loginBySMSCode(phone, password, new LogInListener<MyUser>() {
+                @Override
+                public void done(MyUser user, BmobException e) {
+                    if (e == null) {
+                        phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
+
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        phoneSignInButton.revertAnimation();
+
+                        Toast.makeText(LoginActivity.this, getString(R.string.error_incorrect_confirm),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+
+    private void signUp(String phone, String password, String code) {
+
+        if (!validatePasswordForm() || !validateCodeForm()) {
+            return;
+        }
+
+        phoneSignUpButton.startAnimation();
+
+        MyUser user = new MyUser();
+        user.setMobilePhoneNumber(phone);
+        user.setPassword(password);
+        user.signOrLogin(code, new SaveListener<MyUser>() {
+            @Override
+            public void done(MyUser user, BmobException e) {
+                if (e == null) {
+                    phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
+
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                } else {
+                    phoneSignUpButton.revertAnimation();
+
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_create_user),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private boolean validatePasswordForm() {
+        boolean valid = true;
+
+        String password = loginPassword.getText().toString();
+        Log.d("wewin", "validatePhoneForm: " + password);
+        if (TextUtils.isEmpty(password)) {
+            loginPassword.setError(getString(R.string.error_password_required));
+            valid = false;
+        } else {
+            loginPassword.setError(null);
+        }
+
+        return valid;
+    }
+
+    private boolean validateCodeForm() {
+        boolean valid = true;
+
+        String code = loginConfirm.getText().toString();
+        Log.d("wewin", "validatePhoneForm: " + code);
+        if (TextUtils.isEmpty(code)) {
+            loginConfirm.setError(getString(R.string.error_confirm_required));
+            valid = false;
+        } else {
+            loginConfirm.setError(null);
+        }
+
+        return valid;
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        wexinLogin.dispose();
+        phoneSignInButton.dispose();
+        phoneSignUpButton.dispose();
     }
 
 

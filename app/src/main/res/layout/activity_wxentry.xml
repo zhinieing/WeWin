@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.android.wewin.ui.activity.WXEntryActivity">
+    tools:context="com.project.android.wewin.wxapi.WXEntryActivity">
 
 </android.support.constraint.ConstraintLayout>

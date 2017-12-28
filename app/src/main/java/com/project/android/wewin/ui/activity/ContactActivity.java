@@ -10,21 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
+import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.MyAlertDialog;
-import com.wilddog.wilddogauth.WilddogAuth;
-import com.wilddog.wilddogauth.core.request.UserProfileChangeRequest;
-import com.wilddog.wilddogauth.model.WilddogUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -48,8 +46,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     @BindView(R.id.contact_fab)
     FloatingActionButton fab;
 
-    private WilddogAuth wilddogAuth;
-    private WilddogUser currentUser;
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,29 +55,14 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         ButterKnife.bind(this);
 
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        wilddogAuth = WilddogAuth.getInstance();
+        user = BmobUser.getCurrentUser(MyUser.class);
 
         fab.setOnClickListener(this);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        currentUser = wilddogAuth.getCurrentUser();
-        updateUI();
-    }
-
-    private void updateUI() {
-        if (currentUser != null){
-
-        } else {
-            fab.setVisibility(View.GONE);
-        }
-    }
 
 
     @Override
@@ -159,7 +141,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 mClass.setClassName(editText.getText().toString());
-                mClass.setCreatorId(currentUser.getUid());
+                //todo 设置用户id
+                //mClass.setCreatorId(user.getUid());
                 mClass.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
@@ -209,10 +192,11 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     private void createGroupMember(final String groupInfoId) {
         groupMember.setGroupId(groupInfoId);
-        groupMember.setUserId(currentUser.getUid());
-        groupMember.setUserName(currentUser.getDisplayName());
-        groupMember.setUserPhoto(currentUser.getPhotoUrl().toString());
-        groupMember.setUserEmail(currentUser.getEmail());
+        //todo 设置用户信息
+//        groupMember.setUserId(currentUser.getUid());
+//        groupMember.setUserName(currentUser.getDisplayName());
+//        groupMember.setUserPhoto(currentUser.getPhotoUrl().toString());
+//        groupMember.setUserEmail(currentUser.getEmail());
         groupMember.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {

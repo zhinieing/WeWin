@@ -1,12 +1,15 @@
-package com.project.android.wewin.ui.activity;
+package com.project.android.wewin.wxapi;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.ui.activity.LoginActivity;
 import com.project.android.wewin.utils.Constants;
 import com.project.android.wewin.utils.Util;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -23,7 +26,7 @@ import cn.bmob.v3.BmobUser.BmobThirdUserAuth;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.LogInListener;
 
-public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
+public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
     @Override
     public void onReq(BaseReq baseReq) {
         switch (baseReq.getType()) {
-            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX://
+            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
                 break;
             case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
                 break;
@@ -63,7 +66,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     @Override
                     public void run() {
                         String result = Util.getResponse("https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ Constants.WEIXIN_APP_ID+"&secret="+Constants.WEIXIN_APP_SECRET+"&code="+code+"&grant_type=authorization_code");
-                        //Log.i("smile", "微信平台返回的token:" + result);
+                        Log.d("wewin", "微信平台返回的token:" + result);
                         loginByWX(result);
                     }
 
@@ -98,6 +101,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                 @Override
                 public void done(JSONObject jsonObject, BmobException e) {
                     if (e == null) {
+                        Log.d("wewin", jsonObject.toString());
                                
                     } else {
                         Toast.makeText(WXEntryActivity.this,

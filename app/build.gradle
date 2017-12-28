@@ -18,6 +18,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    signingConfigs {
+        debug {
+            storeFile file("../debug.keystore")
+        }
+    }
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
@@ -40,7 +45,7 @@ dependencies {
     compile 'com.jph.takephoto:takephoto_library:4.0.3'
     compile 'com.google.code.gson:gson:2.8.2'
 
-    compile 'com.wilddog.client:wilddog-auth-android:2.0.7'
+    /*compile 'com.wilddog.client:wilddog-auth-android:2.0.7'*/
     compile 'com.qiniu:qiniu-android-sdk:7.3.+'
 
     compile 'cn.bmob.android:bmob-sdk:3.5.8'
@@ -61,5 +66,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.4.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     compile 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
 }
