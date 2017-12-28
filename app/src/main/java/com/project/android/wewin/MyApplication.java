@@ -4,8 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.project.android.wewin.data.local.db.AppDatabaseManager;
-import com.wilddog.wilddogcore.WilddogApp;
-import com.wilddog.wilddogcore.WilddogOptions;
+import com.project.android.wewin.utils.Constants;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import cn.bmob.v3.Bmob;
 
@@ -18,6 +19,7 @@ public class MyApplication extends Application{
 
     private static MyApplication INSTANCE = null;
     private static Context context;
+    public static IWXAPI api;
 
     public static MyApplication getInstance() {
         return INSTANCE;
@@ -36,9 +38,13 @@ public class MyApplication extends Application{
 
         AppDatabaseManager.getInstance().createDB(this);
 
-        Bmob.initialize(this, "b69feccd348afa82300261a7e587e7f2", "bmob");
+        Bmob.initialize(this, Constants.BMOB_APPID, "bmob");
 
-        WilddogOptions options = new WilddogOptions.Builder().setSyncUrl("https://wd7253182455nvohji.wilddogio.com").build();
-        WilddogApp.initializeApp(this, options);
+        register2WX();
+    }
+
+    public void register2WX() {
+        api = WXAPIFactory.createWXAPI(this, Constants.WEIXIN_APP_ID, true);
+        api.registerApp(Constants.WEIXIN_APP_ID);
     }
 }

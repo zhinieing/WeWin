@@ -15,8 +15,40 @@
 
     </android.support.v7.widget.Toolbar>
 
+    <RelativeLayout
+        android:id="@+id/login_form"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_above="@+id/wexin_login"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_login_icon" />
+
+        <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+            android:id="@+id/wexin_login"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/button_shape_default_rounded"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/tool_bar_height"
+            app:spinning_bar_color="@android:color/white"
+            app:spinning_bar_width="3dp"
+            app:spinning_bar_padding="6dp"
+            app:initialCornerAngle="50dp"
+            app:finalCornerAngle="50dp"
+            android:text="@string/wexin_sign_in"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+
+
+    <!--<LinearLayout
         android:id="@+id/login_form"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
@@ -128,7 +160,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </LinearLayout>-->
 
     
     <LinearLayout
@@ -165,19 +197,6 @@
                 android:layout_height="20dp" />
 
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/user_userid"
-            android:paddingTop="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/user_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        
     </LinearLayout>
+
 </LinearLayout>

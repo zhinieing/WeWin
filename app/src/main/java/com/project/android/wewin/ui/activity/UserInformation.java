@@ -22,6 +22,7 @@ import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 import com.project.android.wewin.R;
 import com.project.android.wewin.utils.Auth;
+import com.project.android.wewin.utils.Constants;
 import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.Util;
 import com.qiniu.android.http.ResponseInfo;
@@ -43,8 +44,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class UserInformation extends TakePhotoActivity implements View.OnClickListener {
-    private static String AccessKey = "j9I4TPsY2WW0uVdi6vBFAp_svIkf05jur6tYT6_G";
-    private static String SecretKey = "7oEW82Mfv9KI6mhOHdfad_yqsLdphUKEwxhwVkwQ";
 
     @BindView(R.id.modify_user_toolbar)
     Toolbar toolbar;
@@ -102,7 +101,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                 final CompressConfig compressConfig=new CompressConfig.Builder().setMaxSize(100*100).create();
                 takePhoto.onEnableCompress(compressConfig, true);
 
-                final MyAlertDialog dialog = new MyAlertDialog(this, Util.strings, new DialogInterface.OnClickListener() {
+                final MyAlertDialog dialog = new MyAlertDialog(this, Constants.CAMERA_GALLERY, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
@@ -183,7 +182,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String key = "icon_" + sdf.format(new Date());
 
-        uploadManager.put(path, key, Auth.create(AccessKey, SecretKey).uploadToken("wewin"), new UpCompletionHandler() {
+        uploadManager.put(path, key, Auth.create(Constants.AccessKey, Constants.SecretKey).uploadToken("wewin"), new UpCompletionHandler() {
             @Override
             public void complete(String key, ResponseInfo info, JSONObject response) {
                 String imgPath = "http://p1itk7pe2.bkt.clouddn.com/" + key;

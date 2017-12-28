@@ -1,5 +1,8 @@
 package com.project.android.wewin.utils;
 
+import com.project.android.wewin.MyApplication;
+import com.project.android.wewin.R;
+
 import java.nio.charset.Charset;
 
 /**
@@ -46,6 +49,36 @@ public final class Constants {
      * 底层HTTP库中复用连接对象的回收周期（单位分钟）
      */
     public static final int CONNECTION_POOL_MAX_IDLE_MINUTES = 5;
+
+    public static final String[] CAMERA_GALLERY = {MyApplication.getContext().getString(R.string.alert_choose_from_camera), MyApplication.getContext().getString(R.string.alert_choose_from_gallery)};
+
+
+    /**
+     *  此为七牛的AccessKey和SecretKey
+     */
+    public static final String AccessKey = "j9I4TPsY2WW0uVdi6vBFAp_svIkf05jur6tYT6_G";
+    public static final String SecretKey = "7oEW82Mfv9KI6mhOHdfad_yqsLdphUKEwxhwVkwQ";
+
+    /**
+     *  此为Bmob的APP_ID
+     */
+    public static final String BMOB_APPID = "b69feccd348afa82300261a7e587e7f2";
+
+    /**
+     *  微信平台的APPID,请自行前往微信开放平台注册申请应用
+     */
+    public static final String WEIXIN_APP_ID ="wx7ba5bc5eca6d2d94";
+
+    /**
+     * 微信平台的AppSecret
+     */
+    public static final String WEIXIN_APP_SECRET ="a964c2d1bcc6f562130f31b208e5d2b7";
+
+    /**
+     *  微信平台的grant type，固定值：authorization_code
+     */
+    public static final String WEIXIN_GRANT_TYPE ="authorization_code";
+
 
     private Constants() {
     }

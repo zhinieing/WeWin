@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:name=".MyApplication"
@@ -44,6 +45,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.project.android.wewin.ui.activity.MainActivity" />
         </activity>
+
+        <receiver
+            android:name=".ui.broadcast.AppRegister"
+            android:permission="com.tencent.mm.plugin.permission.SEND">
+            <intent-filter>
+                <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".ui.activity.WXEntryActivity" />
+        <activity android:name=".ui.activity.PersonActivity"></activity>
     </application>
 
 </manifest>

@@ -1,27 +1,17 @@
 package com.project.android.wewin.ui.activity;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.utils.Util;
-import com.wilddog.wilddogauth.WilddogAuth;
-import com.wilddog.wilddogauth.core.Task;
-import com.wilddog.wilddogauth.core.listener.OnCompleteListener;
-import com.wilddog.wilddogauth.core.result.AuthResult;
 import com.wilddog.wilddogauth.model.WilddogUser;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
@@ -35,27 +25,14 @@ import butterknife.ButterKnife;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "EmailPassword";
-
-    private WilddogAuth wilddogAuth;
 
     @BindView(R.id.login_toolbar)
     Toolbar toolbar;
 
     @BindView(R.id.login_form)
-    LinearLayout loginForm;
-    @BindView(R.id.email)
-    AutoCompleteTextView mEmailView;
-    @BindView(R.id.password)
-    EditText mPasswordView;
-    @BindView(R.id.email_sign_in_button)
-    CircularProgressButton mEmailSignInButton;
-    @BindView(R.id.email_sign_up_button)
-    CircularProgressButton mEmailSignUpButton;
-    @BindView(R.id.reset_password)
-    TextView resetPassword;
-    @BindView(R.id.to_sign_up)
-    TextView toSignUp;
+    RelativeLayout loginForm;
+    @BindView(R.id.wexin_login)
+    CircularProgressButton wexinLogin;
 
     @BindView(R.id.signed_in)
     LinearLayout signedIn;
@@ -63,11 +40,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     ImageView userPhoto;
     @BindView(R.id.user_modify)
     Button userModify;
-    @BindView(R.id.user_userid)
-    TextView userUserid;
-    @BindView(R.id.user_email)
-    TextView userEmail;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +47,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        wilddogAuth = WilddogAuth.getInstance();
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
 
-        mEmailSignInButton.setOnClickListener(this);
-        mEmailSignUpButton.setOnClickListener(this);
-        resetPassword.setOnClickListener(this);
-        toSignUp.setOnClickListener(this);
+        wexinLogin.setOnClickListener(this);
         userModify.setOnClickListener(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        WilddogUser currentUser = wilddogAuth.getCurrentUser();
-        updateUI(currentUser);
+
+
     }
 
     private void updateUI(WilddogUser user) {
@@ -102,8 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signedIn.setVisibility(View.VISIBLE);
 
             Util.loadCircleImage(user.getPhotoUrl(), userPhoto);
-            userUserid.setText(user.getUid());
-            userEmail.setText(user.getEmail());
+
         } else {
             loginForm.setVisibility(View.VISIBLE);
             signedIn.setVisibility(View.GONE);
@@ -114,7 +80,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.email_sign_in_button:
+            case R.id.wexin_login:
+                wexinLogin.startAnimation();
+                break;
+            case R.id.user_modify:
+                startActivity(new Intent(this, UserInformation.class));
+                break;
+            default:
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wexinLogin.dispose();
+    }
+
+
+    //wilddog login start
+
+    /*private WilddogAuth wilddogAuth;
+    wilddogAuth = WilddogAuth.getInstance();
+    WilddogUser currentUser = wilddogAuth.getCurrentUser();*/
+
+    /*@BindView(R.id.email)
+    AutoCompleteTextView mEmailView;
+    @BindView(R.id.password)
+    EditText mPasswordView;
+    @BindView(R.id.email_sign_in_button)
+    CircularProgressButton mEmailSignInButton;
+    @BindView(R.id.email_sign_up_button)
+    CircularProgressButton mEmailSignUpButton;
+    @BindView(R.id.reset_password)
+    TextView resetPassword;
+    @BindView(R.id.to_sign_up)
+    TextView toSignUp;*/
+
+    /*case R.id.email_sign_in_button:
                 signIn(mEmailView.getText().toString(), mPasswordView.getText().toString());
                 break;
             case R.id.email_sign_up_button:
@@ -128,16 +130,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mEmailSignInButton.setVisibility(View.GONE);
                 resetPassword.setVisibility(View.GONE);
                 toSignUp.setVisibility(View.GONE);
-                break;
-            case R.id.user_modify:
-                startActivity(new Intent(this, UserInformation.class));
-                break;
-            default:
-        }
-    }
+                break;*/
+
+    /*mEmailSignInButton.setOnClickListener(this);
+        mEmailSignUpButton.setOnClickListener(this);
+        resetPassword.setOnClickListener(this);
+        toSignUp.setOnClickListener(this);*/
 
 
-    private void createAccount(final String email, String password) {
+    /*private void createAccount(final String email, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -256,15 +257,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return valid;
-    }
+    }*/
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    /*mEmailSignInButton.dispose();
+        mEmailSignUpButton.dispose();*/
 
-        mEmailSignInButton.dispose();
-        mEmailSignUpButton.dispose();
-    }
+    //wilddog login end
+
+
 
 
     /*EventBus.getDefault().register(this);

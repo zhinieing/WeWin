@@ -10,6 +10,7 @@
     <string name="prompt_email">邮箱</string>
     <string name="prompt_password">密码</string>
 
+    <string name="wexin_sign_in">微信登录</string>
     <string name="action_sign_in">登录</string>
     <string name="action_sign_up">注册</string>
     <string name="action_return">返回</string>
