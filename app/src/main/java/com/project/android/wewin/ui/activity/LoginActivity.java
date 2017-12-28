@@ -3,6 +3,7 @@ package com.project.android.wewin.ui.activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -97,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_get_confirm:
+                new MyCountDownTimer(60000, 1000).start();
                 getConfirmSMS(loginPhone.getText().toString());
                 break;
             case R.id.phone_sign_in_button:
@@ -134,7 +136,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getConfirmSMS(String phone) {
-
 
         BmobSMS.requestSMSCode(phone, "一键注册或登录模板", new QueryListener<Integer>() {
             @Override
@@ -258,6 +259,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return valid;
+    }
+
+    private class MyCountDownTimer extends CountDownTimer {
+
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long l) {
+
+            loginGetConfirm.setClickable(false);
+            loginGetConfirm.setText(l/1000+"s");
+
+        }
+
+        @Override
+        public void onFinish() {
+
+            loginGetConfirm.setText(getString(R.string.prompt_get_confirm));
+            loginGetConfirm.setClickable(true);
+        }
     }
 
 
