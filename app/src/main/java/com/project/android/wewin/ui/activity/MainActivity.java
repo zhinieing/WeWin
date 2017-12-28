@@ -141,8 +141,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         setSupportActionBar(toolbar);
 
-        MyUser user = BmobUser.getCurrentUser(MyUser.class);
-
 
         //底部导航栏设置
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -187,15 +185,17 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         screenTitles = loadScreenTitles();
 
 
-
-        drawerAdapter = new DrawerAdapter(Arrays.asList(
-                createPersonItemFor(Uri.parse(user.getUserPhoto()), user.getUsername()),
+        items = new ArrayList<DrawerItem>();
+        items.addAll(Arrays.asList(
+                createPersonItemFor(Uri.parse(""), ""),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
                 createItemFor(POS_SET),
                 createItemFor(POS_HELP),
                 new SpaceItem(30),
                 createItemFor(POS_EXIT)));
+
+        drawerAdapter = new DrawerAdapter(items);
         drawerAdapter.setListener(this);
 
 
@@ -236,12 +236,28 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         }
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        PersonItem personItem = (PersonItem) items.get(0);
+        if (user.getUserPhoto() != null) {
+            personItem.setImageUri(Uri.parse(user.getUserPhoto()));
+        }
+        personItem.setUsername(user.getUsername());
+
+        drawerAdapter.notifyDataSetChanged();
+    }
+
     //侧边栏点击事件
     @Override
     public void onItemSelected(int position) {
         if (position == POS_EXIT) {
             MyUser.logOut();
-            finish();
+            startActivity(new Intent(this, LoginActivity.class));
         }
         slidingRootNav.closeMenu();
 

@@ -38,6 +38,7 @@ public class PersonActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         MyUser user = BmobUser.getCurrentUser(MyUser.class);
 
@@ -46,7 +47,12 @@ public class PersonActivity extends AppCompatActivity {
 
     private void initView(MyUser user) {
 
-        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
+        if (user.getUserPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
+        } else {
+            Util.loadCircleImage(Uri.parse(""), userPhoto);
+        }
+
 
         userModify.setOnClickListener(new View.OnClickListener() {
             @Override

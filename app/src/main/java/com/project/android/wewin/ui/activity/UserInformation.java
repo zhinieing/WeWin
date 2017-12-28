@@ -24,13 +24,9 @@ import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.MyUser;
-import com.project.android.wewin.utils.Auth;
 import com.project.android.wewin.utils.Constants;
 import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.Util;
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.UpCompletionHandler;
-import com.qiniu.android.storage.UploadManager;
 
 import org.json.JSONObject;
 
@@ -44,6 +40,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 /**
  * @author pengming
@@ -80,6 +77,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
         user = BmobUser.getCurrentUser(MyUser.class);
 
+        initView();
     }
 
 
@@ -88,7 +86,12 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         modifyingUserPhoto.setOnClickListener(this);
         modifyingUserDisplayName.setOnClickListener(this);
 
-        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
+        if (user.getUserPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
+        } else {
+            Util.loadCircleImage(Uri.parse(""), modifiedUserPhoto);
+        }
+
         modifiedUserDisplayName.setText(user.getUsername());
 
     }
@@ -167,7 +170,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         super.takeSuccess(result);
         String iconPath = result.getImage().getOriginalPath();
 
-        uploadImg2QiNiu(iconPath);
+        uploadFile(iconPath);
     }
 
     @Override
@@ -182,7 +185,38 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     }
 
 
-    private void uploadImg2QiNiu(String path) {
+    private void uploadFile(String path) {
+        final BmobFile bmobFile = new BmobFile(new File(path));
+        bmobFile.upload(new UploadFileListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    Util.loadCircleImage(Uri.parse(bmobFile.getFileUrl()), modifiedUserPhoto);
+
+                    deleteOldPhoto();
+
+                    checks[0] = true;
+                    changes[0] = bmobFile.getFileUrl();
+                }
+            }
+        });
+    }
+
+
+    private void deleteOldPhoto() {
+        if (user.getUserPhoto().contains("bmob")) {
+            BmobFile file = new BmobFile();
+            file.setUrl(user.getUserPhoto());
+            file.delete(new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+
+                }
+            });
+        }
+    }
+
+    /*private void uploadImg2QiNiu(String path) {
         final UploadManager uploadManager = new UploadManager();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -199,14 +233,13 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                 changes[0] = imgPath;
             }
         }, null);
-    }
+    }*/
 
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("wewin", "onStop: ");
 
         MyUser newMyUser = new MyUser();
         if (checks[0]) {
@@ -219,7 +252,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             @Override
             public void done(BmobException e) {
                 if (e == null) {
-
+                    Log.d("wewin", "done: ");
                 }
             }
         });
