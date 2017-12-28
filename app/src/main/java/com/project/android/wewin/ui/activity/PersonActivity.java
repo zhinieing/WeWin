@@ -1,6 +1,7 @@
 package com.project.android.wewin.ui.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
 
+/**
+ * @author pengming
+ */
 public class PersonActivity extends AppCompatActivity {
 
     @BindView(R.id.person_toolbar)
@@ -42,8 +46,7 @@ public class PersonActivity extends AppCompatActivity {
 
     private void initView(MyUser user) {
 
-        //todo 更新用户头像
-        //Util.loadCircleImage(user.getPhotoUrl(), userPhoto);
+        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
 
         userModify.setOnClickListener(new View.OnClickListener() {
             @Override

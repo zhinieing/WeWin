@@ -7,7 +7,6 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +34,7 @@ import cn.bmob.v3.listener.SaveListener;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Boolean passwordLogin = true;
+    private boolean passwordLogin = true;
 
     @BindView(R.id.login_toolbar)
     Toolbar toolbar;
@@ -141,7 +140,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void done(Integer integer, BmobException e) {
                 if (e == null) {
-                    Log.d("wewin", "短信id:" + integer);
                     Toast.makeText(LoginActivity.this, getString(R.string.send_sms_success),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -235,7 +233,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         boolean valid = true;
 
         String password = loginPassword.getText().toString();
-        Log.d("wewin", "validatePhoneForm: " + password);
         if (TextUtils.isEmpty(password)) {
             loginPassword.setError(getString(R.string.error_password_required));
             valid = false;
@@ -250,7 +247,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         boolean valid = true;
 
         String code = loginConfirm.getText().toString();
-        Log.d("wewin", "validatePhoneForm: " + code);
         if (TextUtils.isEmpty(code)) {
             loginConfirm.setError(getString(R.string.error_confirm_required));
             valid = false;

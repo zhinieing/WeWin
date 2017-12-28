@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -40,7 +41,13 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
+/**
+ * @author pengming
+ */
 public class UserInformation extends TakePhotoActivity implements View.OnClickListener {
 
     @BindView(R.id.modify_user_toolbar)
@@ -57,6 +64,9 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     private TakePhoto takePhoto;
 
     private MyUser user;
+
+    private boolean[] checks = new boolean[2];
+    private String[] changes = new String[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +88,8 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         modifyingUserPhoto.setOnClickListener(this);
         modifyingUserDisplayName.setOnClickListener(this);
 
-        //todo 更新用户名
-        //Util.loadCircleImage(user.getPhotoUrl(), modifiedUserPhoto);
-        //modifiedUserDisplayName.setText(user.getDisplayName());
+        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
+        modifiedUserDisplayName.setText(user.getUsername());
 
     }
 
@@ -120,8 +129,8 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             case R.id.modifying_user_display_name:
                 View alertView = LayoutInflater.from(this).inflate(R.layout.alert_modify_username, null);
                 final EditText editText = alertView.findViewById(R.id.alert_modified_username);
-                //todo 更新用户名
-                //editText.setText(user.getDisplayName());
+
+                editText.setText(user.getUsername());
 
                 AlertDialog myDialog;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -131,8 +140,9 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         modifiedUserDisplayName.setText(editText.getText().toString());
-                        //todo 更新用户名
 
+                        checks[1] = true;
+                        changes[1] = editText.getText().toString();
                     }
                 });
 
@@ -185,11 +195,34 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
                 Util.loadCircleImage(Uri.parse(imgPath), modifiedUserPhoto);
 
-                //todo 更新用户头像
+                checks[0] = true;
+                changes[0] = imgPath;
             }
         }, null);
     }
 
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("wewin", "onStop: ");
+
+        MyUser newMyUser = new MyUser();
+        if (checks[0]) {
+            newMyUser.setUserPhoto(changes[0]);
+        }
+        if (checks[1]) {
+            newMyUser.setUsername(changes[1]);
+        }
+        newMyUser.update(user.getObjectId(), new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+
+                }
+            }
+        });
+    }
 }
 

@@ -12,7 +12,7 @@ public class GroupMember extends BmobObject{
     private String userId;
     private String userName;
     private String userPhoto;
-    private String userEmail;
+    private String userPhoneNumber;
     private String groupId;
 
     public GroupMember() {}
@@ -41,12 +41,12 @@ public class GroupMember extends BmobObject{
         this.userPhoto = userPhoto;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getUserPhoneNumber() {
+        return userPhoneNumber;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setUserPhoneNumber(String userPhoneNumber) {
+        this.userPhoneNumber = userPhoneNumber;
     }
 
     public String getGroupId() {

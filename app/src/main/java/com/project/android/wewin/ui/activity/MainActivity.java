@@ -45,6 +45,9 @@ import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
 //The main screen for WeWin
 
+/**
+ * @author pengming
+ */
 public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnItemSelectedListener {
 
     @BindView(R.id.main_toolbar)
@@ -184,9 +187,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         screenTitles = loadScreenTitles();
 
 
-        //todo 设置头像和昵称
+
         drawerAdapter = new DrawerAdapter(Arrays.asList(
-                createPersonItemFor(Uri.parse(""), ""),
+                createPersonItemFor(Uri.parse(user.getUserPhoto()), user.getUsername()),
                 createItemFor(POS_CONTACT),
                 createItemFor(POS_LIKE),
                 createItemFor(POS_SET),
@@ -238,14 +241,13 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     public void onItemSelected(int position) {
         if (position == POS_EXIT) {
             MyUser.logOut();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            //finish();
+            finish();
         }
         slidingRootNav.closeMenu();
 
         switch (position) {
             case POS_PERSON:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(MainActivity.this, PersonActivity.class));
                 break;
             case POS_CONTACT:
                 startActivity(new Intent(MainActivity.this, ContactActivity.class));

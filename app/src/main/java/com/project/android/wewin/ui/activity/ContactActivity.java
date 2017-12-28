@@ -94,11 +94,15 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
+    //添加用户开始
     private void addUser() {
 
     }
 
+    //添加用户结束
 
+
+    //添加班级开始
     private void addClass() {
         mClass = new Class();
         groupInfo = new GroupInfo();
@@ -141,13 +145,23 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(DialogInterface dialogInterface, int i) {
 
                 mClass.setClassName(editText.getText().toString());
-                //todo 设置用户id
-                //mClass.setCreatorId(user.getUid());
+
+                mClass.setCreatorId(user.getObjectId());
                 mClass.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
                         if (e == null) {
                             createGroupInfo(s);
+
+                            BmobQuery<Class> query = new BmobQuery<Class>();
+                            query.getObject(s, new QueryListener<Class>() {
+                                @Override
+                                public void done(Class aClass, BmobException e) {
+                                    if (e == null) {
+                                        updateUser(aClass);
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -180,7 +194,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void done(GroupInfo groupInfo, BmobException e) {
                             if (e == null) {
-
                                 updateClass(groupInfo, classId);
                             }
                         }
@@ -192,11 +205,10 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     private void createGroupMember(final String groupInfoId) {
         groupMember.setGroupId(groupInfoId);
-        //todo 设置用户信息
-//        groupMember.setUserId(currentUser.getUid());
-//        groupMember.setUserName(currentUser.getDisplayName());
-//        groupMember.setUserPhoto(currentUser.getPhotoUrl().toString());
-//        groupMember.setUserEmail(currentUser.getEmail());
+        groupMember.setUserId(user.getObjectId());
+        groupMember.setUserName(user.getUsername());
+        groupMember.setUserPhoto(user.getUserPhoto());
+        groupMember.setUserPhoneNumber(user.getMobilePhoneNumber());
         groupMember.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
@@ -239,9 +251,27 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void updateUser(Class mClass) {
+        MyUser newMyUser = new MyUser();
+        newMyUser.add("mClasses", mClass);
+        newMyUser.update(user.getObjectId(), new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
 
+                }
+            }
+        });
+    }
+
+    //添加班级结束
+
+
+
+    //添加群组开始
     private void addGroup() {
 
     }
 
+    //添加群组结束
 }
