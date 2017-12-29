@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -52,11 +51,11 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     @BindView(R.id.modified_user_photo)
     ImageView modifiedUserPhoto;
     @BindView(R.id.modifying_user_photo)
-    LinearLayout modifyingUserPhoto;
+    RelativeLayout modifyingUserPhoto;
     @BindView(R.id.modified_user_display_name)
     TextView modifiedUserDisplayName;
     @BindView(R.id.modifying_user_display_name)
-    LinearLayout modifyingUserDisplayName;
+    RelativeLayout modifyingUserDisplayName;
 
     private TakePhoto takePhoto;
 
@@ -75,16 +74,20 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle(R.string.modify_user_information);
 
-        user = BmobUser.getCurrentUser(MyUser.class);
+        modifyingUserPhoto.setOnClickListener(this);
+        modifyingUserDisplayName.setOnClickListener(this);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        user = BmobUser.getCurrentUser(MyUser.class);
         initView();
     }
 
-
     private void initView() {
-
-        modifyingUserPhoto.setOnClickListener(this);
-        modifyingUserDisplayName.setOnClickListener(this);
 
         if (user.getUserPhoto() != null) {
             Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
@@ -93,7 +96,6 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         }
 
         modifiedUserDisplayName.setText(user.getUsername());
-
     }
 
     @Override
@@ -216,6 +218,28 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        MyUser newMyUser = new MyUser();
+        if (checks[0]) {
+            newMyUser.setUserPhoto(changes[0]);
+        }
+        if (checks[1]) {
+            newMyUser.setUsername(changes[1]);
+        }
+        newMyUser.update(user.getObjectId(), new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                }
+            }
+        });
+    }
+
+
     /*private void uploadImg2QiNiu(String path) {
         final UploadManager uploadManager = new UploadManager();
 
@@ -234,28 +258,5 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             }
         }, null);
     }*/
-
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        MyUser newMyUser = new MyUser();
-        if (checks[0]) {
-            newMyUser.setUserPhoto(changes[0]);
-        }
-        if (checks[1]) {
-            newMyUser.setUsername(changes[1]);
-        }
-        newMyUser.update(user.getObjectId(), new UpdateListener() {
-            @Override
-            public void done(BmobException e) {
-                if (e == null) {
-                    Log.d("wewin", "done: ");
-                }
-            }
-        });
-    }
 }
 

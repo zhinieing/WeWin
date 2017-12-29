@@ -3,12 +3,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:padding="@dimen/activity_horizontal_margin">
 
     <EditText
         android:id="@+id/alert_class_name"
         android:layout_width="match_parent"
         android:hint="@string/alert_class_name"
+        android:textColor="@color/textColorPrimary"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -17,6 +19,7 @@
         android:paddingTop="@dimen/padding_medium"
         android:paddingBottom="@dimen/padding_small"
         android:textSize="@dimen/text_size_large"
+        android:textColor="@color/textColorPrimary"
         android:text="@string/alert_class_auth"/>
 
     <RadioGroup
@@ -27,6 +30,7 @@
         <RadioButton
             android:id="@+id/alert_class_teacher"
             android:text="@string/alert_class_teacher"
+            android:textColor="@color/textColorPrimary"
             android:paddingLeft="@dimen/padding_small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -34,6 +38,7 @@
         <RadioButton
             android:id="@+id/alert_class_student"
             android:text="@string/alert_class_student"
+            android:textColor="@color/textColorPrimary"
             android:paddingLeft="@dimen/padding_small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

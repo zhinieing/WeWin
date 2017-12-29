@@ -12,4 +12,5 @@
     <color name="divideColor">#eee</color>
     <color name="login_background">#eee</color>
 
+    <color name="ripple_default">#CACACA</color>
 </resources>

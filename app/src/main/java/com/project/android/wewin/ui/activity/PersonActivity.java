@@ -20,7 +20,7 @@ import cn.bmob.v3.BmobUser;
 /**
  * @author pengming
  */
-public class PersonActivity extends AppCompatActivity {
+public class PersonActivity extends AppCompatActivity implements View.OnClickListener{
 
     @BindView(R.id.person_toolbar)
     Toolbar toolbar;
@@ -40,8 +40,14 @@ public class PersonActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        userModify.setOnClickListener(this);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        MyUser user = BmobUser.getCurrentUser(MyUser.class);
         initView(user);
     }
 
@@ -53,12 +59,15 @@ public class PersonActivity extends AppCompatActivity {
             Util.loadCircleImage(Uri.parse(""), userPhoto);
         }
 
+    }
 
-        userModify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.user_modify:
                 startActivity(new Intent(PersonActivity.this, UserInformation.class));
-            }
-        });
+                break;
+            default:
+        }
     }
 }

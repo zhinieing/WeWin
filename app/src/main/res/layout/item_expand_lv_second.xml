@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="@dimen/expand_lv_first_height"
     android:paddingLeft="@dimen/expand_lv_second_padding"
@@ -8,12 +8,15 @@
 
     <TextView
         android:id="@+id/second_left_tv"
+        android:textSize="@dimen/text_size_large"
+        android:textColor="@color/textColorPrimary"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/second_right_tv"
+        android:textSize="@dimen/text_size_medium"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"

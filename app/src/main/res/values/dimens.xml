@@ -17,10 +17,10 @@
     <dimen name="tool_bar_height">56dp</dimen>
 
     <!-- expand list view -->
-    <dimen name="expand_lv_first_height">48dp</dimen>
-    <dimen name="expand_lv_first_padding">30dp</dimen>
+    <dimen name="expand_lv_first_height">56dp</dimen>
+    <dimen name="expand_lv_first_padding">40dp</dimen>
     <dimen name="expand_lv_second_padding">60dp</dimen>
-    <dimen name="expand_lv_third_padding">90dp</dimen>
+    <dimen name="expand_lv_third_padding">60dp</dimen>
 
     <!--for title-->
     <dimen name="title_height">48dp</dimen>

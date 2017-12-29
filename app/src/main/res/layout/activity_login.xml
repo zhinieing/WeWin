@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:background="@color/colorPrimary"
     tools:context=".ui.activity.LoginActivity">
 
     <android.support.v7.widget.Toolbar
@@ -67,7 +68,8 @@
             android:layout_width="match_parent"
             android:gravity="center_vertical"
             android:layout_height="50dp"
-            android:layout_marginBottom="@dimen/padding_medium">
+            android:layout_marginBottom="@dimen/padding_medium"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_marginLeft="@dimen/padding_large"
@@ -106,7 +108,8 @@
             android:layout_width="match_parent"
             android:gravity="center_vertical"
             android:layout_height="50dp"
-            android:layout_marginBottom="@dimen/padding_medium">
+            android:layout_marginBottom="@dimen/padding_medium"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_marginLeft="@dimen/padding_large"
@@ -129,6 +132,7 @@
                 android:background="@null"
                 android:maxLines="1"
                 android:inputType="textPassword"
+                android:imeOptions="actionUnspecified"
                 android:textSize="@dimen/text_size_large"
                 android:textCursorDrawable="@color/textColorPrimary"
                 style="?android:attr/textViewStyle"
@@ -144,7 +148,8 @@
             android:layout_width="match_parent"
             android:gravity="center_vertical"
             android:layout_height="50dp"
-            android:layout_marginBottom="@dimen/padding_medium">
+            android:layout_marginBottom="@dimen/padding_medium"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_marginLeft="@dimen/padding_large"
@@ -233,6 +238,7 @@
             app:initialCornerAngle="50dp"
             app:finalCornerAngle="50dp"
             android:text="@string/action_sign_in"
+            android:textSize="@dimen/text_size_large"
             android:textStyle="bold"
             android:textColor="@android:color/white" />
 
@@ -250,6 +256,7 @@
             app:initialCornerAngle="50dp"
             app:finalCornerAngle="50dp"
             android:text="@string/action_sign_up"
+            android:textSize="@dimen/text_size_large"
             android:textStyle="bold"
             android:textColor="@android:color/white" />
 

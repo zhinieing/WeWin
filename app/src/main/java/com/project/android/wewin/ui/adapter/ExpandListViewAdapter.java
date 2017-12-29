@@ -1,16 +1,21 @@
 package com.project.android.wewin.ui.adapter;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
+import com.project.android.wewin.utils.Util;
+
 import java.util.List;
 
 /**
@@ -69,13 +74,15 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             holder = new FirstHolder();
             convertView = mInflate.inflate(R.layout.item_expand_lv_first, parent, false);
-            //holder.tv = ((TextView) convertView.findViewById(R.id.tv));
+            holder.leftTv = convertView.findViewById(R.id.first_left_tv);
+            holder.rightTv = convertView.findViewById(R.id.first_right_tv);
 
             convertView.setTag(holder);
         } else {
             holder = (FirstHolder) convertView.getTag();
         }
-        holder.tv.setText(mListData.get(groupPosition).getClassName());
+        holder.leftTv.setText(mListData.get(groupPosition).getClassName());
+        holder.rightTv.setText(mListData.get(groupPosition).getTeacherSize() + "/" + mListData.get(groupPosition).getStudentSize());
 
         return convertView;
     }
@@ -86,7 +93,9 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             lv = new CustomExpandableListView(context);
         }
+
         SecondAdapter secondAdapter = new SecondAdapter(context, mListData.get(groupPosition).getGroupInfos());
+
         lv.setAdapter(secondAdapter);
         return lv;
     }
@@ -152,13 +161,15 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
             if (convertView == null) {
                 holder = new SecondHolder();
                 convertView = mInflate.inflate(R.layout.item_expand_lv_second, parent, false);
-                //holder.tv = ((TextView) convertView.findViewById(R.id.tv));
+                holder.leftTv = convertView.findViewById(R.id.second_left_tv);
+                holder.rightTv = convertView.findViewById(R.id.second_right_tv);
 
                 convertView.setTag(holder);
             } else {
                 holder = (SecondHolder) convertView.getTag();
             }
-            holder.tv.setText(listSecondModel.get(groupPosition).getGroupName());
+            holder.leftTv.setText(listSecondModel.get(groupPosition).getGroupName());
+            holder.rightTv.setText(listSecondModel.get(groupPosition).getMemberSize() + "");
 
             return convertView;
         }
@@ -169,12 +180,21 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
             if (convertView == null) {
                 holder = new ThirdHolder();
                 convertView = mInflate.inflate(R.layout.item_expand_lv_third, parent, false);
-                //holder.tv = ((TextView) convertView.findViewById(R.id.tv));
+                holder.iv = convertView.findViewById(R.id.third_iv);
+                holder.tv = convertView.findViewById(R.id.third_tv);
 
                 convertView.setTag(holder);
             } else {
                 holder = (ThirdHolder) convertView.getTag();
             }
+
+            String imgUrl = listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getUserPhoto();
+            if (imgUrl != null) {
+                Util.loadCircleImage(Uri.parse(imgUrl), holder.iv);
+            } else {
+                Util.loadCircleImage(Uri.parse(""), holder.iv);
+            }
+
             holder.tv.setText(listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getUserName());
 
             return convertView;
@@ -189,17 +209,19 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
 
 
     class FirstHolder {
-        TextView tv;
+        TextView leftTv;
+        TextView rightTv;
 
     }
 
     class SecondHolder {
-        TextView tv;
+        TextView leftTv;
+        TextView rightTv;
 
     }
 
     class ThirdHolder{
+        ImageView iv;
         TextView tv;
-
     }
 }
