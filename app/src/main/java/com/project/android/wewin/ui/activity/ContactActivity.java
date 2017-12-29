@@ -302,6 +302,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
+        //todo 选择已有的群组
         alertRlGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -548,6 +549,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
+        //todo 隐藏已有的群组
         alertRlGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
