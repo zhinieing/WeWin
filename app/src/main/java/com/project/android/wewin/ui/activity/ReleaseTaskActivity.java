@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,7 +16,15 @@ import com.project.android.wewin.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ReleaseTaskActivity extends AppCompatActivity {
+/**
+ * ReleaseTaskActivity class
+ *
+ * @author zhoutao
+ * @date 2017/12/20
+ */
+public class ReleaseTaskActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private final static int FILE_SELECT_CODE = 0;
 
     @BindView(R.id.release_task_toolbar)
     Toolbar mToolbar;
@@ -28,8 +38,14 @@ public class ReleaseTaskActivity extends AppCompatActivity {
     @BindView(R.id.release_task_content)
     EditText mTaskContent;
 
+    @BindView(R.id.release_task_attachment_layout)
+    LinearLayout mAttachmentLayout;
+
     @BindView(R.id.release_task_attachment)
-    ImageButton mAttachmentl;
+    ImageButton mAttachment;
+
+    @BindView(R.id.release_task_confirm)
+    Button mConfirm;
 
     @BindView(R.id.release_price)
     RelativeLayout mReleasePrice;
@@ -42,6 +58,8 @@ public class ReleaseTaskActivity extends AppCompatActivity {
 
     @BindView(R.id.addition_tag)
     TextView mTag;
+
+    private String mAttachmentPath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,5 +76,19 @@ public class ReleaseTaskActivity extends AppCompatActivity {
                 finish();
             }
         });
+        mAttachment.setOnClickListener(this);
+        mConfirm.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.release_task_attachment:
+                break;
+            case R.id.release_task_confirm:
+                break;
+            default:
+                break;
+        }
     }
 }
