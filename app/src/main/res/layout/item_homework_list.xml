@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/item_submitter_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_default_user_img" />
+
+    <TextView
+        android:id="@+id/item_submitter_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/item_submitter_img"
+        android:text="@string/user_display_name_modify"
+        android:textSize="@dimen/text_size_large" />
+
+    <TextView
+        android:id="@+id/item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/item_submitter_name"
+        android:textSize="@dimen/text_size_medium" />
+
+    <TextView
+        android:id="@+id/item_submit_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/release_date"
+        android:textSize="@dimen/text_size_medium" />
+
+    <TextView
+        android:id="@+id/item_submit_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_submitter_img"
+        android:layout_margin="15dp"
+        android:text="@string/title"
+        android:textSize="@dimen/text_size_huge" />
+
+    <TextView
+        android:id="@+id/item_view_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_submit_title"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:text="@string/view_count"
+        android:textSize="@dimen/text_size_small" />
+</RelativeLayout>

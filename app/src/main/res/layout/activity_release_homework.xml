@@ -98,10 +98,10 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_margin="15dp"
-                android:id="@+id/release_attachment_layout"
+                android:id="@+id/release_homework_attachment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="15dp"
                 android:orientation="vertical">
 
             </LinearLayout>

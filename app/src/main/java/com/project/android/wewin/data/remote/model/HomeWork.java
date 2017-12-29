@@ -1,5 +1,7 @@
 package com.project.android.wewin.data.remote.model;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobObject;
 
 /**
@@ -14,7 +16,7 @@ public class HomeWork extends BmobObject {
     private String homeworkContent;
     private String homeworkDeadline;
     private String creatorId;
-    private String accachmentPath;
+    private List<String> accachmentPath;
     private String groupId;
 
     public HomeWork() {
@@ -52,11 +54,11 @@ public class HomeWork extends BmobObject {
         this.creatorId = creatorId;
     }
 
-    public String getAccachmentPath() {
+    public List<String> getAccachmentPath() {
         return accachmentPath;
     }
 
-    public void setAccachmentPath(String accachmentPath) {
+    public void setAccachmentPath(List<String> accachmentPath) {
         this.accachmentPath = accachmentPath;
     }
 

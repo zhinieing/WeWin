@@ -109,22 +109,12 @@
                 android:background="@color/color_button_default" />
 
             <LinearLayout
+                android:id="@+id/detail_attachment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/attachment"
-                    android:textSize="@dimen/text_size_large" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/link1"
-                    android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
             <View
@@ -152,7 +142,7 @@
                     android:textSize="@dimen/text_size_huge" />
 
                 <ImageButton
-                    android:id="@+id/detail_homework_attachment"
+                    android:id="@+id/detail_reply_attachment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -162,16 +152,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/detail_reply_attachment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/link1"
-                    android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
             <View

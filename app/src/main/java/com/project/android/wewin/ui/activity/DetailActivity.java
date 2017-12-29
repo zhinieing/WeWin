@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.project.android.wewin.R;
@@ -15,7 +16,7 @@ import com.project.android.wewin.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     @BindView(R.id.detail_toolbar)
     Toolbar mToolbar;
@@ -41,10 +42,16 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.detail_content)
     TextView mDetailContent;
 
+    @BindView(R.id.detail_attachment_layout)
+    LinearLayout mAttachmentLayout;
+
+    @BindView(R.id.detail_reply_attachment_layout)
+    LinearLayout mReplyLayout;
+
     @BindView(R.id.detail_reply_content)
     EditText mReplyContent;
 
-    @BindView(R.id.detail_homework_attachment)
+    @BindView(R.id.detail_reply_attachment)
     ImageButton mAttachment;
 
     @BindView(R.id.detail_reply)
@@ -65,5 +72,17 @@ public class DetailActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.detail_reply:
+                break;
+            case R.id.detail_reply_attachment:
+                break;
+            default:
+                break;
+        }
     }
 }

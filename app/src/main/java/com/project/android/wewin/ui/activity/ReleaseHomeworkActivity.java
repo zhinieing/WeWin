@@ -1,19 +1,24 @@
 package com.project.android.wewin.ui.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,12 +27,29 @@ import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.MyUser;
 
+
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadBatchListener;
+import cn.bmob.v3.listener.UploadFileListener;
+
+/**
+ * ReleaseHomeworkActivity class
+ *
+ * @author zhoutao
+ * @date 2017/12/20
+ */
 
 public class ReleaseHomeworkActivity extends AppCompatActivity implements View.OnClickListener, OnDateSetListener {
 
@@ -48,7 +70,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     @BindView(R.id.release_homework_attachment)
     ImageButton mAttachment;
 
-    @BindView(R.id.release_attachment_layout)
+    @BindView(R.id.release_homework_attachment_layout)
     LinearLayout mAttachmentLayout;
 
     @BindView(R.id.release_deadline)
@@ -64,9 +86,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    private String mAccachmentPath;
-
-    HomeWork mHomeWork;
+    private HomeWork mHomeWork = new HomeWork();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,14 +131,77 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     private void releaseConfirm() {
-        mAccachmentPath = "";
-        for (int i = 0; i < mAttachmentLayout.getChildCount(); i++) {
-            mAccachmentPath += mAttachmentLayout.getChildAt(i).getTag() + ";";
+        mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
+        mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
+        mHomeWork.setCreatorId(MyUser.getCurrentUser().getObjectId());
+        if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        } else {
+            if (isHomeworkValid()) {
+                uploadAttachment();
+            }
         }
-        Toast.makeText(this, "path:" + mAccachmentPath, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    uploadAttachment();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void uploadAttachment() {
+        mConfirm.setClickable(false);
+        mConfirm.setText(R.string.uploading);
+        mConfirm.setBackgroundColor(ContextCompat.getColor(this,R.color.textColorSecondary));
+        int size = mAttachmentLayout.getChildCount();
+        final String[] filePaths = new String[size];
+        for (int i = 0; i < size; i++) {
+            filePaths[i] = mAttachmentLayout.getChildAt(i).getTag().toString();
+            BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+                @Override
+                public void onSuccess(List<BmobFile> list, List<String> list1) {
+                    if (list1.size() == filePaths.length) {
+                        mHomeWork.addAll("attachmentPath",list1);
+                        mHomeWork.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+                                if (e == null) {
+                                    Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onProgress(int i, int i1, int i2, int i3) {
+                    Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    Log.i("error", "errorcode:" + i + " message:" + s);
+                }
+            });
+        }
     }
 
     private void addTarget() {
+        mHomeWork.setGroupId("1");
     }
 
     private void addAttachment() {
@@ -130,7 +213,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "请安装文件管理器", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -139,7 +221,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == FILE_SELECT_CODE) {
                 Uri uri = data.getData();
-                Toast.makeText(this, "path:" + uri.getPath(), Toast.LENGTH_SHORT).show();
                 String fileName = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
                 final TextView textView = new TextView(this);
                 textView.setText(fileName);
@@ -189,11 +270,27 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
         String text = getDateToString(millseconds);
         mDeadline.setText(text);
-        //mHomeWork.setHomeworkDeadline(text);
+        mHomeWork.setHomeworkDeadline(text);
     }
 
     public String getDateToString(long time) {
         Date d = new Date(time);
         return sf.format(d);
+    }
+
+    public boolean isHomeworkValid() {
+        boolean homeworkValid = false;
+        if (mHomeWork.getHomeworkTitle().isEmpty()) {
+            Toast.makeText(this, "请输入作业标题", Toast.LENGTH_SHORT).show();
+        } else if (mHomeWork.getHomeworkContent().isEmpty()) {
+            Toast.makeText(this, "请输入作业内容", Toast.LENGTH_SHORT).show();
+        } else if (mHomeWork.getHomeworkDeadline() == null) {
+            Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();
+        } else if (mHomeWork.getGroupId() == null) {
+            Toast.makeText(this, "请选择发送对象", Toast.LENGTH_SHORT).show();
+        } else {
+            homeworkValid = true;
+        }
+        return homeworkValid;
     }
 }
