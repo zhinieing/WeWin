@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
 
     //disableShiftMode函数是为了消除当menuitem>3时产生的动画效果
+
     public static void disableShiftMode(BottomNavigationView view) {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
         try {

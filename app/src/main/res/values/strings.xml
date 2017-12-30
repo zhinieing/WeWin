@@ -96,4 +96,6 @@
     <string name="alert_group_class">选择班级</string>
     <string name="alert_group_group">选择群组</string>
     <string name="contact_add_group_success">添加群组成功</string>
+
+    <string name="network_error">当前网络环境不好，请稍后再试哦~</string>
 </resources>

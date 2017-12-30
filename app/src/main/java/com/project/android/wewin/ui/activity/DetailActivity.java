@@ -117,6 +117,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         activity.startActivity(intent);
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
