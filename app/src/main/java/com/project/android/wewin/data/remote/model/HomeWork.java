@@ -16,11 +16,21 @@ public class HomeWork extends BmobObject {
     private String homeworkContent;
     private String homeworkDeadline;
     private String creatorId;
+    private Integer viewCount;
     private List<String> accachmentPath;
     private String groupId;
 
     public HomeWork() {
     }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
+    }
+
 
     public String getHomeworkTitle() {
         return homeworkTitle;

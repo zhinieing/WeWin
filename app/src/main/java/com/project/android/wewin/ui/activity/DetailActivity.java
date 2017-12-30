@@ -72,9 +72,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.detail_reply_attachment_layout)
     LinearLayout mReplyLayout;
 
-    @BindView(R.id.detail_reply_content)
-    EditText mReplyContent;
-
     @BindView(R.id.detail_reply_attachment)
     ImageButton mAttachment;
 

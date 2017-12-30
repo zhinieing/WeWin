@@ -64,6 +64,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
     private final static int FILE_SELECT_CODE = 0;
 
+    private final static String TAG = "Wewin";
     @BindView(R.id.release_homework_toolbar)
     Toolbar mToolbar;
 
@@ -142,6 +143,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     private void releaseConfirm() {
+        mHomeWork.setViewCount(0);
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorId(user.getObjectId());
@@ -174,7 +176,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private void uploadAttachment() {
         mConfirm.setClickable(false);
         mConfirm.setText(R.string.uploading);
-        mConfirm.setBackgroundColor(ContextCompat.getColor(this,R.color.textColorSecondary));
+        mConfirm.setBackgroundColor(ContextCompat.getColor(this, R.color.textColorSecondary));
         int size = mAttachmentLayout.getChildCount();
         final String[] filePaths = new String[size];
         for (int i = 0; i < size; i++) {
@@ -183,7 +185,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                 @Override
                 public void onSuccess(List<BmobFile> list, List<String> list1) {
                     if (list1.size() == filePaths.length) {
-                        mHomeWork.addAll("attachmentPath",list1);
+                        mHomeWork.addAll("attachmentPath", list1);
                         mHomeWork.save(new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {
@@ -229,7 +231,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         }
 
         final String[] groupId = new String[1];
-
+        final String[] className = new String[1];
         //todo 选择有学生群组的班级
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,7 +240,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         tvClass.setText(classNames[i]);
-
+                        className[0] = classNames[i];
                         BmobQuery<GroupInfo> query = new BmobQuery<GroupInfo>();
                         query.addWhereEqualTo("classId", user.getmClasses().get(i).getObjectId());
                         query.addWhereEqualTo("auth", 0);
@@ -247,6 +249,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                             public void done(List<GroupInfo> list, BmobException e) {
                                 if (e == null) {
                                     groupId[0] = list.get(0).getObjectId();
+                                    Log.i(TAG, "onClick done: " + groupId[0]);
                                 }
                             }
                         });
@@ -265,6 +268,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 mHomeWork.setGroupId(groupId[0]);
+                mAddTarget.setText(className[0]);
+                Log.i(TAG, "onClick: " + groupId[0]);
             }
         });
 
@@ -277,7 +282,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
         myDialog = builder.create();
         myDialog.show();
-        
+
     }
 
     private void addAttachment() {

@@ -71,12 +71,7 @@ public class MainFragment extends Fragment {
 
         tabsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(final int position) {
+            public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
                 FloatingActionButton fab = getActivity().findViewById(R.id.fab);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -95,6 +90,11 @@ public class MainFragment extends Fragment {
             }
 
             @Override
+            public void onPageSelected(final int position) {
+
+            }
+
+            @Override
             public void onPageScrollStateChanged(int state) {
 
             }
@@ -104,8 +104,7 @@ public class MainFragment extends Fragment {
     }
 
 
-
-    public static void setIndicator(TabLayout tabLayout, int marginDip){
+    public static void setIndicator(TabLayout tabLayout, int marginDip) {
         try {
             Field mTabStripField = tabLayout.getClass().getDeclaredField("mTabStrip");
             mTabStripField.setAccessible(true);
@@ -132,14 +131,11 @@ public class MainFragment extends Fragment {
     }
 
 
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
-
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -150,7 +146,7 @@ public class MainFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
                     return TaskFragment.newInstance(position + 1);
                 case 2:
