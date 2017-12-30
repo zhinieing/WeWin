@@ -147,6 +147,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorId(user.getObjectId());
+        mHomeWork.setCreatorName(user.getUsername());
+        mHomeWork.setCreatorPhoto(user.getUserPhoto());
         if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,

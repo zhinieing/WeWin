@@ -16,6 +16,8 @@ public class HomeWork extends BmobObject {
     private String homeworkContent;
     private String homeworkDeadline;
     private String creatorId;
+    private String creatorName;
+    private String creatorPhoto;
     private Integer viewCount;
     private List<String> accachmentPath;
     private String groupId;
@@ -31,6 +33,21 @@ public class HomeWork extends BmobObject {
         this.viewCount = viewCount;
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getCreatorPhoto() {
+        return creatorPhoto;
+    }
+
+    public void setCreatorPhoto(String creatorPhoto) {
+        this.creatorPhoto = creatorPhoto;
+    }
 
     public String getHomeworkTitle() {
         return homeworkTitle;
