@@ -109,13 +109,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mViewCount.setText(mHomeWork.getViewCount());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());
         mDetailContent.setText(mHomeWork.getHomeworkContent());
-
     }
 
-    public void startDetailActivity(Activity activity, HomeWork homeWork) {
+    public static void startDetailActivity(Activity activity, HomeWork homeWork) {
         Intent intent = new Intent(activity, DetailActivity.class);
         intent.putExtra("homework_detail", (Parcelable) homeWork);
-        startActivity(intent);
+        activity.startActivity(intent);
     }
 
     @Override
