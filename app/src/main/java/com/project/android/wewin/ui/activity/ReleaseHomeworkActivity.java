@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -13,12 +14,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +29,10 @@ import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.utils.MyAlertDialog;
 
 
 import java.io.File;
@@ -38,8 +43,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -87,6 +95,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private HomeWork mHomeWork = new HomeWork();
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +117,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mAddTarget.setOnClickListener(this);
         mConfirm.setOnClickListener(this);
         initTimePicker();
+        user = BmobUser.getCurrentUser(MyUser.class);
     }
 
     @Override
@@ -133,7 +143,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private void releaseConfirm() {
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
-        mHomeWork.setCreatorId(MyUser.getCurrentUser().getObjectId());
+        mHomeWork.setCreatorId(user.getObjectId());
         if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -201,7 +211,49 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     private void addTarget() {
-        mHomeWork.setGroupId("1");
+
+        View alertView = LayoutInflater.from(this).inflate(R.layout.alert_add_group, null);
+        RelativeLayout alertRlClass = alertView.findViewById(R.id.alert_group_class);
+        RelativeLayout alertRlGroup = alertView.findViewById(R.id.alert_group_group);
+
+        final TextView tvClass = alertView.findViewById(R.id.alert_group_choose_class);
+        final TextView tvGroup = alertView.findViewById(R.id.alert_group_choose_group);
+
+        alertRlGroup.setVisibility(View.GONE);
+        tvGroup.setVisibility(View.GONE);
+
+        final String[] classNames = new String[user.getmClasses().size()];
+        for (int i = 0; i < user.getmClasses().size(); i++) {
+            classNames[i] = user.getmClasses().get(i).getClassName();
+        }
+
+        //todo 选择有学生群组的班级
+        alertRlClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final MyAlertDialog dialog = new MyAlertDialog(ReleaseHomeworkActivity.this, classNames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        tvClass.setText(classNames[i]);
+
+                        BmobQuery<GroupInfo> query = new BmobQuery<GroupInfo>();
+                        query.addWhereEqualTo("classId", user.getmClasses().get(i).getObjectId());
+                        query.addWhereEqualTo("auth", 0);
+                        query.findObjects(new FindListener<GroupInfo>() {
+                            @Override
+                            public void done(List<GroupInfo> list, BmobException e) {
+                                if (e == null) {
+                                    mHomeWork.setGroupId(list.get(0).getObjectId());
+                                }
+                            }
+                        });
+                    }
+                });
+
+                dialog.initDialog();
+            }
+        });
+        
     }
 
     private void addAttachment() {

@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,14 +16,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.Class;
+import com.project.android.wewin.data.remote.model.GroupInfo;
+import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.MyUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -35,6 +44,7 @@ import cn.bmob.v3.listener.SaveListener;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private boolean passwordLogin = true;
+    private boolean signIn = true;
 
     @BindView(R.id.login_toolbar)
     Toolbar toolbar;
@@ -71,7 +81,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
         initView();
@@ -160,11 +169,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
+                        InitData.initData(user);
+
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
+
                     } else {
                         phoneSignInButton.revertAnimation();
 
@@ -184,11 +195,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
+                        InitData.initData(user);
+
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
+
                     } else {
                         phoneSignInButton.revertAnimation();
 
@@ -216,11 +229,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void done(MyUser user, BmobException e) {
                 if (e == null) {
+                    InitData.initData(user);
+
                     phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                             BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
+
                 } else {
                     phoneSignUpButton.revertAnimation();
 
@@ -259,6 +274,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         return valid;
     }
+
 
     private class MyCountDownTimer extends CountDownTimer {
 

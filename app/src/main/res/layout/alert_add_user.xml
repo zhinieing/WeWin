@@ -79,9 +79,8 @@
         android:visibility="gone"
         android:background="@drawable/layout_ripple_default"
         android:clickable="true"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_medium"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/padding_medium"
         android:layout_height="@dimen/title_height">
 
         <TextView
@@ -115,8 +114,6 @@
         android:visibility="gone"
         android:background="@drawable/layout_ripple_default"
         android:clickable="true"
-        android:paddingLeft="@dimen/padding_medium"
-        android:paddingRight="@dimen/padding_medium"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height">
 
