@@ -1,5 +1,9 @@
 package com.project.android.wewin.data.remote.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
@@ -11,16 +15,16 @@ import cn.bmob.v3.BmobObject;
  * @date 2017/12/11
  */
 
-public class HomeWork extends BmobObject {
+public class HomeWork extends BmobObject implements Parcelable {
     private String homeworkTitle;
     private String homeworkContent;
     private String homeworkDeadline;
     private String creatorId;
     private String creatorName;
     private String creatorPhoto;
-    private Integer viewCount;
-    private List<String> accachmentPath;
     private String groupId;
+    private Integer viewCount;
+    private List<String> attachmentPath;
 
     public HomeWork() {
     }
@@ -81,12 +85,12 @@ public class HomeWork extends BmobObject {
         this.creatorId = creatorId;
     }
 
-    public List<String> getAccachmentPath() {
-        return accachmentPath;
+    public List<String> getAttachmentPath() {
+        return attachmentPath;
     }
 
-    public void setAccachmentPath(List<String> accachmentPath) {
-        this.accachmentPath = accachmentPath;
+    public void setAttachmentPath(List<String> attachmentPath) {
+        this.attachmentPath = attachmentPath;
     }
 
     public String getGroupId() {
@@ -96,4 +100,45 @@ public class HomeWork extends BmobObject {
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(homeworkTitle);
+        parcel.writeString(homeworkContent);
+        parcel.writeString(homeworkDeadline);
+        parcel.writeString(creatorId);
+        parcel.writeString(creatorName);
+        parcel.writeString(creatorPhoto);
+        parcel.writeString(groupId);
+        parcel.writeInt(viewCount);
+        parcel.writeStringList(attachmentPath);
+    }
+
+    public static final Parcelable.Creator<HomeWork> CREATOR = new Parcelable.Creator<HomeWork>() {
+
+        @Override
+        public HomeWork createFromParcel(Parcel parcel) {
+            HomeWork homeWork = new HomeWork();
+            homeWork.homeworkTitle = parcel.readString();
+            homeWork.homeworkContent = parcel.readString();
+            homeWork.homeworkDeadline = parcel.readString();
+            homeWork.creatorId = parcel.readString();
+            homeWork.creatorName = parcel.readString();
+            homeWork.creatorPhoto = parcel.readString();
+            homeWork.groupId = parcel.readString();
+            homeWork.viewCount = parcel.readInt();
+            parcel.readStringList(homeWork.attachmentPath);
+            return homeWork;
+        }
+
+        @Override
+        public HomeWork[] newArray(int i) {
+            return new HomeWork[i];
+        }
+    };
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.HomeWork;
 
 import org.w3c.dom.Text;
 
@@ -78,6 +80,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.detail_reply)
     Button mReply;
 
+    private HomeWork mHomeWork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,14 +101,20 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initDetail() {
-        //todo 界面信息填充，数据从获取用户信息得到
-//        mUserImg.setImageURI();
-//        mUserName.setText();
-//        mReleaseDate.setText();
-//        mDeadline.setText();
-//        mViewCount.setText();
-//        mDetailTitle.setText();
-//        mDetailContent.setText();
+        mHomeWork = getIntent().getParcelableExtra("homework_detail");
+        mUserImg.setImageURI(Uri.parse(mHomeWork.getCreatorPhoto()));
+        mUserName.setText(mHomeWork.getCreatorName());
+        mReleaseDate.setText(mHomeWork.getCreatedAt());
+        mDeadline.setText(mHomeWork.getHomeworkDeadline());
+        mViewCount.setText(mHomeWork.getViewCount());
+        mDetailTitle.setText(mHomeWork.getHomeworkTitle());
+        mDetailContent.setText(mHomeWork.getHomeworkContent());
+    }
+
+    public void startDetailActivity(Activity activity, HomeWork homeWork) {
+        Intent intent = new Intent(activity, DetailActivity.class);
+        intent.putExtra("homework_detail", (Parcelable) homeWork);
+        startActivity(intent);
     }
 
     @Override
