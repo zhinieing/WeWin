@@ -1,16 +1,24 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.ui.activity.MainActivity;
+import com.project.android.wewin.ui.activity.ReleaseHomeworkActivity;
 import com.project.android.wewin.ui.adapter.TaskRvAdapter;
 
 import java.util.ArrayList;
@@ -44,23 +52,27 @@ public class TaskFragment extends Fragment {
         return fragment;
     }
 
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        /*LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         taskList.setLayoutManager(llm);
         taskList.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
 
         taskRvAdapter = new TaskRvAdapter(container.getContext());
-        taskList.setAdapter(taskRvAdapter);
+        taskList.setAdapter(taskRvAdapter);*/
+
 
         return view;
     }
+
+
 
     @Override
     public void onDestroyView() {

@@ -82,15 +82,18 @@
     <string name="null_class_found">没有找到班级，快去添加吧！</string>
     <string name="null_class_while_add_group">没有找到班级，先去添加班级吧！</string>
     <string name="contact_add_user">添加联系人</string>
+    <string name="contact_add_user_success">添加联系人成功</string>
 
     <string name="contact_add_class">添加班级</string>
     <string name="alert_class_name">输入班级名称</string>
     <string name="alert_class_auth">选择您的身份：</string>
     <string name="alert_class_teacher">老师</string>
     <string name="alert_class_student">学生</string>
+    <string name="contact_add_class_success">添加班级成功</string>
 
     <string name="contact_add_group">添加群组</string>
     <string name="uploading">正在上传</string>
     <string name="alert_group_class">选择班级</string>
     <string name="alert_group_group">选择群组</string>
+    <string name="contact_add_group_success">添加群组成功</string>
 </resources>

@@ -87,9 +87,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         user = BmobUser.getCurrentUser(MyUser.class);
 
-        Log.d("wewein", "onCreate: "+user.getmClasses().size());
-
-
         mAdapter = new ExpandListViewAdapter(user.getmClasses(), this);
         expandedLv.setAdapter(mAdapter);
 
@@ -287,8 +284,10 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                             @Override
                                             public void done(BmobException e) {
                                                 if (e == null) {
-
                                                     InitData.initData(user);
+
+                                                    Toast.makeText(ContactActivity.this, getString(R.string.contact_add_user_success), Toast.LENGTH_SHORT).show();
+                                                    finish();
                                                 }
                                             }
                                         });
@@ -414,6 +413,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         nullClassFound.setVisibility(View.GONE);
                     }
                     InitData.initData(user);
+                    Toast.makeText(ContactActivity.this, getString(R.string.contact_add_class_success), Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             }
         });
@@ -508,6 +509,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     public void done(String s, BmobException e) {
                         if (e == null) {
                             InitData.initData(user);
+                            Toast.makeText(ContactActivity.this, getString(R.string.contact_add_group_success), Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     }
                 });

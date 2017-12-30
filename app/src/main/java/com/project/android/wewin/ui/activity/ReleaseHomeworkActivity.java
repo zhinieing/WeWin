@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -227,6 +228,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             classNames[i] = user.getmClasses().get(i).getClassName();
         }
 
+        final String[] groupId = new String[1];
+
         //todo 选择有学生群组的班级
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,7 +246,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                             @Override
                             public void done(List<GroupInfo> list, BmobException e) {
                                 if (e == null) {
-                                    mHomeWork.setGroupId(list.get(0).getObjectId());
+                                    groupId[0] = list.get(0).getObjectId();
                                 }
                             }
                         });
@@ -253,6 +256,27 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                 dialog.initDialog();
             }
         });
+
+        AlertDialog myDialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.alert_group_class);
+        builder.setView(alertView);
+        builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mHomeWork.setGroupId(groupId[0]);
+            }
+        });
+
+        builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        myDialog = builder.create();
+        myDialog.show();
         
     }
 

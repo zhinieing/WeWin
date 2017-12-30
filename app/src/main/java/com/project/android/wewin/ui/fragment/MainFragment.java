@@ -1,20 +1,25 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.ui.activity.ReleaseHomeworkActivity;
 
 import java.lang.reflect.Field;
 
@@ -64,8 +69,40 @@ public class MainFragment extends Fragment {
             }
         });
 
+        tabsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(final int position) {
+                FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (position) {
+                            case 0:
+                                startActivity(new Intent(view.getContext(), ReleaseHomeworkActivity.class));
+                                break;
+                            case 1:
+                                Toast.makeText(view.getContext(), "add questions", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
         return view;
     }
+
 
 
     public static void setIndicator(TabLayout tabLayout, int marginDip){

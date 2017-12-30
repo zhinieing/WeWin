@@ -205,14 +205,14 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         list.setAdapter(drawerAdapter);
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //todo 根据fragment判断启动ReleaseHomeworkActivity还是ReleaseTaskActivity
 
-                startActivity(new Intent(MainActivity.this,ReleaseHomeworkActivity.class));
+
             }
-        });
+        });*/
     }
 
 

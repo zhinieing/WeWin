@@ -175,6 +175,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
 
                     } else {
                         phoneSignInButton.revertAnimation();
@@ -201,6 +202,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
 
                     } else {
                         phoneSignInButton.revertAnimation();
@@ -235,6 +237,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
 
                 } else {
                     phoneSignUpButton.revertAnimation();
