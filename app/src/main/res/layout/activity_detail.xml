@@ -39,6 +39,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/detail_user_img"
             android:text="@string/user_name"
+            android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_huge" />
 
         <TextView
@@ -50,7 +51,18 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/detail_user_img"
             android:text="@string/view_count"
-            android:textSize="@dimen/text_size_small" />
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_size_mini" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_user_name"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/detail_view_count"
+            android:text="@string/view"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_size_mini" />
 
         <TextView
             android:id="@+id/detail_release_date"
@@ -60,7 +72,8 @@
             android:layout_alignParentTop="true"
             android:layout_margin="3dp"
             android:text="@string/release_date"
-            android:textSize="@dimen/text_size_medium" />
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_size_small" />
 
         <TextView
             android:id="@+id/detail_deadline"
@@ -70,7 +83,8 @@
             android:layout_below="@id/detail_release_date"
             android:layout_margin="3dp"
             android:text="@string/deadline"
-            android:textSize="@dimen/text_size_medium" />
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_size_small" />
 
     </RelativeLayout>
 
@@ -102,6 +116,13 @@
                 android:maxLines="1"
                 android:textSize="@dimen/text_size_huge" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/color_button_default" />
+
             <TextView
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
@@ -110,7 +131,7 @@
                 android:background="@null"
                 android:gravity="top"
                 android:hint="@string/homework_content"
-                android:lines="8"
+                android:minLines="8"
                 android:textSize="@dimen/text_size_huge" />
 
             <View

@@ -7,8 +7,9 @@
 
     <ImageView
         android:id="@+id/item_submitter_img"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
@@ -23,6 +24,7 @@
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/item_submitter_img"
         android:text="@string/user_display_name_modify"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_large" />
 
     <TextView
@@ -32,6 +34,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/item_submitter_name"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_medium" />
 
     <TextView
@@ -43,6 +46,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
         android:text="@string/release_date"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_small" />
 
     <TextView
@@ -52,6 +56,7 @@
         android:layout_below="@id/item_submitter_img"
         android:layout_marginLeft="15dp"
         android:text="@string/title"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_huge" />
 
     <TextView
@@ -63,6 +68,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"
         android:text="@string/view_count"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_mini" />
 
     <TextView
@@ -73,5 +79,6 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/item_view_count"
         android:text="@string/view"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size_mini" />
 </RelativeLayout>

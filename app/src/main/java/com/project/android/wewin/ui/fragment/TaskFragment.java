@@ -109,9 +109,9 @@ public class TaskFragment extends Fragment {
             public void done(List<HomeWork> list, BmobException e) {
                 if (e == null) {
                     taskRvAdapter.setHomeWorkList(list);
-                    Log.d("wewein", "done: "+list.size());
+                    Log.d("wewein", "done: " + list.size());
                 } else {
-                    Log.d("wewein", "done: "+e);
+                    Log.d("wewein", "done: " + e);
                 }
             }
         });
@@ -126,7 +126,7 @@ public class TaskFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         taskList.setLayoutManager(llm);
-        taskList.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
+        taskList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         taskRvAdapter = new TaskRvAdapter(getActivity(), homeWorkOnItemClickListener);
         taskList.setAdapter(taskRvAdapter);

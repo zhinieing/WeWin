@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -25,15 +26,18 @@ import android.widget.Toast;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.utils.Util;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 
@@ -81,6 +85,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     Button mReply;
 
     private HomeWork mHomeWork;
+    private List<String> mDetailAttachment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,18 +102,81 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 finish();
             }
         });
+        mAttachment.setOnClickListener(this);
+        mReply.setOnClickListener(this);
         initDetail();
     }
 
     private void initDetail() {
         mHomeWork = getIntent().getParcelableExtra("homework_detail");
-        mUserImg.setImageURI(Uri.parse(mHomeWork.getCreatorPhoto()));
+        if (mHomeWork.getCreatorPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(mHomeWork.getCreatorPhoto()), mUserImg);
+        } else {
+            Util.loadCircleImage(Uri.parse(""), mUserImg);
+        }
         mUserName.setText(mHomeWork.getCreatorName());
+        Log.i("homework get", "initDetail: " + mHomeWork.getCreatedAt());
         mReleaseDate.setText(mHomeWork.getCreatedAt());
         mDeadline.setText(mHomeWork.getHomeworkDeadline());
-        mViewCount.setText(mHomeWork.getViewCount());
+        mViewCount.setText(mHomeWork.getViewCount().toString());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());
         mDetailContent.setText(mHomeWork.getHomeworkContent());
+        mDetailAttachment = mHomeWork.getAttachmentPath();
+        for (int i = 0; i < mDetailAttachment.size(); i++) {
+            final Uri uri = Uri.parse(mDetailAttachment.get(i));
+            final String fileName = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
+            final TextView textView = new TextView(this);
+            textView.setText(fileName);
+            textView.setTextSize(16);
+            textView.setTag(uri.getPath());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(5, 5, 5, 5);
+            textView.setLayoutParams(layoutParams);
+            textView.setBackgroundColor(ContextCompat.getColor(this, R.color.attachmentBackground));
+            textView.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BmobFile bmobFile = new BmobFile(fileName, "", uri.getPath());
+                    if (ActivityCompat.checkSelfPermission(DetailActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(DetailActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    } else {
+                        downloadFile(bmobFile);
+                    }
+                }
+            });
+            mAttachmentLayout.addView(textView);
+        }
+    }
+
+
+    private void downloadFile(BmobFile file) {
+        //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
+        File saveFile = new File(Environment.getExternalStorageDirectory(), file.getFilename());
+        file.download(saveFile, new DownloadFileListener() {
+
+            @Override
+            public void onStart() {
+                Log.i("download", "onStart: ");
+            }
+
+            @Override
+            public void done(String savePath, BmobException e) {
+                if (e == null) {
+                    Toast.makeText(DetailActivity.this, "下载成功,保存路径:" + savePath, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailActivity.this, "下载失败：" + e.getErrorCode() + "," + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onProgress(Integer value, long newworkSpeed) {
+                Log.i("bmob", "下载进度：" + value + "," + newworkSpeed);
+            }
+
+        });
     }
 
     public static void startDetailActivity(Activity activity, HomeWork homeWork) {
@@ -237,10 +305,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mAttachmentLayout.removeView(textView);
+                        mReplyLayout.removeView(textView);
                     }
                 });
-                mAttachmentLayout.addView(textView);
+                mReplyLayout.addView(textView);
             }
         }
     }
