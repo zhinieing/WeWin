@@ -132,6 +132,7 @@ public class HomeWork extends BmobObject implements Parcelable {
             homeWork.creatorPhoto = parcel.readString();
             homeWork.groupId = parcel.readString();
             homeWork.viewCount = parcel.readInt();
+            homeWork.attachmentPath = new ArrayList<String>();
             parcel.readStringList(homeWork.attachmentPath);
             return homeWork;
         }

@@ -7,10 +7,11 @@
 
     <ImageView
         android:id="@+id/item_submitter_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
         android:src="@drawable/ic_default_user_img" />
 
     <TextView
@@ -18,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@id/item_submitter_img"
         android:text="@string/user_display_name_modify"
@@ -42,14 +43,14 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
         android:text="@string/release_date"
-        android:textSize="@dimen/text_size_medium" />
+        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_submit_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_submitter_img"
-        android:layout_margin="15dp"
+        android:layout_marginLeft="15dp"
         android:text="@string/title"
         android:textSize="@dimen/text_size_huge" />
 
@@ -60,6 +61,17 @@
         android:layout_below="@id/item_submit_title"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
         android:text="@string/view_count"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_mini" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_submit_title"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/item_view_count"
+        android:text="@string/view"
+        android:textSize="@dimen/text_size_mini" />
 </RelativeLayout>
