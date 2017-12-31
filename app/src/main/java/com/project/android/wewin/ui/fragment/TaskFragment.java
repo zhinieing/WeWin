@@ -81,10 +81,14 @@ public class TaskFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_task, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        View view = null;
 
-        initView(view);
+        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            view = inflater.inflate(R.layout.fragment_task, container, false);
+            unbinder = ButterKnife.bind(this, view);
+
+            initHomeWorkView(view);
+        }
 
         return view;
     }
@@ -103,15 +107,18 @@ public class TaskFragment extends Fragment {
         query.findObjects(new FindListener<HomeWork>() {
             @Override
             public void done(List<HomeWork> list, BmobException e) {
-                if (e == null && list.size() == 0) {
+                if (e == null) {
                     taskRvAdapter.setHomeWorkList(list);
+                    Log.d("wewein", "done: "+list.size());
+                } else {
+                    Log.d("wewein", "done: "+e);
                 }
             }
         });
 
     }
 
-    private void initView(View view) {
+    private void initHomeWorkView(View view) {
         if (view == null) {
             return;
         }

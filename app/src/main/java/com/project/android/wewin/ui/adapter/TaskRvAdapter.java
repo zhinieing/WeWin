@@ -53,7 +53,7 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
         holder.userName.setText(homeWork.getCreatorName());
         holder.submitTime.setText(homeWork.getCreatedAt());
         holder.title.setText(homeWork.getHomeworkTitle());
-        holder.viewCount.setText(homeWork.getViewCount());
+        holder.viewCount.setText(homeWork.getViewCount()+"");
         holder.homeWorkItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
