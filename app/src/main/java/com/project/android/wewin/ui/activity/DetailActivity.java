@@ -57,9 +57,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.detail_user_name)
     TextView mUserName;
 
-    @BindView(R.id.detail_release_date)
-    TextView mReleaseDate;
-
     @BindView(R.id.detail_deadline)
     TextView mDeadline;
 
@@ -116,7 +113,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
         mUserName.setText(mHomeWork.getCreatorName());
         Log.i("homework get", "initDetail: " + mHomeWork.getCreatedAt());
-        mReleaseDate.setText(mHomeWork.getCreatedAt());
         mDeadline.setText(mHomeWork.getHomeworkDeadline());
         mViewCount.setText(mHomeWork.getViewCount().toString());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());

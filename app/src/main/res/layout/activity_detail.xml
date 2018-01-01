@@ -26,8 +26,8 @@
 
         <ImageView
             android:id="@+id/detail_user_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/ic_default_user_img" />
@@ -39,7 +39,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/detail_user_img"
             android:text="@string/user_name"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_huge" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/detail_user_img"
             android:text="@string/view_count"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_mini" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/detail_view_count"
             android:text="@string/view"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_mini" />
 
         <TextView
@@ -71,8 +71,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_margin="3dp"
-            android:text="@string/release_date"
-            android:textColor="@color/colorAccent"
+            android:text="@string/deadline"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_small" />
 
         <TextView
@@ -83,7 +83,7 @@
             android:layout_below="@id/detail_release_date"
             android:layout_margin="3dp"
             android:text="@string/deadline"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_small" />
 
     </RelativeLayout>
