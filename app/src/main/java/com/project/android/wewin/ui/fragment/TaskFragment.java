@@ -81,13 +81,22 @@ public class TaskFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = null;
+        View view = inflater.inflate(R.layout.fragment_task, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        initHomeWorkView(view);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        taskList.setLayoutManager(llm);
+        taskList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
+
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            view = inflater.inflate(R.layout.fragment_task, container, false);
-            unbinder = ButterKnife.bind(this, view);
+            taskRvAdapter = new TaskRvAdapter(getActivity(), homeWorkOnItemClickListener);
+            taskList.setAdapter(taskRvAdapter);
+        } else {
 
-            initHomeWorkView(view);
         }
 
         return view;
@@ -100,21 +109,23 @@ public class TaskFragment extends Fragment {
         user = BmobUser.getCurrentUser(MyUser.class);
 
 
-        BmobQuery<HomeWork> query = new BmobQuery<HomeWork>();
-        query.addWhereContainedIn("groupId", user.getGroupIds());
-        query.setLimit(10);
-        query.order("createdAt");
-        query.findObjects(new FindListener<HomeWork>() {
-            @Override
-            public void done(List<HomeWork> list, BmobException e) {
-                if (e == null) {
-                    taskRvAdapter.setHomeWorkList(list);
-                    Log.d("wewein", "done: " + list.size());
-                } else {
-                    Log.d("wewein", "done: " + e);
+        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            BmobQuery<HomeWork> query = new BmobQuery<HomeWork>();
+            query.addWhereContainedIn("groupId", user.getGroupIds());
+            query.setLimit(10);
+            query.order("createdAt");
+            query.findObjects(new FindListener<HomeWork>() {
+                @Override
+                public void done(List<HomeWork> list, BmobException e) {
+                    if (e == null) {
+                        taskRvAdapter.setHomeWorkList(list);
+                        Log.d("wewein", "done: " + list.size());
+                    } else {
+                        Log.d("wewein", "done: " + e);
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 
@@ -122,14 +133,6 @@ public class TaskFragment extends Fragment {
         if (view == null) {
             return;
         }
-
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        taskList.setLayoutManager(llm);
-        taskList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-
-        taskRvAdapter = new TaskRvAdapter(getActivity(), homeWorkOnItemClickListener);
-        taskList.setAdapter(taskRvAdapter);
     }
 
 

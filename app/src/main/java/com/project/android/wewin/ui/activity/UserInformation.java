@@ -206,15 +206,17 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
 
     private void deleteOldPhoto() {
-        if (user.getUserPhoto().contains("bmob")) {
-            BmobFile file = new BmobFile();
-            file.setUrl(user.getUserPhoto());
-            file.delete(new UpdateListener() {
-                @Override
-                public void done(BmobException e) {
+        if (user.getUserPhoto() != null) {
+            if (user.getUserPhoto().contains("bmob")) {
+                BmobFile file = new BmobFile();
+                file.setUrl(user.getUserPhoto());
+                file.delete(new UpdateListener() {
+                    @Override
+                    public void done(BmobException e) {
 
-                }
-            });
+                    }
+                });
+            }
         }
     }
 
