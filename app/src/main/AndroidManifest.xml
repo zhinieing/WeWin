@@ -24,11 +24,6 @@
             android:name=".ui.activity.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
-
-        </activity>
-        <activity
-            android:name=".ui.activity.LoginActivity"
-            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,8 +31,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.UserInformation"
-            android:parentActivityName=".ui.activity.PersonActivity" />
+            android:name=".ui.activity.LoginActivity"
+            android:label="@string/app_name">
+        </activity>
+
         <activity android:name=".ui.activity.ReleaseHomeworkActivity" />
         <activity android:name=".ui.activity.ReleaseTaskActivity" />
         <activity android:name=".ui.activity.DetailActivity" />
@@ -50,6 +47,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.project.android.wewin.ui.activity.MainActivity" />
         </activity>
+        <activity android:name=".ui.activity.PersonActivity"
+            android:parentActivityName=".ui.activity.MainActivity">
+        </activity>
+        <activity
+            android:name=".ui.activity.UserInformation"
+            android:parentActivityName=".ui.activity.PersonActivity" />
 
         <receiver
             android:name=".ui.broadcast.AppRegister"
@@ -61,9 +64,7 @@
 
         <activity android:name=".wxapi.WXEntryActivity"
             android:exported="true"/>
-        <activity android:name=".ui.activity.PersonActivity"
-            android:parentActivityName=".ui.activity.MainActivity">
-        </activity>
+
     </application>
 
 </manifest>

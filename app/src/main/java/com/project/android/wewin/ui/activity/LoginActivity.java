@@ -85,11 +85,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         initView();
 
-        MyUser user = BmobUser.getCurrentUser(MyUser.class);
-        if (user != null) {
-            startActivity(new Intent(this, MainActivity.class));
-        }
-
     }
 
 
@@ -174,8 +169,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
+                        finish();
 
                     } else {
                         phoneSignInButton.revertAnimation();
@@ -201,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
 
 
                     } else {
@@ -236,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                             BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
 
 
                 } else {

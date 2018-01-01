@@ -20,14 +20,15 @@ import cn.bmob.v3.BmobUser;
 /**
  * @author pengming
  */
-public class PersonActivity extends AppCompatActivity implements View.OnClickListener{
+public class PersonActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @BindView(R.id.person_toolbar)
-    Toolbar toolbar;
+
     @BindView(R.id.user_photo)
     ImageView userPhoto;
     @BindView(R.id.user_modify)
     Button userModify;
+    @BindView(R.id.person_toolbar)
+    Toolbar toolbar;
 
 
     @Override

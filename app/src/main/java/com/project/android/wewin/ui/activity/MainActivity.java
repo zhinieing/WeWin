@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -142,6 +143,11 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         setSupportActionBar(toolbar);
 
 
+        /*MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        if (user == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }*/
+
         //底部导航栏设置
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         disableShiftMode(navigation);
@@ -205,14 +211,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         list.setAdapter(drawerAdapter);
 
 
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //todo 根据fragment判断启动ReleaseHomeworkActivity还是ReleaseTaskActivity
-
-
-            }
-        });*/
     }
 
 
@@ -243,6 +241,10 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         super.onStart();
 
         MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
 
         PersonItem personItem = (PersonItem) items.get(0);
         if (user.getUserPhoto() != null) {
@@ -308,4 +310,13 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         return ContextCompat.getColor(this, res);
     }
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(false);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
