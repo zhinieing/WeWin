@@ -163,8 +163,9 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         if (e == null && list.size() != 0) {
                             add.setVisibility(View.VISIBLE);
 
+
                             if (list.get(0).getUserPhoto() != null){
-                                Util.loadCircleImage(Uri.parse(user.getUserPhoto()), photo);
+                                Util.loadCircleImage(Uri.parse(list.get(0).getUserPhoto()), photo);
                             } else {
                                 Util.loadCircleImage(Uri.parse(""), photo);
                             }

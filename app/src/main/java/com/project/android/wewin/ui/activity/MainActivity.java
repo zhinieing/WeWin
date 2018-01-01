@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private DrawerAdapter drawerAdapter;
     private List<DrawerItem> items;
 
+    private MyUser user;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -143,10 +145,12 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         setSupportActionBar(toolbar);
 
 
-        /*MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        user = BmobUser.getCurrentUser(MyUser.class);
         if (user == null) {
             startActivity(new Intent(this, LoginActivity.class));
-        }*/
+        } else {
+            InitData.initData(user);
+        }
 
         //底部导航栏设置
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -240,11 +244,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     protected void onStart() {
         super.onStart();
 
-        MyUser user = BmobUser.getCurrentUser(MyUser.class);
-
-        if (user == null) {
-            startActivity(new Intent(this, LoginActivity.class));
-        }
+        user = BmobUser.getCurrentUser(MyUser.class);
 
         PersonItem personItem = (PersonItem) items.get(0);
         if (user.getUserPhoto() != null) {
@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         personItem.setUsername(user.getUsername());
 
         drawerAdapter.notifyDataSetChanged();
+
     }
 
     //侧边栏点击事件

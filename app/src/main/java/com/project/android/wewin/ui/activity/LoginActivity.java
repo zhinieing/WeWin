@@ -164,7 +164,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
-                        InitData.initData(user);
 
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
@@ -190,7 +189,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
-                        InitData.initData(user);
 
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
@@ -225,7 +223,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void done(MyUser user, BmobException e) {
                 if (e == null) {
-                    InitData.initData(user);
 
                     phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                             BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
