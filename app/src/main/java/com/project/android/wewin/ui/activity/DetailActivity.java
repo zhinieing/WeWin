@@ -41,6 +41,13 @@ import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 
+/**
+ * DetailActivity class
+ *
+ * @author zhoutao
+ * @date 2017/12/10
+ */
+
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final static int FILE_SELECT_CODE = 0;
