@@ -39,10 +39,10 @@ public class InitData {
             @Override
             public void done(List<GroupMember> list, BmobException e) {
                 if (e == null) {
-                    user.setGroupIds(mGroupIds);
-                    user.setmClasses(mClassData);
+                    /*user.setGroupIds(mGroupIds);
+                    user.setmClasses(mClassData);*/
 
-                    /*if (list.size() == 0) {
+                    if (list.size() == 0) {
                         MyUser newMyUser = new MyUser();
                         newMyUser.setmClasses(mClassData);
                         newMyUser.setGroupIds(mGroupIds);
@@ -56,7 +56,7 @@ public class InitData {
                                 }
                             }
                         });
-                    }*/
+                    }
 
 
                     for (GroupMember groupMember : list) {
@@ -102,7 +102,7 @@ public class InitData {
                                                                         if (e == null) {
                                                                             groupMembers.addAll(list);
 
-                                                                            /*// todo 判断最后一次才上传
+                                                                            // todo 判断最后一次才上传
                                                                             MyUser newMyUser = new MyUser();
                                                                             newMyUser.setmClasses(mClassData);
                                                                             newMyUser.setGroupIds(mGroupIds);
@@ -115,7 +115,7 @@ public class InitData {
                                                                                         Log.d("wewein", "error6: "+e);
                                                                                     }
                                                                                 }
-                                                                            });*/
+                                                                            });
                                                                         }
                                                                     }
                                                                 });

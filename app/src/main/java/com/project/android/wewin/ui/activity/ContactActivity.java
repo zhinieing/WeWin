@@ -90,7 +90,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         mAdapter = new ExpandListViewAdapter(user.getmClasses(), this);
         expandedLv.setAdapter(mAdapter);
 
-        if (user.getmClasses().size() == 0) {
+        if (user.getmClasses() == null) {
             nullClassFound.setVisibility(View.VISIBLE);
         }
     }

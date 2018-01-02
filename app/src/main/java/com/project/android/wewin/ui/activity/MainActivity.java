@@ -147,7 +147,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         user = BmobUser.getCurrentUser(MyUser.class);
         if (user == null) {
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } else {
             InitData.initData(user);
         }
@@ -246,13 +248,15 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         user = BmobUser.getCurrentUser(MyUser.class);
 
-        PersonItem personItem = (PersonItem) items.get(0);
-        if (user.getUserPhoto() != null) {
-            personItem.setImageUri(Uri.parse(user.getUserPhoto()));
-        }
-        personItem.setUsername(user.getUsername());
+        if (user != null) {
+            PersonItem personItem = (PersonItem) items.get(0);
+            if (user.getUserPhoto() != null) {
+                personItem.setImageUri(Uri.parse(user.getUserPhoto()));
+            }
+            personItem.setUsername(user.getUsername());
 
-        drawerAdapter.notifyDataSetChanged();
+            drawerAdapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -261,7 +265,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     public void onItemSelected(int position) {
         if (position == POS_EXIT) {
             MyUser.logOut();
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
         slidingRootNav.closeMenu();
 

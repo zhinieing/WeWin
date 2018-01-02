@@ -168,7 +168,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                        finish();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
 
                     } else {
                         phoneSignInButton.revertAnimation();
@@ -193,8 +195,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                                 BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                        finish();
-
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
 
                     } else {
                         phoneSignInButton.revertAnimation();
@@ -227,8 +230,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
                             BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
 
-                    finish();
-
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
 
                 } else {
                     phoneSignUpButton.revertAnimation();

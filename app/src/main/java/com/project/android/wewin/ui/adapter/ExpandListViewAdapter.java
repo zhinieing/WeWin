@@ -35,7 +35,7 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return mListData.size();
+        return mListData == null ? 0 : mListData.size();
     }
 
     @Override
@@ -120,14 +120,13 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
 
         @Override
         public int getGroupCount() {
-            int size = listSecondModel.size();
 
-            return size;
+            return listSecondModel == null ? 0 : listSecondModel.size();
         }
 
         @Override
         public int getChildrenCount(int groupPosition) {
-            return listSecondModel.get(groupPosition).getGroupMembers().size();
+            return listSecondModel.get(groupPosition).getGroupMembers() == null ? 0 : listSecondModel.get(groupPosition).getGroupMembers().size();
         }
 
         @Override
