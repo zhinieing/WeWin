@@ -31,6 +31,7 @@ import com.project.android.wewin.utils.Util;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import butterknife.BindView;
@@ -66,9 +67,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     @BindView(R.id.detail_deadline)
     TextView mDeadline;
-
-    @BindView(R.id.detail_view_count)
-    TextView mViewCount;
 
     @BindView(R.id.detail_title)
     TextView mDetailTitle;
@@ -119,19 +117,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             Util.loadCircleImage(Uri.parse(""), mUserImg);
         }
         mUserName.setText(mHomeWork.getCreatorName());
-        Log.i("homework get", "initDetail: " + mHomeWork.getCreatedAt());
+        Log.i("homework get", "initDetail: " + mHomeWork.getAttachmentPath());
         mDeadline.setText(mHomeWork.getHomeworkDeadline());
-        mViewCount.setText(mHomeWork.getViewCount().toString());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());
         mDetailContent.setText(mHomeWork.getHomeworkContent());
         mDetailAttachment = mHomeWork.getAttachmentPath();
         for (int i = 0; i < mDetailAttachment.size(); i++) {
-            final Uri uri = Uri.parse(mDetailAttachment.get(i));
-            final String fileName = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
+            final String url = mDetailAttachment.get(i);
+            final String fileName = url.substring(url.lastIndexOf("/") + 1);
             final TextView textView = new TextView(this);
             textView.setText(fileName);
             textView.setTextSize(16);
-            textView.setTag(uri.getPath());
+            textView.setTag(url);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(5, 5, 5, 5);
             textView.setLayoutParams(layoutParams);
@@ -140,12 +137,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    BmobFile bmobFile = new BmobFile(fileName, "", uri.getPath());
+                    BmobFile bmobFile = new BmobFile(fileName, "", url);
                     if (ActivityCompat.checkSelfPermission(DetailActivity.this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(DetailActivity.this,
                                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     } else {
+                        Log.i("file info", "onClick: " + bmobFile.getFilename() + "," + bmobFile.getFileUrl());
                         downloadFile(bmobFile);
                     }
                 }
@@ -157,7 +155,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private void downloadFile(BmobFile file) {
         //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
-        File saveFile = new File(Environment.getExternalStorageDirectory(), file.getFilename());
+        File saveFile = new File(Environment.getExternalStorageDirectory()+"/Wewin/download/", file.getFilename());
         file.download(saveFile, new DownloadFileListener() {
 
             @Override
@@ -226,7 +224,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    uploadAttachment();
+                    //uploadAttachment();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }

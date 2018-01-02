@@ -53,7 +53,6 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
         holder.userName.setText(homeWork.getCreatorName());
         holder.submitTime.setText(homeWork.getCreatedAt());
         holder.title.setText(homeWork.getHomeworkTitle());
-        holder.viewCount.setText(homeWork.getViewCount()+"");
         holder.homeWorkItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +86,7 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         public View homeWorkItem;
         public ImageView userPhoto;
-        public TextView userName, submitTime, title, viewCount;
+        public TextView userName, submitTime, title;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -97,7 +96,6 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
             userName = itemView.findViewById(R.id.item_submitter_name);
             submitTime = itemView.findViewById(R.id.item_submit_time);
             title = itemView.findViewById(R.id.item_submit_title);
-            viewCount = itemView.findViewById(R.id.item_view_count);
 
         }
     }

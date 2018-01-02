@@ -43,28 +43,6 @@
             android:textSize="@dimen/text_size_huge" />
 
         <TextView
-            android:id="@+id/detail_view_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_user_name"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/detail_user_img"
-            android:text="@string/view_count"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/text_size_mini" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_user_name"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/detail_view_count"
-            android:text="@string/view"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/text_size_mini" />
-
-        <TextView
             android:id="@+id/detail_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

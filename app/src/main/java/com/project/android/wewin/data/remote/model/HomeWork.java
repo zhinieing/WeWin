@@ -23,18 +23,9 @@ public class HomeWork extends BmobObject implements Parcelable {
     private String creatorName;
     private String creatorPhoto;
     private String groupId;
-    private Integer viewCount;
     private List<String> attachmentPath;
 
     public HomeWork() {
-    }
-
-    public Integer getViewCount() {
-        return viewCount;
-    }
-
-    public void setViewCount(Integer viewCount) {
-        this.viewCount = viewCount;
     }
 
     public String getCreatorName() {
@@ -115,7 +106,6 @@ public class HomeWork extends BmobObject implements Parcelable {
         parcel.writeString(creatorName);
         parcel.writeString(creatorPhoto);
         parcel.writeString(groupId);
-        parcel.writeInt(viewCount);
         parcel.writeStringList(attachmentPath);
     }
 
@@ -131,7 +121,6 @@ public class HomeWork extends BmobObject implements Parcelable {
             homeWork.creatorName = parcel.readString();
             homeWork.creatorPhoto = parcel.readString();
             homeWork.groupId = parcel.readString();
-            homeWork.viewCount = parcel.readInt();
             homeWork.attachmentPath = new ArrayList<String>();
             parcel.readStringList(homeWork.attachmentPath);
             return homeWork;

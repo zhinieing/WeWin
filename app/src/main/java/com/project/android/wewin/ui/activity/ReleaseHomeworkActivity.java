@@ -143,7 +143,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     private void releaseConfirm() {
-        mHomeWork.setViewCount(0);
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorId(user.getObjectId());

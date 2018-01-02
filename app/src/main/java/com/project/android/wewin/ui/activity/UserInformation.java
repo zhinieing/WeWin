@@ -102,15 +102,15 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.modifying_user_photo:
-                File file=new File(Environment.getExternalStorageDirectory(), "/temp/"+System.currentTimeMillis() + ".jpg");
-                if (!file.getParentFile().exists()){
+                File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
+                if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
                 final Uri imageUri = Uri.fromFile(file);
 
                 takePhoto = getTakePhoto();
                 final CropOptions cropOptions = new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(false).create();
-                final CompressConfig compressConfig=new CompressConfig.Builder().setMaxSize(100*100).create();
+                final CompressConfig compressConfig = new CompressConfig.Builder().setMaxSize(10 * 10).setMaxPixel(100).create();
                 takePhoto.onEnableCompress(compressConfig, true);
 
                 final MyAlertDialog dialog = new MyAlertDialog(this, Constants.CAMERA_GALLERY, new DialogInterface.OnClickListener() {
@@ -164,7 +164,6 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             default:
         }
     }
-
 
 
     @Override
