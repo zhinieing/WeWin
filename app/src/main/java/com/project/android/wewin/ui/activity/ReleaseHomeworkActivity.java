@@ -179,39 +179,57 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mConfirm.setText(R.string.uploading);
         mConfirm.setBackgroundColor(ContextCompat.getColor(this, R.color.textColorSecondary));
         int size = mAttachmentLayout.getChildCount();
-        final String[] filePaths = new String[size];
-        for (int i = 0; i < size; i++) {
-            filePaths[i] = mAttachmentLayout.getChildAt(i).getTag().toString();
-            BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+        if (size == 0) {
+            mHomeWork.save(new SaveListener<String>() {
                 @Override
-                public void onSuccess(List<BmobFile> list, List<String> list1) {
-                    if (list1.size() == filePaths.length) {
-                        mHomeWork.addAll("attachmentPath", list1);
-                        mHomeWork.save(new SaveListener<String>() {
-                            @Override
-                            public void done(String s, BmobException e) {
-                                if (e == null) {
-                                    Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
-
-                @Override
-                public void onProgress(int i, int i1, int i2, int i3) {
-                    Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.i("error", "errorcode:" + i + " message:" + s);
                 }
             });
         }
+        final String[] filePaths = new String[size];
+        for (int i = 0; i < size; i++) {
+            filePaths[i] = mAttachmentLayout.getChildAt(i).getTag().toString();
+        }
+        BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+            @Override
+            public void onSuccess(List<BmobFile> list, List<String> list1) {
+                if (list1.size() == filePaths.length) {
+                    mHomeWork.addAll("attachmentPath", list1);
+                    mHomeWork.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+                            if (e == null) {
+                                Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onProgress(int i, int i1, int i2, int i3) {
+                Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                mConfirm.setClickable(true);
+                mConfirm.setText(R.string.confirm_release);
+                mConfirm.setBackgroundColor(ContextCompat.getColor(ReleaseHomeworkActivity.this, R.color.colorAccent));
+                Toast.makeText(ReleaseHomeworkActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
+                Log.i("error", "errorcode:" + i + " message:" + s);
+            }
+        });
+
     }
 
     private void addTarget() {

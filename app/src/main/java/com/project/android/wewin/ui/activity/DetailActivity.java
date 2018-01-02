@@ -141,7 +141,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     if (ActivityCompat.checkSelfPermission(DetailActivity.this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(DetailActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                     } else {
                         Log.i("file info", "onClick: " + bmobFile.getFilename() + "," + bmobFile.getFileUrl());
                         downloadFile(bmobFile);
@@ -223,6 +223,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    uploadAttachment();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case 0:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //uploadAttachment();
                 } else {
