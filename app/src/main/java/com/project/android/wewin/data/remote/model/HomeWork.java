@@ -19,30 +19,13 @@ public class HomeWork extends BmobObject implements Parcelable {
     private String homeworkTitle;
     private String homeworkContent;
     private String homeworkDeadline;
-    private String creatorId;
-    private String creatorName;
-    private String creatorPhoto;
-    private String groupId;
+    private MyUser creatorUser;
+    private GroupInfo groupInfo;
     private List<String> attachmentPath;
 
     public HomeWork() {
     }
 
-    public String getCreatorName() {
-        return creatorName;
-    }
-
-    public void setCreatorName(String creatorName) {
-        this.creatorName = creatorName;
-    }
-
-    public String getCreatorPhoto() {
-        return creatorPhoto;
-    }
-
-    public void setCreatorPhoto(String creatorPhoto) {
-        this.creatorPhoto = creatorPhoto;
-    }
 
     public String getHomeworkTitle() {
         return homeworkTitle;
@@ -68,12 +51,20 @@ public class HomeWork extends BmobObject implements Parcelable {
         this.homeworkDeadline = homeworkDeadline;
     }
 
-    public String getCreatorId() {
-        return creatorId;
+    public MyUser getCreatorUser() {
+        return creatorUser;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setCreatorUser(MyUser creatorUser) {
+        this.creatorUser = creatorUser;
+    }
+
+    public GroupInfo getGroupInfo() {
+        return groupInfo;
+    }
+
+    public void setGroupInfo(GroupInfo groupInfo) {
+        this.groupInfo = groupInfo;
     }
 
     public List<String> getAttachmentPath() {
@@ -84,13 +75,6 @@ public class HomeWork extends BmobObject implements Parcelable {
         this.attachmentPath = attachmentPath;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
 
     @Override
     public int describeContents() {
@@ -102,10 +86,10 @@ public class HomeWork extends BmobObject implements Parcelable {
         parcel.writeString(homeworkTitle);
         parcel.writeString(homeworkContent);
         parcel.writeString(homeworkDeadline);
-        parcel.writeString(creatorId);
+        /*parcel.writeString(creatorId);
         parcel.writeString(creatorName);
         parcel.writeString(creatorPhoto);
-        parcel.writeString(groupId);
+        parcel.writeString(groupId);*/
         parcel.writeStringList(attachmentPath);
     }
 
@@ -117,10 +101,10 @@ public class HomeWork extends BmobObject implements Parcelable {
             homeWork.homeworkTitle = parcel.readString();
             homeWork.homeworkContent = parcel.readString();
             homeWork.homeworkDeadline = parcel.readString();
-            homeWork.creatorId = parcel.readString();
+            /*homeWork.creatorId = parcel.readString();
             homeWork.creatorName = parcel.readString();
             homeWork.creatorPhoto = parcel.readString();
-            homeWork.groupId = parcel.readString();
+            homeWork.groupId = parcel.readString();*/
             homeWork.attachmentPath = new ArrayList<String>();
             parcel.readStringList(homeWork.attachmentPath);
             return homeWork;

@@ -12,10 +12,10 @@ import cn.bmob.v3.BmobObject;
 
 public class Class extends BmobObject{
     private String className;
-    private String creatorId;
     private String classIcon;
     private Integer studentSize;
     private Integer teacherSize;
+    private MyUser creatorUser;
     private List<GroupInfo> groupInfos;
 
     public Class() {}
@@ -26,14 +26,6 @@ public class Class extends BmobObject{
 
     public void setClassName(String className) {
         this.className = className;
-    }
-
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
     }
 
     public String getClassIcon() {
@@ -66,5 +58,13 @@ public class Class extends BmobObject{
 
     public void setGroupInfos(List<GroupInfo> groupInfos) {
         this.groupInfos = groupInfos;
+    }
+
+    public MyUser getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(MyUser creatorUser) {
+        this.creatorUser = creatorUser;
     }
 }

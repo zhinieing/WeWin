@@ -10,8 +10,7 @@ import cn.bmob.v3.BmobUser;
 
 public class MyUser extends BmobUser {
     private String userPhoto;
-    private List<Class> mClasses;
-    private List<String> groupIds;
+
 
     public MyUser() {
     }
@@ -24,19 +23,4 @@ public class MyUser extends BmobUser {
         this.userPhoto = userPhoto;
     }
 
-    public List<Class> getmClasses() {
-        return mClasses;
-    }
-
-    public void setmClasses(List<Class> mClasses) {
-        this.mClasses = mClasses;
-    }
-
-    public List<String> getGroupIds() {
-        return groupIds;
-    }
-
-    public void setGroupIds(List<String> groupIds) {
-        this.groupIds = groupIds;
-    }
 }

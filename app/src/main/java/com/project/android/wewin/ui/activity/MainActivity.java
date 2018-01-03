@@ -150,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } else {
-            InitData.initData(user);
         }
 
         //底部导航栏设置

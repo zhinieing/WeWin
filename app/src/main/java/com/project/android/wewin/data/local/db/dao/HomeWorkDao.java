@@ -22,5 +22,4 @@ public interface HomeWorkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertHomeWorkList(List<HomeWorkRoom> homework);
 
-
 }

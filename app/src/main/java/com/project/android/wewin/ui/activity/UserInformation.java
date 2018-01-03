@@ -166,6 +166,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     }
 
 
+
     @Override
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);

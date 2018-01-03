@@ -1,34 +1,39 @@
 package com.project.android.wewin.ui.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
+import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.adapter.ExpandListViewAdapter;
 import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.Util;
+import com.project.android.wewin.viewmodel.ContactViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.b.V;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FetchUserInfoListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -48,11 +51,11 @@ import cn.bmob.v3.listener.UpdateListener;
 /**
  * @author pengming
  */
-public class ContactActivity extends AppCompatActivity implements View.OnClickListener{
+public class ContactActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String[] strings = {MyApplication.getContext().getString(R.string.contact_add_user),
-            MyApplication.getContext().getString(R.string.contact_add_class),
-            MyApplication.getContext().getString(R.string.contact_add_group)};
+            MyApplication.getContext().getString(R.string.contact_add_class)};
+
 
     private Class mClass;
     private GroupInfo groupInfo;
@@ -67,10 +70,16 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     ExpandableListView expandedLv;
     @BindView(R.id.null_class_found)
     TextView nullClassFound;
+    @BindView(R.id.contact_spl)
+    SwipeRefreshLayout mRefreshLayout;
+    @BindView(R.id.bar_load_more_class)
+    ProgressBar mLoadMorebar;
 
     private MyUser user;
     private ExpandListViewAdapter mAdapter;
+    private List<Class> mClassData = new ArrayList<>();
 
+    private ContactViewModel mContactViewModel;
 
 
     @Override
@@ -85,15 +94,80 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         fab.setOnClickListener(this);
 
+        mRefreshLayout.setOnRefreshListener(new ContactSwipeListener());
+        mRefreshLayout.setColorSchemeResources(
+                R.color.colorAccent,
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        mAdapter = new ExpandListViewAdapter(this);
+        expandedLv.setAdapter(mAdapter);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         user = BmobUser.getCurrentUser(MyUser.class);
 
-        mAdapter = new ExpandListViewAdapter(user.getmClasses(), this);
-        expandedLv.setAdapter(mAdapter);
+        subscribeUI();
+    }
 
-        if (user.getmClasses() == null) {
-            nullClassFound.setVisibility(View.VISIBLE);
+
+    private void subscribeUI() {
+
+        ContactViewModel.Factory factory = new ContactViewModel
+                .Factory(MyApplication.getInstance(),
+                Injection.getDataRepository(MyApplication.getInstance()));
+        mContactViewModel = ViewModelProviders.of(this, factory).get(ContactViewModel.class);
+        mContactViewModel.getClassList().observe(this, new Observer<List<Class>>() {
+            @Override
+            public void onChanged(@Nullable List<Class> classes) {
+                mClassData.clear();
+                mClassData.addAll(classes);
+
+                if (classes == null || classes.size() == 0) {
+                    nullClassFound.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                mAdapter.setClassList(classes);
+
+            }
+        });
+
+        mContactViewModel.isLoadingClassList().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean == null) {
+                    return;
+                }
+
+                if (mRefreshLayout.isRefreshing()) {
+                    mRefreshLayout.setRefreshing(false);
+                } else {
+                    mLoadMorebar.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
+                }
+            }
+        });
+
+        mContactViewModel.loadClassList();
+        mRefreshLayout.setRefreshing(true);
+    }
+
+
+
+    private class ContactSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
+        @Override
+        public void onRefresh() {
+            mAdapter.clearClassList();
+            mRefreshLayout.setRefreshing(true);
+            mContactViewModel.loadClassList();
         }
     }
+
 
 
     @Override
@@ -110,9 +184,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                             case 1:
                                 addClass();
                                 break;
-                            case 2:
-                                addGroup();
-                                break;
                             default:
                         }
                     }
@@ -125,10 +196,11 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
+
     //添加用户开始
 
     private void addUser() {
-        if (user.getmClasses().size() == 0) {
+        if (mClassData.size() == 0) {
             Toast.makeText(this, getString(R.string.null_class_while_add_group), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -164,17 +236,14 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                             add.setVisibility(View.VISIBLE);
 
 
-                            if (list.get(0).getUserPhoto() != null){
+                            if (list.get(0).getUserPhoto() != null) {
                                 Util.loadCircleImage(Uri.parse(list.get(0).getUserPhoto()), photo);
                             } else {
                                 Util.loadCircleImage(Uri.parse(""), photo);
                             }
                             username.setText(list.get(0).getUsername());
 
-                            groupMember.setUserId(list.get(0).getObjectId());
-                            groupMember.setUserName(list.get(0).getUsername());
-                            groupMember.setUserPhoto(list.get(0).getUserPhoto());
-                            groupMember.setUserPhoneNumber(list.get(0).getMobilePhoneNumber());
+                            groupMember.setMemberUser(list.get(0));
                         }
                     }
                 });
@@ -191,15 +260,12 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
-        final String[] classNames = new String[user.getmClasses().size()];
-        for (int i = 0; i < user.getmClasses().size(); i++) {
-            classNames[i] = user.getmClasses().get(i).getClassName();
+        final String[] classNames = new String[mClassData.size()];
+        for (int i = 0; i < mClassData.size(); i++) {
+            classNames[i] = mClassData.get(i).getClassName();
         }
 
-        final String[] groupNames = {getString(R.string.alert_class_teacher), getString(R.string.alert_class_student)};
-
-        final String[] classId = new String[1];
-        final String[] groupId = new String[1];
+        final int[] index1 = new int[1];
 
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,7 +275,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(DialogInterface dialogInterface, int i) {
                         tvClass.setText(classNames[i]);
 
-                        classId[0] = user.getmClasses().get(i).getObjectId();
+                        index1[0] = i;
                     }
                 });
 
@@ -218,7 +284,17 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
-        //todo 选择已有的群组
+        final String[] searchedGroupNames = new String[mClassData.get(index1[0]).getGroupInfos().size()];
+        for (int i = 0; i < mClassData.get(index1[0]).getGroupInfos().size(); i++) {
+            searchedGroupNames[i] = mClassData.get(index1[0]).getGroupInfos().get(i).getGroupName();
+        }
+
+        final String[] groupNames = {getString(R.string.alert_class_student), getString(R.string.alert_class_teacher)};
+
+        final int[] index2 = new int[1];
+
+        final boolean[] createGroupInfo = new boolean[1];
+
         alertRlGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,34 +303,47 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(DialogInterface dialogInterface, final int i) {
                         tvGroup.setText(groupNames[i]);
 
-                        BmobQuery<GroupInfo> query1 = new BmobQuery<GroupInfo>();
-                        query1.addWhereEqualTo("classId", classId[0]);
-                        query1.addWhereEqualTo("auth", 1 - i);
-                        query1.findObjects(new FindListener<GroupInfo>() {
-                            @Override
-                            public void done(List<GroupInfo> list, BmobException e) {
-                                if (e == null) {
-                                    groupId[0] = list.get(0).getObjectId();
-                                    groupInfo.setMemberSize(list.get(0).getMemberSize() + 1);
+
+                        switch (searchedGroupNames.length) {
+                            case 0:
+                                createGroupInfo[0] = true;
+                                index2[0] = i;
+                                break;
+                            case 1:
+                                if (groupNames[i].equals(searchedGroupNames[0])) {
+                                    createGroupInfo[0] = false;
+                                    index2[0] = 0;
+                                } else {
+                                    createGroupInfo[0] = true;
+                                    index2[0] = i;
                                 }
-                            }
-                        });
+                                break;
+                            case 2:
+                                createGroupInfo[0] = false;
+                                if (groupNames[i].equals(searchedGroupNames[i])) {
+                                    index2[0] = i;
+                                } else {
+                                    index2[0] = 1 - i;
+                                }
+                                break;
+                            default:
+                        }
 
 
-                        BmobQuery<Class> query2 = new BmobQuery<Class>();
-                        query2.getObject(classId[0], new QueryListener<Class>() {
+                        BmobQuery<Class> query = new BmobQuery<>();
+                        query.getObject(mClassData.get(index1[0]).getObjectId(), new QueryListener<Class>() {
                             @Override
                             public void done(Class aClass, BmobException e) {
                                 if (e == null) {
                                     if (i == 0) {
-                                        mClass.setTeacherSize(aClass.getTeacherSize() + 1);
-                                    }
-                                    if (i == 1) {
                                         mClass.setStudentSize(aClass.getStudentSize() + 1);
+                                    } else {
+                                        mClass.setTeacherSize(aClass.getTeacherSize() + 1);
                                     }
                                 }
                             }
                         });
+
                     }
                 });
 
@@ -270,34 +359,55 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                groupMember.setGroupId(groupId[0]);
-                groupMember.save(new SaveListener<String>() {
+
+                mClass.update(mClassData.get(index1[0]).getObjectId(), new UpdateListener() {
                     @Override
-                    public void done(String s, BmobException e) {
+                    public void done(BmobException e) {
                         if (e == null) {
+                            InitData.initData(user);
 
-                            groupInfo.update(groupId[0], new UpdateListener() {
-                                @Override
-                                public void done(BmobException e) {
-                                    if (e == null) {
-
-                                        mClass.update(classId[0], new UpdateListener() {
-                                            @Override
-                                            public void done(BmobException e) {
-                                                if (e == null) {
-                                                    InitData.initData(user);
-
-                                                    Toast.makeText(ContactActivity.this, getString(R.string.contact_add_user_success), Toast.LENGTH_SHORT).show();
-                                                    finish();
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
+                            Toast.makeText(ContactActivity.this, getString(R.string.contact_add_user_success), Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     }
                 });
+
+
+                if (createGroupInfo[0]) {
+                    groupInfo.setTargetClass(mClassData.get(index1[0]));
+                    groupInfo.setGroupName(groupNames[index2[0]]);
+                    groupInfo.setMemberSize(1);
+                    groupInfo.setAuth(index2[0]);
+                    groupInfo.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+                            if (e == null) {
+
+                                BmobQuery<GroupInfo> query = new BmobQuery<>();
+                                query.getObject(s, new QueryListener<GroupInfo>() {
+                                    @Override
+                                    public void done(GroupInfo groupInfo, BmobException e) {
+                                        if (e == null) {
+
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+
+                    groupInfo.setMemberSize(mClassData.get(index1[0]).getGroupInfos().get(index2[0]).getMemberSize() + 1);
+                    groupInfo.update(mClassData.get(index1[0]).getGroupInfos().get(index2[0]).getObjectId(), new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                createUserGroupMember(mClassData.get(index1[0]).getGroupInfos().get(index2[0]));
+                            }
+                        }
+                    });
+                }
+
             }
         });
 
@@ -311,6 +421,20 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         myDialog = builder.create();
         myDialog.show();
 
+    }
+
+
+    private void createUserGroupMember(GroupInfo groupInfo) {
+        groupMember.setTargetGroupInfo(groupInfo);
+        groupMember.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+
+
+                }
+            }
+        });
     }
 
     //添加用户结束
@@ -363,12 +487,21 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
                 mClass.setClassName(editText.getText().toString());
 
-                mClass.setCreatorId(user.getObjectId());
+                mClass.setCreatorUser(user);
                 mClass.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
                         if (e == null) {
-                            createGroupInfo(s);
+
+                            BmobQuery<Class> query = new BmobQuery<>();
+                            query.getObject(s, new QueryListener<Class>() {
+                                @Override
+                                public void done(Class aClass, BmobException e) {
+                                    if (e == null) {
+                                        createGroupInfo(aClass);
+                                    }
+                                }
+                            });
                         }
                     }
                 });
@@ -388,28 +521,35 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void createGroupInfo(final String classId) {
-        groupInfo.setClassId(classId);
+    private void createGroupInfo(Class mClass) {
+        groupInfo.setTargetClass(mClass);
         groupInfo.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
-                    createGroupMember(s);
+
+                    BmobQuery<GroupInfo> query = new BmobQuery<>();
+                    query.getObject(s, new QueryListener<GroupInfo>() {
+                        @Override
+                        public void done(GroupInfo groupInfo, BmobException e) {
+                            if (e == null) {
+                                createGroupMember(groupInfo);
+                            }
+                        }
+                    });
                 }
             }
         });
     }
 
-    private void createGroupMember(final String groupInfoId) {
-        groupMember.setGroupId(groupInfoId);
-        groupMember.setUserId(user.getObjectId());
-        groupMember.setUserName(user.getUsername());
-        groupMember.setUserPhoto(user.getUserPhoto());
-        groupMember.setUserPhoneNumber(user.getMobilePhoneNumber());
+    private void createGroupMember(GroupInfo groupInfo) {
+        groupMember.setTargetGroupInfo(groupInfo);
+        groupMember.setMemberUser(user);
         groupMember.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
+
                     if (nullClassFound.getVisibility() == View.VISIBLE) {
                         nullClassFound.setVisibility(View.GONE);
                     }
@@ -427,8 +567,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     //添加群组开始
 
-    private void addGroup() {
-        if (user.getmClasses().size() == 0) {
+    /*private void addGroup() {
+        if (mClassData.size() == 0) {
             Toast.makeText(this, getString(R.string.null_class_while_add_group), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -445,15 +585,12 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         final TextView tvGroup = alertView.findViewById(R.id.alert_group_choose_group);
 
 
-        final String[] classNames = new String[user.getmClasses().size()];
-        for (int i = 0; i < user.getmClasses().size(); i++) {
-            classNames[i] = user.getmClasses().get(i).getClassName();
+        final String[] classNames = new String[mClassData.size()];
+        for (int i = 0; i < mClassData.size(); i++) {
+            classNames[i] = mClassData.get(i).getClassName();
         }
 
         final String[] groupNames = {getString(R.string.alert_class_teacher), getString(R.string.alert_class_student)};
-
-        final String[] classId = new String[1];
-
 
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -462,8 +599,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         tvClass.setText(classNames[i]);
-                        groupInfo.setClassId(user.getmClasses().get(i).getObjectId());
-                        classId[0] = user.getmClasses().get(i).getObjectId();
+
+                        groupInfo.setTargetClass(mClassData.get(i));
                     }
                 });
 
@@ -529,7 +666,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         myDialog.show();
 
     }
-
+*/
     //添加群组结束
 
 }

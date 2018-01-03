@@ -3,8 +3,10 @@ package com.project.android.wewin.data;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.project.android.wewin.data.local.db.entity.HomeWorkRoom;
+import com.project.android.wewin.data.remote.model.Class;
+import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
@@ -43,8 +45,9 @@ public class DataRepository {
         return INSTANCE;
     }
 
-    public LiveData<List<HomeWorkRoom>> getHomeWorkList(int index) {
+    public LiveData<List<HomeWork>> getHomeWorkList(int index) {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            Log.d("wewein", "getHomeWorkList: ");
             return mRemoteDataSource.getHomeWorkList(index);
         } else {
             return mLocalDataSource.getHomeWorkList(index);
@@ -58,4 +61,22 @@ public class DataRepository {
             return mLocalDataSource.isLoadingHomeWorkList();
         }
     }
+
+    public LiveData<List<Class>> getClassList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getClassList();
+        } else {
+            return mLocalDataSource.getClassList();
+        }
+    }
+
+    public LiveData<Boolean> isLoadingClassList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingClassList();
+        } else {
+            return mLocalDataSource.isLoadingClassList();
+        }
+    }
+
+
 }

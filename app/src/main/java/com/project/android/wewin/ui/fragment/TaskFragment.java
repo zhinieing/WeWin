@@ -1,5 +1,7 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,16 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.TaskRvAdapter;
 import com.project.android.wewin.utils.Util;
+import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
 import java.util.List;
 
@@ -46,9 +51,12 @@ public class TaskFragment extends Fragment {
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
+    @BindView(R.id.bar_load_more_homework)
+    ProgressBar mLoadMorebar;
 
     private TaskRvAdapter taskRvAdapter;
-    private MyUser user;
+
+    private HomeWorkListViewModel mHomeWorkListViewModel = null;
 
 
     private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
@@ -86,9 +94,11 @@ public class TaskFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         taskList.setLayoutManager(llm);
         taskList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        taskList.addOnScrollListener(new HomeWorkOnScrollListener());
 
         mRefreshLayout.setOnRefreshListener(new HomeWorSwipeListener());
         mRefreshLayout.setColorSchemeResources(
+                R.color.colorAccent,
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -104,49 +114,75 @@ public class TaskFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        user = BmobUser.getCurrentUser(MyUser.class);
-
-        initHomeWorkView();
-
-    }
 
     private class HomeWorSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
             taskRvAdapter.clearHomeWorkList();
-            initHomeWorkView();
+            mRefreshLayout.setRefreshing(true);
+            mHomeWorkListViewModel.refreshHomeWorkListData();
         }
     }
 
-    private void initHomeWorkView() {
-        if (user != null && user.getGroupIds() != null) {
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                BmobQuery<HomeWork> query = new BmobQuery<HomeWork>();
-                query.addWhereContainedIn("groupId", user.getGroupIds());
-                query.setLimit(10);
-                query.order("createdAt");
-                query.findObjects(new FindListener<HomeWork>() {
-                    @Override
-                    public void done(List<HomeWork> list, BmobException e) {
-                        if (e == null) {
-                            taskRvAdapter.setHomeWorkList(list);
-                            mRefreshLayout.setRefreshing(false);
-                            Log.d("wewein", "done: " + list.size());
-                        } else {
-                            Log.d("wewein", "done: " + e);
-                        }
-                    }
-                });
+    private class HomeWorkOnScrollListener extends RecyclerView.OnScrollListener {
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager)
+                    recyclerView.getLayoutManager();
+            int lastPosition = layoutManager
+                    .findLastVisibleItemPosition();
+            if (lastPosition == taskRvAdapter.getItemCount() - 1) {
+
+                mHomeWorkListViewModel.loadNextPageHomeWorkList();
             }
         }
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        subscribeUI();
+
+    }
 
 
+    private void subscribeUI() {
+        if (!isAdded()) {
+            return;
+        }
+        HomeWorkListViewModel.Factory factory = new HomeWorkListViewModel
+                .Factory(MyApplication.getInstance(),
+                Injection.getDataRepository(MyApplication.getInstance()));
+        mHomeWorkListViewModel = ViewModelProviders.of(this, factory).get(HomeWorkListViewModel.class);
+        mHomeWorkListViewModel.getHomeWorkList().observe(this, new Observer<List<HomeWork>>() {
+            @Override
+            public void onChanged(@Nullable List<HomeWork> homeWorks) {
+                if (homeWorks == null || homeWorks.size() == 0) {
+                    return;
+                }
+
+                taskRvAdapter.setHomeWorkList(homeWorks);
+            }
+        });
+        mHomeWorkListViewModel.isLoadingHomeWorkList().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean state) {
+                if (state == null) {
+                    return;
+                }
+
+                if (mRefreshLayout.isRefreshing()) {
+                    mRefreshLayout.setRefreshing(false);
+                } else {
+                    mLoadMorebar.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
+                }
+            }
+        });
+        mHomeWorkListViewModel.refreshHomeWorkListData();
+        mRefreshLayout.setRefreshing(true);
+    }
 
     @Override
     public void onDestroyView() {

@@ -13,9 +13,9 @@ import android.widget.TextView;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
-import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.utils.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +27,23 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
     private LayoutInflater mInflate;
     private Context context;
 
-    public ExpandListViewAdapter(List<Class> mListData, Context context) {
-        this.mListData = mListData;
+    public ExpandListViewAdapter(Context context) {
+        mListData = new ArrayList<>();
         this.context = context;
         this.mInflate = LayoutInflater.from(context);
+    }
+
+    public void setClassList(List<Class> mClassList) {
+        if (mClassList == null || mClassList.size() == 0) {
+            return;
+        }
+        mListData.addAll(mClassList);
+        notifyDataSetChanged();
+    }
+
+    public void clearClassList() {
+        mListData.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -187,14 +200,14 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
                 holder = (ThirdHolder) convertView.getTag();
             }
 
-            String imgUrl = listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getUserPhoto();
+            String imgUrl = listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getMemberUser().getUserPhoto();
             if (imgUrl != null) {
                 Util.loadCircleImage(Uri.parse(imgUrl), holder.iv);
             } else {
                 Util.loadCircleImage(Uri.parse(""), holder.iv);
             }
 
-            holder.tv.setText(listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getUserName());
+            holder.tv.setText(listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getMemberUser().getUsername());
 
             return convertView;
         }

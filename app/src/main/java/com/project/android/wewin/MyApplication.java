@@ -12,7 +12,9 @@ import cn.bmob.v3.Bmob;
 
 
 /**
- * Created by pengming on 2017/11/24.
+ *
+ * @author pengming
+ * @date 2017/11/24
  */
 
 public class MyApplication extends Application{

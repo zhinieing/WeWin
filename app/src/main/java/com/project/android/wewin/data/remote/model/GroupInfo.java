@@ -12,9 +12,9 @@ import cn.bmob.v3.BmobObject;
 
 public class GroupInfo extends BmobObject{
     private String groupName;
-    private String classId;
     private Integer memberSize;
     private Integer auth;
+    private Class targetClass;
     private List<GroupMember> groupMembers;
 
     public GroupInfo() {}
@@ -25,14 +25,6 @@ public class GroupInfo extends BmobObject{
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public String getClassId() {
-        return classId;
-    }
-
-    public void setClassId(String classId) {
-        this.classId = classId;
     }
 
     public Integer getMemberSize() {
@@ -49,6 +41,14 @@ public class GroupInfo extends BmobObject{
 
     public void setAuth(Integer auth) {
         this.auth = auth;
+    }
+
+    public Class getTargetClass() {
+        return targetClass;
+    }
+
+    public void setTargetClass(Class targetClass) {
+        this.targetClass = targetClass;
     }
 
     public List<GroupMember> getGroupMembers() {
