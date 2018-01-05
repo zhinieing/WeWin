@@ -87,7 +87,7 @@ public class HomeWork extends BmobObject implements Parcelable {
         parcel.writeString(homeworkContent);
         parcel.writeString(homeworkDeadline);
         parcel.writeParcelable(creatorUser, i);
-        parcel.writeParcelable(groupInfo, i);
+        //parcel.writeParcelable(groupInfo, i);
         parcel.writeStringList(attachmentPath);
     }
 
@@ -100,7 +100,7 @@ public class HomeWork extends BmobObject implements Parcelable {
             homeWork.homeworkContent = parcel.readString();
             homeWork.homeworkDeadline = parcel.readString();
             homeWork.creatorUser = parcel.readParcelable(MyUser.class.getClassLoader());
-            homeWork.groupInfo = parcel.readParcelable(GroupInfo.class.getClassLoader());
+            //homeWork.groupInfo = parcel.readParcelable(GroupInfo.class.getClassLoader());
             homeWork.attachmentPath = new ArrayList<String>();
             parcel.readStringList(homeWork.attachmentPath);
             return homeWork;
