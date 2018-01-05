@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
             startActivity(intent);
         }
 
-        //底部导航栏设置
+        /*底部导航栏设置*/
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         disableShiftMode(navigation);
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
 
 
-        //Viewpager页面设置
+        /*Viewpager页面设置*/
         mainViewpager.addOnPageChangeListener(mOnPageChangeListener);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(MainFragment.newInstance(1));
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
 
 
-        //侧边导航栏设置
+        /*侧边导航栏设置*/
         slidingRootNav = new SlidingRootNavBuilder(this)
                 .withToolbarMenuToggle(toolbar)
                 .withMenuOpened(false)
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     }
 
 
-    //disableShiftMode函数是为了消除当menuitem>3时产生的动画效果
+    /*disableShiftMode函数是为了消除当menuitem>3时产生的动画效果*/
 
     public static void disableShiftMode(BottomNavigationView view) {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     }
 
-    //侧边栏点击事件
+    /*侧边栏点击事件*/
     @Override
     public void onItemSelected(int position) {
         if (position == POS_EXIT) {

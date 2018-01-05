@@ -111,12 +111,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initDetail() {
         mHomeWork = getIntent().getParcelableExtra("homework_detail");
-        if (mHomeWork.getCreatorPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(mHomeWork.getCreatorPhoto()), mUserImg);
+        if (mHomeWork.getCreatorUser().getUserPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(mHomeWork.getCreatorUser().getUserPhoto()), mUserImg);
         } else {
             Util.loadCircleImage(Uri.parse(""), mUserImg);
         }
-        mUserName.setText(mHomeWork.getCreatorName());
+        mUserName.setText(mHomeWork.getCreatorUser().getUsername());
         Log.i("homework get", "initDetail: " + mHomeWork.getAttachmentPath());
         mDeadline.setText(mHomeWork.getHomeworkDeadline());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());

@@ -13,11 +13,19 @@ import java.util.List;
 
 public interface DataSource {
 
-    LiveData<List<HomeWork>> getHomeWorkList(int index);
+    /*主界面*/
 
+    LiveData<List<HomeWork>> getHomeWorkList(int index);
     LiveData<Boolean> isLoadingHomeWorkList();
 
 
+    /*通讯录*/
+
     LiveData<List<Class>> getClassList();
     LiveData<Boolean> isLoadingClassList();
+
+
+    /*发布作业*/
+
+    LiveData<List<Class>> getStudentClassList();
 }

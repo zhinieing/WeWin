@@ -49,7 +49,6 @@ public class HomeWorkListViewModel extends AndroidViewModel {
     }
 
     public void refreshHomeWorkListData(){
-        Log.d("wewein", "refreshHomeWorkListData: ");
         mHomeWorkPageIndex.setValue(1);
     }
 

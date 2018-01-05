@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +14,21 @@ import android.widget.TextView;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
+import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CountListener;
+import cn.bmob.v3.listener.FindListener;
+
 /**
- * Created by pengming on 26/12/2017.
+ *
+ * @author pengming
+ * @date 26/12/2017
  */
 
 public class ExpandListViewAdapter extends BaseExpandableListAdapter {

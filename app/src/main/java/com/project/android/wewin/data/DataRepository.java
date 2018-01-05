@@ -47,7 +47,6 @@ public class DataRepository {
 
     public LiveData<List<HomeWork>> getHomeWorkList(int index) {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
-            Log.d("wewein", "getHomeWorkList: ");
             return mRemoteDataSource.getHomeWorkList(index);
         } else {
             return mLocalDataSource.getHomeWorkList(index);
@@ -78,5 +77,11 @@ public class DataRepository {
         }
     }
 
-
+    public LiveData<List<Class>> getStudentClassList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getStudentClassList();
+        } else {
+            return mLocalDataSource.getStudentClassList();
+        }
+    }
 }

@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -72,8 +73,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     TextView nullClassFound;
     @BindView(R.id.contact_spl)
     SwipeRefreshLayout mRefreshLayout;
-    @BindView(R.id.bar_load_more_class)
-    ProgressBar mLoadMorebar;
+
 
     private MyUser user;
     private ExpandListViewAdapter mAdapter;
@@ -125,14 +125,17 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         mContactViewModel.getClassList().observe(this, new Observer<List<Class>>() {
             @Override
             public void onChanged(@Nullable List<Class> classes) {
-                mClassData.clear();
-                mClassData.addAll(classes);
 
                 if (classes == null || classes.size() == 0) {
                     nullClassFound.setVisibility(View.VISIBLE);
-                    return;
                 }
 
+                nullClassFound.setVisibility(View.GONE);
+
+                mClassData.clear();
+                mClassData.addAll(classes);
+
+                mAdapter.clearClassList();
                 mAdapter.setClassList(classes);
 
             }
@@ -145,16 +148,19 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     return;
                 }
 
-                if (mRefreshLayout.isRefreshing()) {
-                    mRefreshLayout.setRefreshing(false);
-                } else {
-                    mLoadMorebar.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
+                mRefreshLayout.setRefreshing(aBoolean);
+
+                if (!aBoolean && !mRefreshLayout.isRefreshing()) {
+                    if (mClassData.size() == 0) {
+                        nullClassFound.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
 
-        mContactViewModel.loadClassList();
         mRefreshLayout.setRefreshing(true);
+        mContactViewModel.loadClassList();
+
     }
 
 
@@ -162,7 +168,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     private class ContactSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
-            mAdapter.clearClassList();
             mRefreshLayout.setRefreshing(true);
             mContactViewModel.loadClassList();
         }
@@ -197,7 +202,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
 
 
-    //添加用户开始
+    /*添加用户开始*/
 
     private void addUser() {
         if (mClassData.size() == 0) {
@@ -209,6 +214,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         groupInfo = new GroupInfo();
         groupMember = new GroupMember();
 
+        final MyUser[] searchedUser = new MyUser[1];
 
         View alertView = LayoutInflater.from(this).inflate(R.layout.alert_add_user, null);
         final EditText editText = alertView.findViewById(R.id.alert_user_phone);
@@ -227,7 +233,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BmobQuery<MyUser> query = new BmobQuery<MyUser>();
+                BmobQuery<MyUser> query = new BmobQuery<>();
                 query.addWhereEqualTo("mobilePhoneNumber", editText.getText().toString());
                 query.findObjects(new FindListener<MyUser>() {
                     @Override
@@ -244,6 +250,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                             username.setText(list.get(0).getUsername());
 
                             groupMember.setMemberUser(list.get(0));
+
+                            searchedUser[0] = list.get(0);
                         }
                     }
                 });
@@ -358,22 +366,30 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         builder.setView(alertView);
         builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(final DialogInterface dialogInterface, int i) {
+
+                for (GroupInfo groupInfo : mClassData.get(index1[0]).getGroupInfos()) {
+                    for (GroupMember groupMember : groupInfo.getGroupMembers()) {
+                        if (groupMember.getMemberUser().getObjectId().equals(searchedUser[0].getObjectId())) {
+
+                            Toast.makeText(ContactActivity.this, getString(R.string.alert_user_exist_error), Toast.LENGTH_SHORT).show();
+                            dialogInterface.dismiss();
+                            return;
+                        }
+                    }
+                }
 
                 mClass.update(mClassData.get(index1[0]).getObjectId(), new UpdateListener() {
                     @Override
                     public void done(BmobException e) {
                         if (e == null) {
-                            InitData.initData(user);
 
-                            Toast.makeText(ContactActivity.this, getString(R.string.contact_add_user_success), Toast.LENGTH_SHORT).show();
-                            finish();
                         }
                     }
                 });
 
-
                 if (createGroupInfo[0]) {
+
                     groupInfo.setTargetClass(mClassData.get(index1[0]));
                     groupInfo.setGroupName(groupNames[index2[0]]);
                     groupInfo.setMemberSize(1);
@@ -388,7 +404,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                     @Override
                                     public void done(GroupInfo groupInfo, BmobException e) {
                                         if (e == null) {
-
+                                            createUserGroupMember(groupInfo);
                                         }
                                     }
                                 });
@@ -408,6 +424,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     });
                 }
 
+                mRefreshLayout.setRefreshing(true);
             }
         });
 
@@ -432,17 +449,20 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                 if (e == null) {
 
 
+
+                    mContactViewModel.loadClassList();
                 }
             }
         });
     }
 
-    //添加用户结束
+    /*添加用户结束*/
 
 
 
 
-    //添加班级开始
+    /*添加班级开始*/
+
     private void addClass() {
 
         mClass = new Class();
@@ -484,6 +504,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                mRefreshLayout.setRefreshing(true);
 
                 mClass.setClassName(editText.getText().toString());
 
@@ -550,22 +571,17 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             public void done(String s, BmobException e) {
                 if (e == null) {
 
-                    if (nullClassFound.getVisibility() == View.VISIBLE) {
-                        nullClassFound.setVisibility(View.GONE);
-                    }
-                    InitData.initData(user);
-                    Toast.makeText(ContactActivity.this, getString(R.string.contact_add_class_success), Toast.LENGTH_SHORT).show();
-                    finish();
+                    mContactViewModel.loadClassList();
                 }
             }
         });
     }
 
-    //添加班级结束
+    /*添加班级结束*/
 
 
 
-    //添加群组开始
+    /*添加群组开始*/
 
     /*private void addGroup() {
         if (mClassData.size() == 0) {
@@ -609,7 +625,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
-        //todo 隐藏已有的群组
+
         alertRlGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -667,6 +683,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 */
-    //添加群组结束
+    /*添加群组结束*/
 
 }

@@ -77,12 +77,16 @@
     <string name="view_count">浏览次数</string>
     <string name="user_name">User Name</string>
     <string name="help_and_feedback">帮助与反馈</string>
+    <string name="release_homework_none_student_error">先去添加接收作业的学生吧！</string>
 
     <string name="title_activity_contact">ContactActivity</string>
     <string name="null_class_found">没有找到班级，快去添加吧！</string>
     <string name="null_class_while_add_group">没有找到班级，先去添加班级吧！</string>
     <string name="contact_add_user">添加联系人</string>
     <string name="contact_add_user_success">添加联系人成功</string>
+    <string name="alert_user_class">选择班级</string>
+    <string name="alert_user_auth">选择身份</string>
+    <string name="alert_user_exist_error">该班级中已包含该用户</string>
 
     <string name="contact_add_class">添加班级</string>
     <string name="alert_class_name">输入班级名称</string>

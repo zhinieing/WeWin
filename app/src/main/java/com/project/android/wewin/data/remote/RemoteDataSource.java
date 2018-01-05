@@ -16,11 +16,15 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 
 /**
- * Created by pengming on 2017/11/24.
+ *
+ * @author pengming
+ * @date 2017/11/24
  */
 
 public class RemoteDataSource implements DataSource {
@@ -31,9 +35,16 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
 
+    private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Class>> mClassList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
+
+    private int indexClass;
+    private int indexGroup;
 
     private RemoteDataSource() {
-        //mApiGirl = ApiManager.getInstance().getApiGirl();
     }
 
     public static RemoteDataSource getInstance() {
@@ -57,17 +68,20 @@ public class RemoteDataSource implements DataSource {
         if (user != null) {
             BmobQuery<GroupMember> query = new BmobQuery<>();
             query.addWhereEqualTo("memberUser", user);
+            query.include("targetGroupInfo");
             query.findObjects(new FindListener<GroupMember>() {
                 @Override
                 public void done(List<GroupMember> list, BmobException e) {
-                    if (e == null) {
+                    if (e == null && list.size() != 0) {
                         List<GroupInfo> groupInfos = new ArrayList<>();
                         for (GroupMember groupMember : list) {
                             groupInfos.add(groupMember.getTargetGroupInfo());
                         }
 
+
                         BmobQuery<HomeWork> query = new BmobQuery<>();
-                        query.addWhereContainedIn("groupInfo", groupInfos);
+                        query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfos.get(0)));
+                        query.include("creatorUser");
                         query.setSkip(10*(index - 1));
                         query.setLimit(10);
                         query.order("createdAt");
@@ -77,7 +91,7 @@ public class RemoteDataSource implements DataSource {
                                 mIsLoadingHomeWorkList.setValue(false);
 
                                 if (e == null) {
-                                    Log.d("wewein", "done: "+list.size());
+                                    Log.d("wewein", "done000000: "+list.size());
                                     mHomeWorkList.setValue(list);
                                 }
                             }
@@ -92,7 +106,6 @@ public class RemoteDataSource implements DataSource {
             mIsLoadingHomeWorkList.setValue(false);
         }
 
-
         return mHomeWorkList;
     }
 
@@ -104,11 +117,154 @@ public class RemoteDataSource implements DataSource {
 
     @Override
     public LiveData<List<Class>> getClassList() {
-        return null;
+        mIsLoadingClassList.setValue(true);
+
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user != null) {
+            final List<Class> mClassData = new ArrayList<>();
+
+            BmobQuery<GroupMember> query = new BmobQuery<>();
+            query.include("targetGroupInfo");
+            query.addWhereEqualTo("memberUser", user);
+            query.findObjects(new FindListener<GroupMember>() {
+                @Override
+                public void done(List<GroupMember> list, BmobException e) {
+                    if (e == null && list.size() != 0) {
+
+                        final int classNum = list.size();
+                        indexClass = 0;
+
+                        for (GroupMember groupMember : list) {
+
+                            BmobQuery<Class> query = new BmobQuery<>();
+                            query.getObject(groupMember.getTargetGroupInfo().getTargetClass().getObjectId(), new QueryListener<Class>() {
+                                @Override
+                                public void done(Class aClass, BmobException e) {
+                                    if (e == null) {
+                                        final List<GroupInfo> groupInfos = new ArrayList<>();
+                                        aClass.setGroupInfos(groupInfos);
+                                        mClassData.add(aClass);
+
+                                        BmobQuery<GroupInfo> query = new BmobQuery<>();
+                                        query.addWhereEqualTo("targetClass", new BmobPointer(aClass));
+                                        query.findObjects(new FindListener<GroupInfo>() {
+                                            @Override
+                                            public void done(List<GroupInfo> list, BmobException e) {
+                                                if (e == null) {
+
+                                                    indexClass++;
+                                                    final int groupNum = list.size();
+                                                    indexGroup = 0;
+
+
+                                                    for (GroupInfo groupInfo : list) {
+                                                        final List<GroupMember> groupMembers = new ArrayList<>();
+                                                        groupInfo.setGroupMembers(groupMembers);
+                                                        groupInfos.add(groupInfo);
+
+                                                        BmobQuery<GroupMember> query = new BmobQuery<>();
+                                                        query.addWhereEqualTo("targetGroupInfo", new BmobPointer(groupInfo));
+                                                        query.include("memberUser");
+                                                        query.findObjects(new FindListener<GroupMember>() {
+                                                            @Override
+                                                            public void done(List<GroupMember> list, BmobException e) {
+                                                                if (e == null) {
+                                                                    groupMembers.addAll(list);
+
+                                                                    indexGroup++;
+
+                                                                    if (indexClass == classNum && indexGroup == groupNum) {
+                                                                        Log.d("wewein", "done: final get class"+",indexClass="+indexClass+",indexGroup="+indexGroup);
+                                                                        mIsLoadingClassList.setValue(false);
+                                                                        mClassList.setValue(mClassData);
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+
+                    } else {
+                        mIsLoadingClassList.setValue(false);
+                    }
+                }
+            });
+        } else {
+            mIsLoadingClassList.setValue(false);
+        }
+
+        return mClassList;
     }
 
     @Override
     public LiveData<Boolean> isLoadingClassList() {
-        return null;
+        return mIsLoadingClassList;
+    }
+
+    @Override
+    public LiveData<List<Class>> getStudentClassList() {
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user != null) {
+            final List<Class> mClassData = new ArrayList<>();
+
+            BmobQuery<GroupMember> query = new BmobQuery<>();
+            query.addWhereEqualTo("memberUser", user);
+            query.include("targetGroupInfo");
+            query.findObjects(new FindListener<GroupMember>() {
+                @Override
+                public void done(List<GroupMember> list, BmobException e) {
+                    if (e == null && list.size() != 0) {
+
+                        final int classNum = list.size();
+                        indexClass = 0;
+
+                        for (GroupMember groupMember : list) {
+                            BmobQuery<Class> query = new BmobQuery<>();
+                            query.getObject(groupMember.getTargetGroupInfo().getTargetClass().getObjectId(), new QueryListener<Class>() {
+                                @Override
+                                public void done(final Class aClass, BmobException e) {
+                                    if (e == null) {
+
+                                        BmobQuery<GroupInfo> query = new BmobQuery<>();
+                                        query.addWhereEqualTo("targetClass", new BmobPointer(aClass));
+                                        query.addWhereEqualTo("auth", 0);
+                                        query.findObjects(new FindListener<GroupInfo>() {
+                                            @Override
+                                            public void done(List<GroupInfo> list, BmobException e) {
+                                                if (e == null) {
+
+                                                    indexClass++;
+
+                                                    if (list.size() != 0) {
+                                                        aClass.setGroupInfos(list);
+                                                        mClassData.add(aClass);
+                                                    }
+
+                                                    if (indexClass == classNum) {
+                                                        Log.d("wewein", "done: final get student class" );
+                                                        mStudentClassList.setValue(mClassData);
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        return mStudentClassList;
     }
 }

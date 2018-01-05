@@ -51,4 +51,9 @@ public class LocalDataSource implements DataSource{
     public LiveData<Boolean> isLoadingClassList() {
         return null;
     }
+
+    @Override
+    public LiveData<List<Class>> getStudentClassList() {
+        return null;
+    }
 }

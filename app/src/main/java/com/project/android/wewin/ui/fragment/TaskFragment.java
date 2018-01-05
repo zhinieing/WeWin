@@ -38,7 +38,9 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
 /**
- * Created by pengming on 2017/11/4.
+ *
+ * @author pengming
+ * @date 2017/11/4
  */
 
 public class TaskFragment extends Fragment {
@@ -51,8 +53,7 @@ public class TaskFragment extends Fragment {
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
-    @BindView(R.id.bar_load_more_homework)
-    ProgressBar mLoadMorebar;
+
 
     private TaskRvAdapter taskRvAdapter;
 
@@ -118,7 +119,7 @@ public class TaskFragment extends Fragment {
     private class HomeWorSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
-            taskRvAdapter.clearHomeWorkList();
+
             mRefreshLayout.setRefreshing(true);
             mHomeWorkListViewModel.refreshHomeWorkListData();
         }
@@ -162,7 +163,8 @@ public class TaskFragment extends Fragment {
                 if (homeWorks == null || homeWorks.size() == 0) {
                     return;
                 }
-
+                Log.d("wewein", "onChanged : homeworks");
+                taskRvAdapter.clearHomeWorkList();
                 taskRvAdapter.setHomeWorkList(homeWorks);
             }
         });
@@ -173,15 +175,12 @@ public class TaskFragment extends Fragment {
                     return;
                 }
 
-                if (mRefreshLayout.isRefreshing()) {
-                    mRefreshLayout.setRefreshing(false);
-                } else {
-                    mLoadMorebar.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
-                }
+                mRefreshLayout.setRefreshing(state);
             }
         });
-        mHomeWorkListViewModel.refreshHomeWorkListData();
+
         mRefreshLayout.setRefreshing(true);
+        mHomeWorkListViewModel.refreshHomeWorkListData();
     }
 
     @Override

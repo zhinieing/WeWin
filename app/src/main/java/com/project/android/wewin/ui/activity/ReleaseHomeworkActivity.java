@@ -3,6 +3,8 @@ package com.project.android.wewin.ui.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,11 +32,16 @@ import android.widget.Toast;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
+import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.Injection;
+import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.MyAlertDialog;
+import com.project.android.wewin.viewmodel.ContactViewModel;
+import com.project.android.wewin.viewmodel.ReleaseHomeWorkViewModel;
 
 
 import java.io.File;
@@ -99,6 +107,9 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private HomeWork mHomeWork = new HomeWork();
     private MyUser user;
 
+    private List<Class> mClassData = new ArrayList<>();
+    private ReleaseHomeWorkViewModel mReleaseHomeWorkViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,12 +153,39 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         }
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        subscribeUI();
+    }
+
+    private void subscribeUI() {
+
+        ReleaseHomeWorkViewModel.Factory factory = new ReleaseHomeWorkViewModel
+                .Factory(MyApplication.getInstance(),
+                Injection.getDataRepository(MyApplication.getInstance()));
+        mReleaseHomeWorkViewModel = ViewModelProviders.of(this, factory).get(ReleaseHomeWorkViewModel.class);
+        mReleaseHomeWorkViewModel.getStudentClassList().observe(this, new Observer<List<Class>>() {
+            @Override
+            public void onChanged(@Nullable List<Class> classes) {
+                if (classes == null || classes.size() == 0) {
+                    return;
+                }
+
+                mClassData.clear();
+                mClassData.addAll(classes);
+            }
+        });
+
+        mReleaseHomeWorkViewModel.loadStudentClassList();
+
+    }
+
     private void releaseConfirm() {
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
-        mHomeWork.setCreatorId(user.getObjectId());
-        mHomeWork.setCreatorName(user.getUsername());
-        mHomeWork.setCreatorPhoto(user.getUserPhoto());
+        mHomeWork.setCreatorUser(user);
         if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -233,6 +271,10 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     private void addTarget() {
+        if (mClassData.size() == 0) {
+            Toast.makeText(this, getString(R.string.release_homework_none_student_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         View alertView = LayoutInflater.from(this).inflate(R.layout.alert_add_group, null);
         RelativeLayout alertRlClass = alertView.findViewById(R.id.alert_group_class);
@@ -244,14 +286,13 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         alertRlGroup.setVisibility(View.GONE);
         tvGroup.setVisibility(View.GONE);
 
-        final String[] classNames = new String[user.getmClasses().size()];
-        for (int i = 0; i < user.getmClasses().size(); i++) {
-            classNames[i] = user.getmClasses().get(i).getClassName();
+        final String[] classNames = new String[mClassData.size()];
+        for (int i = 0; i < mClassData.size(); i++) {
+            classNames[i] = mClassData.get(i).getClassName();
         }
 
-        final String[] groupId = new String[1];
-        final String[] className = new String[1];
-        //todo 选择有学生群组的班级
+        final int[] index = new int[1];
+
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -259,19 +300,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         tvClass.setText(classNames[i]);
-                        className[0] = classNames[i];
-                        BmobQuery<GroupInfo> query = new BmobQuery<GroupInfo>();
-                        query.addWhereEqualTo("classId", user.getmClasses().get(i).getObjectId());
-                        query.addWhereEqualTo("auth", 0);
-                        query.findObjects(new FindListener<GroupInfo>() {
-                            @Override
-                            public void done(List<GroupInfo> list, BmobException e) {
-                                if (e == null) {
-                                    groupId[0] = list.get(0).getObjectId();
-                                    Log.i(TAG, "onClick done: " + groupId[0]);
-                                }
-                            }
-                        });
+
+                        index[0] = i;
                     }
                 });
 
@@ -286,9 +316,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mHomeWork.setGroupId(groupId[0]);
-                mAddTarget.setText(className[0]);
-                Log.i(TAG, "onClick: " + groupId[0]);
+                mHomeWork.setGroupInfo(mClassData.get(index[0]).getGroupInfos().get(0));
+                mAddTarget.setText(classNames[index[0]]);
             }
         });
 
@@ -386,7 +415,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             Toast.makeText(this, "请输入作业内容", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getHomeworkDeadline() == null) {
             Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();
-        } else if (mHomeWork.getGroupId() == null) {
+        } else if (mHomeWork.getGroupInfo() == null) {
             Toast.makeText(this, "请选择发送对象", Toast.LENGTH_SHORT).show();
         } else {
             homeworkValid = true;

@@ -84,7 +84,7 @@
         android:layout_height="@dimen/title_height">
 
         <TextView
-            android:text="@string/alert_group_class"
+            android:text="@string/alert_user_class"
             android:layout_centerVertical="true"
             android:textSize="@dimen/text_size_large"
             android:textColor="@color/textColorPrimary"
@@ -118,7 +118,7 @@
         android:layout_height="@dimen/title_height">
 
         <TextView
-            android:text="@string/alert_group_group"
+            android:text="@string/alert_user_auth"
             android:layout_centerVertical="true"
             android:textSize="@dimen/text_size_large"
             android:textColor="@color/textColorPrimary"

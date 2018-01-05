@@ -30,7 +30,7 @@ public class InitData {
 
     public static void initData(final MyUser user) {
 
-        final List<Class> mClassData = new ArrayList<Class>();
+        /*final List<Class> mClassData = new ArrayList<Class>();
         final List<String> mGroupIds = new ArrayList<String>();
 
         final BmobQuery<GroupMember> query1 = new BmobQuery<GroupMember>();
@@ -39,8 +39,8 @@ public class InitData {
             @Override
             public void done(List<GroupMember> list, BmobException e) {
                 if (e == null) {
-                    /*user.setGroupIds(mGroupIds);
-                    user.setmClasses(mClassData);*/
+                    *//*user.setGroupIds(mGroupIds);
+                    user.setmClasses(mClassData);*//*
 
                     if (list.size() == 0) {
                         MyUser newMyUser = new MyUser();
@@ -132,6 +132,6 @@ public class InitData {
                     }
                 }
             }
-        });
+        });*/
     }
 }
