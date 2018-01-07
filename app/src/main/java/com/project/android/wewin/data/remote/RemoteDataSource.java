@@ -35,6 +35,8 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
 
+    private final MutableLiveData<Boolean> mIsClassTeacher = new MutableLiveData<>();
+
     private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
 
     private final MutableLiveData<List<Class>> mClassList = new MutableLiveData<>();
@@ -73,14 +75,15 @@ public class RemoteDataSource implements DataSource {
                 @Override
                 public void done(List<GroupMember> list, BmobException e) {
                     if (e == null && list.size() != 0) {
-                        List<GroupInfo> groupInfos = new ArrayList<>();
+                        List<String> groupIds = new ArrayList<>();
                         for (GroupMember groupMember : list) {
-                            groupInfos.add(groupMember.getTargetGroupInfo());
+                            groupIds.add(groupMember.getTargetGroupInfo().getObjectId());
                         }
 
-
                         BmobQuery<HomeWork> query = new BmobQuery<>();
-                        query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfos.get(0)));
+                        BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
+                        innerQuery.addWhereContainedIn("objectId", groupIds);
+                        query.addWhereMatchesQuery("groupInfo", "GroupInfo", innerQuery);
                         query.include("creatorUser");
                         query.setSkip(10*(index - 1));
                         query.setLimit(10);
@@ -91,8 +94,8 @@ public class RemoteDataSource implements DataSource {
                                 mIsLoadingHomeWorkList.setValue(false);
 
                                 if (e == null) {
-                                    Log.d("wewein", "done000000: "+list.size());
                                     mHomeWorkList.setValue(list);
+                                    //Log.d("wewein", "done homeworks remote: ");
                                 }
                             }
                         });
@@ -112,6 +115,39 @@ public class RemoteDataSource implements DataSource {
     @Override
     public LiveData<Boolean> isLoadingHomeWorkList() {
         return mIsLoadingHomeWorkList;
+    }
+
+    @Override
+    public LiveData<Boolean> isClassTeacher() {
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user != null) {
+            BmobQuery<GroupMember> query = new BmobQuery<>();
+            query.include("targetGroupInfo");
+            query.addWhereEqualTo("memberUser", user);
+            query.findObjects(new FindListener<GroupMember>() {
+                @Override
+                public void done(List<GroupMember> list, BmobException e) {
+                    if (e == null && list.size() != 0) {
+                        int index = 0;
+                        for (GroupMember groupMember : list) {
+                            index += groupMember.getTargetGroupInfo().getAuth();
+                        }
+
+                        if (index == 0) {
+                            mIsClassTeacher.setValue(false);
+                        } else {
+                            mIsClassTeacher.setValue(true);
+                        }
+                    } else {
+                        mIsClassTeacher.setValue(false);
+                    }
+                }
+            });
+        } else {
+            mIsClassTeacher.setValue(false);
+        }
+        return mIsClassTeacher;
     }
 
 

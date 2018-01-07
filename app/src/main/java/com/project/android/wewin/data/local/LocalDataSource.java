@@ -43,6 +43,11 @@ public class LocalDataSource implements DataSource{
     }
 
     @Override
+    public LiveData<Boolean> isClassTeacher() {
+        return null;
+    }
+
+    @Override
     public LiveData<List<Class>> getClassList() {
         return null;
     }

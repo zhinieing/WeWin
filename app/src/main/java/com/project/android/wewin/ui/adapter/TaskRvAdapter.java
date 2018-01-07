@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by pengming on 2017/11/4.
+ *
+ * @author pengming
+ * @date 2017/11/4
  */
 
 public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder> {

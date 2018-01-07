@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.adapter.ViewPagerAdapter;
 import com.project.android.wewin.ui.fragment.MainFragment;

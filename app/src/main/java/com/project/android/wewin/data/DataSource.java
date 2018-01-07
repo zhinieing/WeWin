@@ -17,7 +17,7 @@ public interface DataSource {
 
     LiveData<List<HomeWork>> getHomeWorkList(int index);
     LiveData<Boolean> isLoadingHomeWorkList();
-
+    LiveData<Boolean> isClassTeacher();
 
     /*通讯录*/
 
@@ -28,4 +28,5 @@ public interface DataSource {
     /*发布作业*/
 
     LiveData<List<Class>> getStudentClassList();
+
 }

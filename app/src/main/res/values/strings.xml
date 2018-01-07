@@ -78,6 +78,8 @@
     <string name="user_name">User Name</string>
     <string name="help_and_feedback">帮助与反馈</string>
     <string name="release_homework_none_student_error">先去添加接收作业的学生吧！</string>
+    <string name="release_homework_not_this_class_teacher">对不起，您不是这个班的老师，不能发作业！</string>
+    <string name="is_not_any_class_teacher">对不起，您还不是老师，不能发作业！</string>
 
     <string name="title_activity_contact">ContactActivity</string>
     <string name="null_class_found">没有找到班级，快去添加吧！</string>

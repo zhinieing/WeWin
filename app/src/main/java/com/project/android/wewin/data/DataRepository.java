@@ -61,6 +61,14 @@ public class DataRepository {
         }
     }
 
+    public LiveData<Boolean> isClassTeacher() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isClassTeacher();
+        } else {
+            return mLocalDataSource.isClassTeacher();
+        }
+    }
+
     public LiveData<List<Class>> getClassList() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getClassList();

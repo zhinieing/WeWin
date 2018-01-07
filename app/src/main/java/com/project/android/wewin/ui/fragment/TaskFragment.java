@@ -1,8 +1,11 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,11 +25,13 @@ import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.activity.DetailActivity;
+import com.project.android.wewin.ui.activity.MainActivity;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.TaskRvAdapter;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -56,7 +61,8 @@ public class TaskFragment extends Fragment {
 
     private TaskRvAdapter taskRvAdapter;
 
-    private HomeWorkListViewModel mHomeWorkListViewModel = null;
+
+    private HomeWorkListViewModel mHomeWorkListViewModel;
 
 
     private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
@@ -118,9 +124,9 @@ public class TaskFragment extends Fragment {
     private class HomeWorSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
-
             mRefreshLayout.setRefreshing(true);
             mHomeWorkListViewModel.refreshHomeWorkListData();
+
         }
     }
 
@@ -143,7 +149,9 @@ public class TaskFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        subscribeUI();
+        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            subscribeUI();
+        }
 
     }
 
@@ -162,24 +170,26 @@ public class TaskFragment extends Fragment {
                 if (homeWorks == null || homeWorks.size() == 0) {
                     return;
                 }
-                Log.d("wewein", "onChanged : homeworks");
+
                 taskRvAdapter.clearHomeWorkList();
                 taskRvAdapter.setHomeWorkList(homeWorks);
             }
         });
         mHomeWorkListViewModel.isLoadingHomeWorkList().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(@Nullable Boolean state) {
-                if (state == null) {
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean == null) {
                     return;
                 }
 
-                mRefreshLayout.setRefreshing(state);
+                mRefreshLayout.setRefreshing(aBoolean);
             }
         });
 
         mRefreshLayout.setRefreshing(true);
         mHomeWorkListViewModel.refreshHomeWorkListData();
+
+
     }
 
     @Override

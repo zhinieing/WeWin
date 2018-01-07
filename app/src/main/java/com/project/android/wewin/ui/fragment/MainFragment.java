@@ -1,5 +1,7 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -18,17 +20,24 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.Injection;
+import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.ui.activity.ReleaseHomeworkActivity;
+import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * Created by pengming on 2017/11/3.
+ *
+ * @author pengming
+ * @date 2017/11/3
  */
 
 public class MainFragment extends Fragment {
@@ -36,6 +45,10 @@ public class MainFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private HomeWorkListViewModel mHomeWorkListViewModel;
+
+    private boolean isTeacher;
 
     Unbinder unbinder;
     @BindView(R.id.main_tabs)
@@ -69,38 +82,78 @@ public class MainFragment extends Fragment {
             }
         });
 
-        tabsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
-                FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        switch (position) {
-                            case 0:
+        tabsViewpager.addOnPageChangeListener(mOnPageChangeListener);
+
+        return view;
+    }
+
+
+    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
+            FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switch (position) {
+                        case 0:
+                            if (!isTeacher) {
+                                Toast.makeText(view.getContext(), getString(R.string.is_not_any_class_teacher), Toast.LENGTH_SHORT).show();
+                            } else {
                                 startActivity(new Intent(view.getContext(), ReleaseHomeworkActivity.class));
-                                break;
-                            case 1:
-                                Toast.makeText(view.getContext(), "add questions", Toast.LENGTH_SHORT).show();
-                                break;
-                            default:
-                        }
+                            }
+                            break;
+                        case 1:
+                            Toast.makeText(view.getContext(), "add questions", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
                     }
-                });
-            }
+                }
+            });
+        }
 
+        @Override
+        public void onPageSelected(final int position) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            subscribeUI();
+        }
+    }
+
+
+    private void subscribeUI() {
+        if (!isAdded()) {
+            return;
+        }
+        HomeWorkListViewModel.Factory factory = new HomeWorkListViewModel
+                .Factory(MyApplication.getInstance(),
+                Injection.getDataRepository(MyApplication.getInstance()));
+        mHomeWorkListViewModel = ViewModelProviders.of(this, factory).get(HomeWorkListViewModel.class);
+        mHomeWorkListViewModel.isClassTeacher().observe(this, new Observer<Boolean>() {
             @Override
-            public void onPageSelected(final int position) {
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean == null) {
+                    return;
+                }
 
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+                isTeacher = aBoolean;
             }
         });
 
-        return view;
+
     }
 
 

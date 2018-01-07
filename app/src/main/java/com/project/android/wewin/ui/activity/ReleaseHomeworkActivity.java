@@ -37,6 +37,7 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
+import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.MyAlertDialog;
@@ -292,6 +293,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         }
 
         final int[] index = new int[1];
+        final boolean[] isTeacher = new boolean[1];
 
         alertRlClass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,6 +304,26 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                         tvClass.setText(classNames[i]);
 
                         index[0] = i;
+
+                        BmobQuery<GroupMember> query = new BmobQuery<>();
+                        query.addWhereEqualTo("memberUser", user);
+
+                        BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
+                        innerQuery.addWhereEqualTo("targetClass", mClassData.get(i));
+                        innerQuery.addWhereEqualTo("auth", 1);
+
+                        query.addWhereMatchesQuery("targetGroupInfo", "GroupInfo", innerQuery);
+                        query.findObjects(new FindListener<GroupMember>() {
+                            @Override
+                            public void done(List<GroupMember> list, BmobException e) {
+                                if (e == null && list.size() != 0) {
+                                    isTeacher[0] = true;
+                                } else {
+                                    isTeacher[0] = false;
+                                }
+                            }
+                        });
+
                     }
                 });
 
@@ -316,6 +338,12 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                if (!isTeacher[0]) {
+                    Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_homework_not_this_class_teacher), Toast.LENGTH_SHORT).show();
+                    dialogInterface.dismiss();
+                    return;
+                }
+
                 mHomeWork.setGroupInfo(mClassData.get(index[0]).getGroupInfos().get(0));
                 mAddTarget.setText(classNames[index[0]]);
             }

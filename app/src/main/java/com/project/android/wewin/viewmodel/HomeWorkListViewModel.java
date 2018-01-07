@@ -63,6 +63,10 @@ public class HomeWorkListViewModel extends AndroidViewModel {
         return mHomeWorkDataRepository.isLoadingHomeWorkList();
     }
 
+    public LiveData<Boolean> isClassTeacher() {
+        return mHomeWorkDataRepository.isClassTeacher();
+    }
+
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
 

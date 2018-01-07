@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.widget.ExpandableListView;
 
 /**
- * Created by pengming on 26/12/2017.
+ *
+ * @author pengming
+ * @date 26/12/2017
  */
 
 public class CustomExpandableListView extends ExpandableListView {

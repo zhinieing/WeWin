@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -127,7 +129,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             public void onChanged(@Nullable List<Class> classes) {
 
                 if (classes == null || classes.size() == 0) {
-                    nullClassFound.setVisibility(View.VISIBLE);
+                    return;
                 }
 
                 nullClassFound.setVisibility(View.GONE);
