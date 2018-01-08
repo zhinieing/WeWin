@@ -12,7 +12,7 @@ import cn.bmob.v3.BmobObject;
  * @date 26/12/2017
  */
 
-public class GroupInfo extends BmobObject implements Parcelable {
+public class GroupInfo extends BmobObject {
     private String groupName;
     private Integer memberSize;
     private Integer auth;
@@ -62,7 +62,7 @@ public class GroupInfo extends BmobObject implements Parcelable {
         this.groupMembers = groupMembers;
     }
 
-    @Override
+   /* @Override
     public int describeContents() {
         return 0;
     }
@@ -94,5 +94,5 @@ public class GroupInfo extends BmobObject implements Parcelable {
 
     public static Creator<GroupInfo> getCREATOR() {
         return CREATOR;
-    }
+    }*/
 }

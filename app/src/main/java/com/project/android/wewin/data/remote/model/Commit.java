@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2018/1/4
  */
 
-public class Commit extends BmobObject implements Parcelable {
+public class Commit extends BmobObject {
     private HomeWork mHomework;
     private MyUser creatorUser;
     private List<String> attachmentPath;
@@ -45,6 +45,7 @@ public class Commit extends BmobObject implements Parcelable {
     }
 
 
+/*
     @Override
     public int describeContents() {
         return 0;
@@ -77,5 +78,6 @@ public class Commit extends BmobObject implements Parcelable {
     public static Creator<Commit> getCREATOR() {
         return CREATOR;
     }
+*/
 
 }

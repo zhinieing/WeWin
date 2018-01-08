@@ -15,7 +15,7 @@ import cn.bmob.v3.BmobObject;
  * @date 2017/12/11
  */
 
-public class HomeWork extends BmobObject implements Parcelable {
+public class HomeWork extends BmobObject {
     private String homeworkTitle;
     private String homeworkContent;
     private String homeworkDeadline;
@@ -75,7 +75,7 @@ public class HomeWork extends BmobObject implements Parcelable {
         this.attachmentPath = attachmentPath;
     }
 
-
+/*
     @Override
     public int describeContents() {
         return 0;
@@ -114,5 +114,5 @@ public class HomeWork extends BmobObject implements Parcelable {
 
     public static Creator<HomeWork> getCREATOR() {
         return CREATOR;
-    }
+    }*/
 }

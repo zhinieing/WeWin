@@ -12,7 +12,7 @@ import cn.bmob.v3.BmobObject;
  * @date 26/12/2017
  */
 
-public class Class extends BmobObject implements Parcelable {
+public class Class extends BmobObject {
     private String className;
     private String classIcon;
     private Integer studentSize;
@@ -71,7 +71,7 @@ public class Class extends BmobObject implements Parcelable {
         this.creatorUser = creatorUser;
     }
 
-    @Override
+   /* @Override
     public int describeContents() {
         return 0;
     }
@@ -105,5 +105,5 @@ public class Class extends BmobObject implements Parcelable {
 
     public static Creator<Class> getCREATOR() {
         return CREATOR;
-    }
+    }*/
 }

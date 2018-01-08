@@ -12,7 +12,7 @@ import cn.bmob.v3.BmobUser;
  * Created by pengming on 28/12/2017.
  */
 
-public class MyUser extends BmobUser implements Parcelable {
+public class MyUser extends BmobUser {
     private String userPhoto;
 
 
@@ -27,7 +27,7 @@ public class MyUser extends BmobUser implements Parcelable {
         this.userPhoto = userPhoto;
     }
 
-    @Override
+   /* @Override
     public int describeContents() {
         return 0;
     }
@@ -54,5 +54,5 @@ public class MyUser extends BmobUser implements Parcelable {
 
     public static Creator<MyUser> getCREATOR() {
         return CREATOR;
-    }
+    }*/
 }
