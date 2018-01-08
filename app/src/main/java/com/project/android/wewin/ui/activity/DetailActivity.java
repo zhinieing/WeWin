@@ -25,9 +25,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Util;
 
+import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -36,6 +39,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
@@ -87,7 +91,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     Button mReply;
 
     private HomeWork mHomeWork;
-    private List<String> mDetailAttachment;
+    private String mHomeWorkId;
+    private Commit mCommit = new Commit();
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +112,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
         mAttachment.setOnClickListener(this);
         mReply.setOnClickListener(this);
-        initDetail();
+        mHomeWorkId = getIntent().getStringExtra("homework_detail");
+        user = BmobUser.getCurrentUser(MyUser.class);
     }
 
     private void initDetail() {
-        mHomeWork = getIntent().getParcelableExtra("homework_detail");
         if (mHomeWork.getCreatorUser().getUserPhoto() != null) {
             Util.loadCircleImage(Uri.parse(mHomeWork.getCreatorUser().getUserPhoto()), mUserImg);
         } else {
@@ -121,7 +127,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mDeadline.setText(mHomeWork.getHomeworkDeadline());
         mDetailTitle.setText(mHomeWork.getHomeworkTitle());
         mDetailContent.setText(mHomeWork.getHomeworkContent());
-        mDetailAttachment = mHomeWork.getAttachmentPath();
+        List<String> mDetailAttachment = mHomeWork.getAttachmentPath();
         for (int i = 0; i < mDetailAttachment.size(); i++) {
             final String url = mDetailAttachment.get(i);
             final String fileName = url.substring(url.lastIndexOf("/") + 1);
@@ -155,7 +161,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private void downloadFile(BmobFile file) {
         //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
-        File saveFile = new File(Environment.getExternalStorageDirectory()+"/Wewin/download/", file.getFilename());
+        File saveFile = new File(Environment.getExternalStorageDirectory() + "/Wewin/download/", file.getFilename());
         file.download(saveFile, new DownloadFileListener() {
 
             @Override
@@ -180,9 +186,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    public static void startDetailActivity(Activity activity, HomeWork homeWork) {
+    public static void startDetailActivity(Activity activity, String homeWorkId) {
         Intent intent = new Intent(activity, DetailActivity.class);
-        intent.putExtra("homework_detail", (Parcelable) homeWork);
+        intent.putExtra("homework_detail", homeWorkId);
         activity.startActivity(intent);
     }
 
@@ -202,6 +208,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void replyConfirm() {
+        mCommit.setCreatorUser(user);
+        mCommit.setmHomework(mHomeWork);
         if (ActivityCompat.checkSelfPermission(DetailActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -216,6 +224,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isReplyValid() {
         boolean replyValid = false;
         //todo 判断回复是否有效，content和attachment
+        if (mAttachmentLayout.getChildCount() > 0) {
+            replyValid = true;
+        } else {
+            Toast.makeText(DetailActivity.this, "回复不能为空", Toast.LENGTH_SHORT).show();
+        }
         return replyValid;
     }
 
@@ -231,7 +244,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case 0:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //uploadAttachment();
+                    //download
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -245,41 +258,58 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mReply.setClickable(false);
         mReply.setText(R.string.uploading);
         mReply.setBackgroundColor(ContextCompat.getColor(this, R.color.textColorSecondary));
-        int size = mAttachmentLayout.getChildCount();
-        final String[] filePaths = new String[size];
-        for (int i = 0; i < size; i++) {
-            filePaths[i] = mAttachmentLayout.getChildAt(i).getTag().toString();
-            BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+        int size = mReplyLayout.getChildCount();
+        if (size == 0) {
+            mCommit.save(new SaveListener<String>() {
                 @Override
-                public void onSuccess(List<BmobFile> list, List<String> list1) {
-                    if (list1.size() == filePaths.length) {
-                        //todo 回复内容的处理，更新数据库
-//                        mHomeWork.addAll("attachmentPath", list1);
-//                        mHomeWork.save(new SaveListener<String>() {
-//                            @Override
-//                            public void done(String s, BmobException e) {
-//                                if (e == null) {
-//                                    Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
-//                                    finish();
-//                                } else {
-//                                    Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
-
-                @Override
-                public void onProgress(int i, int i1, int i2, int i3) {
-                    Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    Log.i("error", "errorcode:" + i + " message:" + s);
                 }
             });
         }
+        final String[] filePaths = new String[size];
+        for (int i = 0; i < size; i++) {
+            filePaths[i] = mReplyLayout.getChildAt(i).getTag().toString();
+        }
+        BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+            @Override
+            public void onSuccess(List<BmobFile> list, List<String> list1) {
+                if (list1.size() == filePaths.length) {
+                    mCommit.addAll("attachmentPath", list1);
+                    mCommit.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+                            if (e == null) {
+                                Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onProgress(int i, int i1, int i2, int i3) {
+                Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                mReply.setClickable(true);
+                mReply.setText(R.string.confirm_release);
+                mReply.setBackgroundColor(ContextCompat.getColor(DetailActivity.this, R.color.colorAccent));
+                Toast.makeText(DetailActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
+                Log.i("error", "errorcode:" + i + " message:" + s);
+            }
+        });
+
     }
 
 
