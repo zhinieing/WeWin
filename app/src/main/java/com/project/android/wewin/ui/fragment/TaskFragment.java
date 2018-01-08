@@ -53,14 +53,13 @@ public class TaskFragment extends Fragment {
     @BindView(R.id.task_list)
     RecyclerView taskList;
 
-    @BindView(R.id.homeworklist_spl)
+    @BindView(R.id.homework_list_spl)
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
 
 
     private TaskRvAdapter taskRvAdapter;
-
 
     private HomeWorkListViewModel mHomeWorkListViewModel;
 
@@ -70,7 +69,7 @@ public class TaskFragment extends Fragment {
                 @Override
                 public void onClick(HomeWork homeWork) {
                     if (Util.isNetworkConnected(MyApplication.getInstance())) {
-                        DetailActivity.startDetailActivity(getActivity(), homeWork);
+                        DetailActivity.startDetailActivity(getActivity(), homeWork.getObjectId());
                     } else {
                         Toast.makeText(getActivity(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                     }

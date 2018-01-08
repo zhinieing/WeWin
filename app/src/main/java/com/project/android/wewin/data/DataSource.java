@@ -8,16 +8,30 @@ import com.project.android.wewin.data.remote.model.HomeWork;
 import java.util.List;
 
 /**
- * Created by pengming on 2017/11/24.
+ *
+ * @author pengming
+ * @date 2017/11/24
  */
 
 public interface DataSource {
 
     /*主界面*/
 
+    LiveData<Boolean> isClassTeacher();
+
     LiveData<List<HomeWork>> getHomeWorkList(int index);
     LiveData<Boolean> isLoadingHomeWorkList();
-    LiveData<Boolean> isClassTeacher();
+
+    LiveData<List<HomeWork>> getPostedHomeWorkList(int index);
+    LiveData<Boolean> isLoadingPostedHomeWorkList();
+
+
+
+    /*作业详情页*/
+
+    LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId);
+
+
 
     /*通讯录*/
 

@@ -48,7 +48,7 @@ public class MainFragment extends Fragment {
 
     private HomeWorkListViewModel mHomeWorkListViewModel;
 
-    private boolean isTeacher;
+    private boolean isTeacher = false ;
 
     Unbinder unbinder;
     @BindView(R.id.main_tabs)
@@ -82,7 +82,9 @@ public class MainFragment extends Fragment {
             }
         });
 
-        tabsViewpager.addOnPageChangeListener(mOnPageChangeListener);
+        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+            tabsViewpager.addOnPageChangeListener(mOnPageChangeListener);
+        }
 
         return view;
     }
@@ -123,14 +125,14 @@ public class MainFragment extends Fragment {
         }
     };
 
-
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
             subscribeUI();
         }
+
     }
 
 

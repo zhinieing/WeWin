@@ -2,6 +2,8 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,11 +27,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Util;
+import com.project.android.wewin.viewmodel.DetailViewModel;
 
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
@@ -114,20 +120,48 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mReply.setOnClickListener(this);
         mHomeWorkId = getIntent().getStringExtra("homework_detail");
         user = BmobUser.getCurrentUser(MyUser.class);
+
     }
 
-    private void initDetail() {
-        if (mHomeWork.getCreatorUser().getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(mHomeWork.getCreatorUser().getUserPhoto()), mUserImg);
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        subscribeUI();
+
+    }
+
+    private void subscribeUI() {
+        DetailViewModel.Factory factory = new DetailViewModel.Factory(MyApplication.getInstance(),
+                Injection.getDataRepository(MyApplication.getInstance()), mHomeWorkId);
+        DetailViewModel detailViewModel = ViewModelProviders.of(this, factory).get(DetailViewModel.class);
+        detailViewModel.getHomeWorkDetail().observe(this, new Observer<HomeWork>() {
+            @Override
+            public void onChanged(@Nullable HomeWork homeWork) {
+                if (homeWork == null) {
+                    return;
+                }
+
+                initDetail(homeWork);
+
+                mHomeWork = homeWork;
+            }
+        });
+    }
+
+
+    private void initDetail(HomeWork homeWork) {
+        if (homeWork.getCreatorUser().getUserPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(homeWork.getCreatorUser().getUserPhoto()), mUserImg);
         } else {
             Util.loadCircleImage(Uri.parse(""), mUserImg);
         }
-        mUserName.setText(mHomeWork.getCreatorUser().getUsername());
-        Log.i("homework get", "initDetail: " + mHomeWork.getAttachmentPath());
-        mDeadline.setText(mHomeWork.getHomeworkDeadline());
-        mDetailTitle.setText(mHomeWork.getHomeworkTitle());
-        mDetailContent.setText(mHomeWork.getHomeworkContent());
-        List<String> mDetailAttachment = mHomeWork.getAttachmentPath();
+        mUserName.setText(homeWork.getCreatorUser().getUsername());
+        Log.i("homework get", "initDetail: " + homeWork.getAttachmentPath());
+        mDeadline.setText(homeWork.getHomeworkDeadline());
+        mDetailTitle.setText(homeWork.getHomeworkTitle());
+        mDetailContent.setText(homeWork.getHomeworkContent());
+        List<String> mDetailAttachment = homeWork.getAttachmentPath();
         for (int i = 0; i < mDetailAttachment.size(); i++) {
             final String url = mDetailAttachment.get(i);
             final String fileName = url.substring(url.lastIndexOf("/") + 1);

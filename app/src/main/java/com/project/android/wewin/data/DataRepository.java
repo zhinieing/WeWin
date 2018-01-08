@@ -61,6 +61,32 @@ public class DataRepository {
         }
     }
 
+
+    public LiveData<List<HomeWork>> getPostedHomeWorkList(int index) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getPostedHomeWorkList(index);
+        } else {
+            return mLocalDataSource.getPostedHomeWorkList(index);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingPostedHomeWorkList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingPostedHomeWorkList();
+        } else {
+            return mLocalDataSource.isLoadingPostedHomeWorkList();
+        }
+    }
+
+    public LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getHomeWorkDetail(mHomeWorkId);
+        } else {
+            return mLocalDataSource.getHomeWorkDetail(mHomeWorkId);
+        }
+    }
+
+
     public LiveData<Boolean> isClassTeacher() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.isClassTeacher();

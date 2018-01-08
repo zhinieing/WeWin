@@ -31,6 +31,10 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
     private final LiveData<List<HomeWork>> mHomeWorkList;
 
+    private final MutableLiveData<Integer> mPostedHomeWorkPageIndex = new MutableLiveData<>();
+
+    private final LiveData<List<HomeWork>> mPostedHomeWorkList;
+
     private DataRepository mHomeWorkDataRepository = null;
 
     public HomeWorkListViewModel(Application application, DataRepository homeWorkDataRepository) {
@@ -42,8 +46,16 @@ public class HomeWorkListViewModel extends AndroidViewModel {
                 return mHomeWorkDataRepository.getHomeWorkList(input);
             }
         });
+
+        mPostedHomeWorkList =Transformations.switchMap(mPostedHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWork>>>() {
+            @Override
+            public LiveData<List<HomeWork>> apply(Integer input) {
+                return mHomeWorkDataRepository.getPostedHomeWorkList(input);
+            }
+        });
     }
 
+    /*TaskFragment*/
     public LiveData<List<HomeWork>> getHomeWorkList(){
         return mHomeWorkList;
     }
@@ -63,6 +75,29 @@ public class HomeWorkListViewModel extends AndroidViewModel {
         return mHomeWorkDataRepository.isLoadingHomeWorkList();
     }
 
+
+    /*PostedTaskFragment*/
+    public LiveData<List<HomeWork>> getPostedHomeWorkList(){
+        return mPostedHomeWorkList;
+    }
+
+    public void refreshPostedHomeWorkListData(){
+        mPostedHomeWorkPageIndex.setValue(1);
+    }
+
+    public void loadNextPostedPageHomeWorkList() {
+        if (!Util.isNetworkConnected(MyApplication.getInstance())) {
+            return;
+        }
+        mPostedHomeWorkPageIndex.setValue((mPostedHomeWorkPageIndex.getValue() == null ? 1 : mPostedHomeWorkPageIndex.getValue() + 1));
+    }
+
+    public LiveData<Boolean> isLoadingPostedHomeWorkList() {
+        return mHomeWorkDataRepository.isLoadingPostedHomeWorkList();
+    }
+
+
+    /*MainFragment*/
     public LiveData<Boolean> isClassTeacher() {
         return mHomeWorkDataRepository.isClassTeacher();
     }

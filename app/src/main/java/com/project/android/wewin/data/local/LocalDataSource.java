@@ -43,6 +43,21 @@ public class LocalDataSource implements DataSource{
     }
 
     @Override
+    public LiveData<List<HomeWork>> getPostedHomeWorkList(int index) {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingPostedHomeWorkList() {
+        return null;
+    }
+
+    @Override
+    public LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId) {
+        return null;
+    }
+
+    @Override
     public LiveData<Boolean> isClassTeacher() {
         return null;
     }

@@ -35,6 +35,12 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
 
+    private final MutableLiveData<Boolean> mIsLoadingPostedHomeWorkList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<HomeWork>> mPostedHomeWorkList = new MutableLiveData<>();
+
+    private final MutableLiveData<HomeWork> mHomeWork = new MutableLiveData<>();
+
     private final MutableLiveData<Boolean> mIsClassTeacher = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
@@ -93,9 +99,8 @@ public class RemoteDataSource implements DataSource {
                             public void done(List<HomeWork> list, BmobException e) {
                                 mIsLoadingHomeWorkList.setValue(false);
 
-                                if (e == null) {
+                                if (e == null && list.size() != 0) {
                                     mHomeWorkList.setValue(list);
-                                    //Log.d("wewein", "done homeworks remote: ");
                                 }
                             }
                         });
@@ -116,6 +121,62 @@ public class RemoteDataSource implements DataSource {
     public LiveData<Boolean> isLoadingHomeWorkList() {
         return mIsLoadingHomeWorkList;
     }
+
+
+    @Override
+    public LiveData<List<HomeWork>> getPostedHomeWorkList(int index) {
+        mIsLoadingPostedHomeWorkList.setValue(true);
+
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user != null) {
+            BmobQuery<HomeWork> query =new BmobQuery<>();
+            query.addWhereEqualTo("creatorUser", new BmobPointer(user));
+            query.include("creatorUser");
+            query.setSkip(10*(index - 1));
+            query.setLimit(10);
+            query.order("createdAt");
+            query.findObjects(new FindListener<HomeWork>() {
+                @Override
+                public void done(List<HomeWork> list, BmobException e) {
+                    mIsLoadingPostedHomeWorkList.setValue(false);
+
+                    if (e == null && list.size() != 0) {
+                        mPostedHomeWorkList.setValue(list);
+                    }
+                }
+            });
+
+        } else {
+            mIsLoadingPostedHomeWorkList.setValue(false);
+        }
+
+        return mPostedHomeWorkList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingPostedHomeWorkList() {
+        return mIsLoadingPostedHomeWorkList;
+    }
+
+
+
+    @Override
+    public LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId) {
+
+        BmobQuery<HomeWork> query = new BmobQuery<>();
+        query.include("creatorUser");
+        query.getObject(mHomeWorkId, new QueryListener<HomeWork>() {
+            @Override
+            public void done(HomeWork homeWork, BmobException e) {
+                if (e == null) {
+                    mHomeWork.setValue(homeWork);
+                }
+            }
+        });
+        return mHomeWork;
+    }
+
 
     @Override
     public LiveData<Boolean> isClassTeacher() {
