@@ -151,6 +151,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void initDetail(HomeWork homeWork) {
+        mAttachmentLayout.removeAllViews();
         if (homeWork.getCreatorUser().getUserPhoto() != null) {
             Util.loadCircleImage(Uri.parse(homeWork.getCreatorUser().getUserPhoto()), mUserImg);
         } else {
