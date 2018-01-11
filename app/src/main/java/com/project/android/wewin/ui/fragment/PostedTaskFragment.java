@@ -154,7 +154,7 @@ public class PostedTaskFragment extends Fragment {
         mHomeWorkListViewModel.getPostedHomeWorkList().observe(this, new Observer<List<HomeWork>>() {
             @Override
             public void onChanged(@Nullable List<HomeWork> homeWork) {
-                if (homeWork == null || homeWork.size() == 0) {
+                if (homeWork == null) {
                     return;
                 }
 

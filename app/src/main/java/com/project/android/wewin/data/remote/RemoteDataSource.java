@@ -99,7 +99,7 @@ public class RemoteDataSource implements DataSource {
                             public void done(List<HomeWork> list, BmobException e) {
                                 mIsLoadingHomeWorkList.setValue(false);
 
-                                if (e == null && list.size() != 0) {
+                                if (e == null) {
                                     mHomeWorkList.setValue(list);
                                 }
                             }
@@ -141,7 +141,7 @@ public class RemoteDataSource implements DataSource {
                 public void done(List<HomeWork> list, BmobException e) {
                     mIsLoadingPostedHomeWorkList.setValue(false);
 
-                    if (e == null && list.size() != 0) {
+                    if (e == null) {
                         mPostedHomeWorkList.setValue(list);
                     }
                 }
@@ -272,7 +272,6 @@ public class RemoteDataSource implements DataSource {
                                                                     indexGroup++;
 
                                                                     if (indexClass == classNum && indexGroup == groupNum) {
-                                                                        Log.d("wewein", "done: final get class"+",indexClass="+indexClass+",indexGroup="+indexGroup);
                                                                         mIsLoadingClassList.setValue(false);
                                                                         mClassList.setValue(mClassData);
                                                                     }
@@ -291,6 +290,10 @@ public class RemoteDataSource implements DataSource {
 
                     } else {
                         mIsLoadingClassList.setValue(false);
+
+                        if (list.size() == 0) {
+                            mClassList.setValue(mClassData);
+                        }
                     }
                 }
             });
@@ -319,7 +322,11 @@ public class RemoteDataSource implements DataSource {
             query.findObjects(new FindListener<GroupMember>() {
                 @Override
                 public void done(List<GroupMember> list, BmobException e) {
-                    if (e == null && list.size() != 0) {
+                    if (e == null) {
+                        if (list.size() == 0) {
+                            mStudentClassList.setValue(mClassData);
+                            return;
+                        }
 
                         final int classNum = list.size();
                         indexClass = 0;
@@ -347,7 +354,6 @@ public class RemoteDataSource implements DataSource {
                                                     }
 
                                                     if (indexClass == classNum) {
-                                                        Log.d("wewein", "done: final get student class" );
                                                         mStudentClassList.setValue(mClassData);
                                                     }
                                                 }

@@ -166,7 +166,7 @@ public class TaskFragment extends Fragment {
         mHomeWorkListViewModel.getHomeWorkList().observe(this, new Observer<List<HomeWork>>() {
             @Override
             public void onChanged(@Nullable List<HomeWork> homeWorks) {
-                if (homeWorks == null || homeWorks.size() == 0) {
+                if (homeWorks == null) {
                     return;
                 }
 

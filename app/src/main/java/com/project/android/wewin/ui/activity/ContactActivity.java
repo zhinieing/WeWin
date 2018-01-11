@@ -132,11 +132,15 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onChanged(@Nullable List<Class> classes) {
 
-                if (classes == null || classes.size() == 0) {
+                if (classes == null) {
                     return;
                 }
 
-                nullClassFound.setVisibility(View.GONE);
+                if (classes.size() != 0) {
+                    nullClassFound.setVisibility(View.GONE);
+                } else {
+                    nullClassFound.setVisibility(View.VISIBLE);
+                }
 
                 mClassData.clear();
                 mClassData.addAll(classes);
@@ -156,11 +160,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
                 mRefreshLayout.setRefreshing(aBoolean);
 
-                if (!aBoolean && !mRefreshLayout.isRefreshing()) {
-                    if (mClassData.size() == 0) {
-                        nullClassFound.setVisibility(View.VISIBLE);
-                    }
-                }
             }
         });
 
@@ -231,7 +230,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mRefreshLayout.setRefreshing(true);
 
-                            int index = 0;
 
                             for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
 
@@ -244,6 +242,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                     });
                                 }
 
+
                                 BmobQuery<HomeWork> query = new BmobQuery<>();
                                 query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfo));
                                 query.findObjects(new FindListener<HomeWork>() {
@@ -252,7 +251,22 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                         groupInfo.delete(new UpdateListener() {
                                             @Override
                                             public void done(BmobException e) {
+                                                if (e == null) {
 
+                                                    if (mClassData.get(groupPosition).getGroupInfos().indexOf(groupInfo) == mClassData.get(groupPosition).getGroupInfos().size() - 1) {
+
+                                                        Class mClass = new Class();
+                                                        mClass.setObjectId(mClassData.get(groupPosition).getObjectId());
+                                                        mClass.delete(new UpdateListener() {
+                                                            @Override
+                                                            public void done(BmobException e) {
+                                                                if (e == null) {
+                                                                    mContactViewModel.loadClassList();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
                                             }
                                         });
 
@@ -289,24 +303,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                         }
                                     }
                                 });
-
-                                index++;
-
                             }
-
-                            if (index == mClassData.get(groupPosition).getGroupInfos().size()) {
-                                Class mClass = new Class();
-                                mClass.setObjectId(mClassData.get(groupPosition).getObjectId());
-                                mClass.delete(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if (e == null) {
-                                            mContactViewModel.loadClassList();
-                                        }
-                                    }
-                                });
-                            }
-
 
                         }
                     });

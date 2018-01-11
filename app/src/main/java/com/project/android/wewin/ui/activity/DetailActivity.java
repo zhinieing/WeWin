@@ -137,7 +137,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                Log.d("wewein", "onChanged detail: ");
+
                 initDetail(homeWork);
 
                 mHomeWork = homeWork;

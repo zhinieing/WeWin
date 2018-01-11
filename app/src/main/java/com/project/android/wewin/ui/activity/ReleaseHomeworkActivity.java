@@ -170,7 +170,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mReleaseHomeWorkViewModel.getStudentClassList().observe(this, new Observer<List<Class>>() {
             @Override
             public void onChanged(@Nullable List<Class> classes) {
-                if (classes == null || classes.size() == 0) {
+                if (classes == null) {
                     return;
                 }
 
