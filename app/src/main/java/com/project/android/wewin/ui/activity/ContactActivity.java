@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Class;
+import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
@@ -45,6 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
@@ -106,6 +109,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         mAdapter = new ExpandListViewAdapter(this);
         expandedLv.setAdapter(mAdapter);
+        expandedLv.setOnItemLongClickListener(onItemLongClickListener);
     }
 
 
@@ -177,6 +181,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
 
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -201,6 +206,190 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             default:
         }
     }
+
+
+
+    private ExpandableListView.OnItemLongClickListener onItemLongClickListener = new ExpandableListView.OnItemLongClickListener() {
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, final long l) {
+
+            if (ExpandableListView.getPackedPositionType(l) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+
+                long packedPosition = ((ExpandableListView) adapterView).getExpandableListPosition(i);
+                final int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+
+
+                if (mClassData.get(groupPosition).getCreatorUser().getObjectId().equals(user.getObjectId())) {
+
+                    AlertDialog myDialog;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
+                    builder.setTitle(getString(R.string.delete_class));
+                    builder.setMessage(getString(R.string.delete_class_message));
+                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mRefreshLayout.setRefreshing(true);
+
+                            int index = 0;
+
+                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
+
+                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
+                                    groupMember.delete(new UpdateListener() {
+                                        @Override
+                                        public void done(BmobException e) {
+
+                                        }
+                                    });
+                                }
+
+                                BmobQuery<HomeWork> query = new BmobQuery<>();
+                                query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfo));
+                                query.findObjects(new FindListener<HomeWork>() {
+                                    @Override
+                                    public void done(List<HomeWork> list, BmobException e) {
+                                        groupInfo.delete(new UpdateListener() {
+                                            @Override
+                                            public void done(BmobException e) {
+
+                                            }
+                                        });
+
+                                        if (e == null && list.size() != 0) {
+                                            for (final HomeWork homeWork : list) {
+
+                                                BmobQuery<Commit> query = new BmobQuery<>();
+                                                query.addWhereEqualTo("mHomework", new BmobPointer(homeWork));
+                                                query.findObjects(new FindListener<Commit>() {
+                                                    @Override
+                                                    public void done(List<Commit> list, BmobException e) {
+
+                                                        homeWork.delete(new UpdateListener() {
+                                                            @Override
+                                                            public void done(BmobException e) {
+
+                                                            }
+                                                        });
+
+                                                        if (e == null && list.size() != 0) {
+
+                                                            for (Commit commit : list) {
+                                                                commit.delete(new UpdateListener() {
+                                                                    @Override
+                                                                    public void done(BmobException e) {
+
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                });
+
+                                index++;
+
+                            }
+
+                            if (index == mClassData.get(groupPosition).getGroupInfos().size()) {
+                                Class mClass = new Class();
+                                mClass.setObjectId(mClassData.get(groupPosition).getObjectId());
+                                mClass.delete(new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        if (e == null) {
+                                            mContactViewModel.loadClassList();
+                                        }
+                                    }
+                                });
+                            }
+
+
+                        }
+                    });
+
+                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+                    myDialog = builder.create();
+                    myDialog.show();
+
+                } else {
+
+                    AlertDialog myDialog;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
+                    builder.setTitle(getString(R.string.exit_class));
+                    builder.setMessage(getString(R.string.exit_class_message));
+                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mRefreshLayout.setRefreshing(true);
+
+                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
+                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
+                                    if (groupMember.getMemberUser().getObjectId().equals(user.getObjectId())) {
+
+                                        groupMember.delete(new UpdateListener() {
+                                            @Override
+                                            public void done(BmobException e) {
+                                                if (e == null) {
+
+                                                    GroupInfo mGroupInfo = new GroupInfo();
+                                                    mGroupInfo.setMemberSize(groupInfo.getMemberSize() - 1);
+                                                    mGroupInfo.update(groupInfo.getObjectId(), new UpdateListener() {
+                                                        @Override
+                                                        public void done(BmobException e) {
+                                                            if (e == null) {
+
+                                                                Class mClass = new Class();
+                                                                if (groupInfo.getAuth() == 0) {
+                                                                    mClass.setStudentSize(mClassData.get(groupPosition).getStudentSize() - 1);
+                                                                } else {
+                                                                    mClass.setTeacherSize(mClassData.get(groupPosition).getTeacherSize() - 1);
+                                                                }
+                                                                mClass.update(mClassData.get(groupPosition).getObjectId(), new UpdateListener() {
+                                                                    @Override
+                                                                    public void done(BmobException e) {
+                                                                        if (e == null) {
+                                                                            mContactViewModel.loadClassList();
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+
+                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+                    myDialog = builder.create();
+                    myDialog.show();
+                }
+
+            }
+            return false;
+        }
+    };
 
 
 
@@ -449,8 +638,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
-
-
 
                     mContactViewModel.loadClassList();
                 }

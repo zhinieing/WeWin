@@ -121,15 +121,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mHomeWorkId = getIntent().getStringExtra("homework_detail");
         user = BmobUser.getCurrentUser(MyUser.class);
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+        Log.d("wewein", "onCreate detail: ");
         subscribeUI();
-
     }
+
 
     private void subscribeUI() {
         DetailViewModel.Factory factory = new DetailViewModel.Factory(MyApplication.getInstance(),
@@ -142,6 +137,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
+                Log.d("wewein", "onChanged detail: ");
                 initDetail(homeWork);
 
                 mHomeWork = homeWork;
