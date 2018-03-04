@@ -103,6 +103,7 @@
     <string name="alert_group_group">选择群组</string>
     <string name="contact_add_group_success">添加群组成功</string>
 
+    <string name="alert_dialog_modify_classname">请输入新的班级名称</string>
     <string name="delete_class">删除班级</string>
     <string name="delete_class_message">删除班级会清除掉所有该班级下的用户信息，以及该班级的老师发布的所有作业！</string>
     <string name="exit_class">退出班级</string>

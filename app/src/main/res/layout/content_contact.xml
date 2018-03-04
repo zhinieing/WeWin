@@ -16,6 +16,9 @@
 
         <ExpandableListView
             android:id="@+id/expanded_lv"
+            android:divider="@null"
+            android:childDivider="@android:color/transparent"
+            android:paddingTop="@dimen/padding_small"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </ExpandableListView>

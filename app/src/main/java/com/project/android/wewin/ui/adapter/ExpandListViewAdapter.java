@@ -114,6 +114,8 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
         CustomExpandableListView lv = ((CustomExpandableListView) convertView);
         if (convertView == null) {
             lv = new CustomExpandableListView(context);
+            lv.setDivider(null);
+            lv.setChildDivider(null);
         }
 
         SecondAdapter secondAdapter = new SecondAdapter(context, mListData.get(groupPosition).getGroupInfos());

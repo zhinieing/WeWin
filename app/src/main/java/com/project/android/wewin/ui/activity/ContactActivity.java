@@ -211,88 +211,136 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     private ExpandableListView.OnItemLongClickListener onItemLongClickListener = new ExpandableListView.OnItemLongClickListener() {
 
         @Override
-        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, final long l) {
+        public boolean onItemLongClick(AdapterView<?> adapterView, final View view, int i, final long l) {
 
             if (ExpandableListView.getPackedPositionType(l) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 
                 long packedPosition = ((ExpandableListView) adapterView).getExpandableListPosition(i);
                 final int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
 
+                final String[] modifyClass = {"编辑班级", "删除班级"};
+                final MyAlertDialog dialog = new MyAlertDialog(view.getContext(), modifyClass, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
 
-                if (mClassData.get(groupPosition).getCreatorUser().getObjectId().equals(user.getObjectId())) {
+                                View alertView = LayoutInflater.from(view.getContext()).inflate(R.layout.alert_modify_username, null);
+                                final EditText editText = alertView.findViewById(R.id.alert_modified_username);
 
-                    AlertDialog myDialog;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
-                    builder.setTitle(getString(R.string.delete_class));
-                    builder.setMessage(getString(R.string.delete_class_message));
-                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mRefreshLayout.setRefreshing(true);
-
-
-                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
-
-                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
-                                    groupMember.delete(new UpdateListener() {
-                                        @Override
-                                        public void done(BmobException e) {
-
-                                        }
-                                    });
-                                }
-
-
-                                BmobQuery<HomeWork> query = new BmobQuery<>();
-                                query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfo));
-                                query.findObjects(new FindListener<HomeWork>() {
+                                AlertDialog mDialog;
+                                AlertDialog.Builder build = new AlertDialog.Builder(view.getContext());
+                                build.setTitle(R.string.alert_dialog_modify_classname);
+                                build.setView(alertView);
+                                build.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void done(List<HomeWork> list, BmobException e) {
-                                        groupInfo.delete(new UpdateListener() {
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        mRefreshLayout.setRefreshing(true);
+
+                                        Class mClass = new Class();
+                                        mClass.setClassName(editText.getText().toString());
+                                        mClass.update(mClassData.get(groupPosition).getObjectId(), new UpdateListener() {
                                             @Override
                                             public void done(BmobException e) {
                                                 if (e == null) {
-
-                                                    if (mClassData.get(groupPosition).getGroupInfos().indexOf(groupInfo) == mClassData.get(groupPosition).getGroupInfos().size() - 1) {
-
-                                                        Class mClass = new Class();
-                                                        mClass.setObjectId(mClassData.get(groupPosition).getObjectId());
-                                                        mClass.delete(new UpdateListener() {
-                                                            @Override
-                                                            public void done(BmobException e) {
-                                                                if (e == null) {
-                                                                    mContactViewModel.loadClassList();
-                                                                }
-                                                            }
-                                                        });
-                                                    }
+                                                    mContactViewModel.loadClassList();
                                                 }
                                             }
                                         });
+                                    }
+                                });
 
-                                        if (e == null && list.size() != 0) {
-                                            for (final HomeWork homeWork : list) {
+                                build.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                });
 
-                                                BmobQuery<Commit> query = new BmobQuery<>();
-                                                query.addWhereEqualTo("mHomework", new BmobPointer(homeWork));
-                                                query.findObjects(new FindListener<Commit>() {
+                                mDialog = build.create();
+                                mDialog.show();
+
+                                break;
+                            case 1:
+
+                                if (mClassData.get(groupPosition).getCreatorUser().getObjectId().equals(user.getObjectId())) {
+
+                                    AlertDialog myDialog;
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
+                                    builder.setTitle(getString(R.string.delete_class));
+                                    builder.setMessage(getString(R.string.delete_class_message));
+                                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            mRefreshLayout.setRefreshing(true);
+
+
+                                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
+
+                                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
+                                                    groupMember.delete(new UpdateListener() {
+                                                        @Override
+                                                        public void done(BmobException e) {
+
+                                                        }
+                                                    });
+                                                }
+
+
+                                                BmobQuery<HomeWork> query = new BmobQuery<>();
+                                                query.addWhereEqualTo("groupInfo", new BmobPointer(groupInfo));
+                                                query.findObjects(new FindListener<HomeWork>() {
                                                     @Override
-                                                    public void done(List<Commit> list, BmobException e) {
-
-                                                        homeWork.delete(new UpdateListener() {
+                                                    public void done(List<HomeWork> list, BmobException e) {
+                                                        groupInfo.delete(new UpdateListener() {
                                                             @Override
                                                             public void done(BmobException e) {
+                                                                if (e == null) {
 
+                                                                    if (mClassData.get(groupPosition).getGroupInfos().indexOf(groupInfo) == mClassData.get(groupPosition).getGroupInfos().size() - 1) {
+
+                                                                        Class mClass = new Class();
+                                                                        mClass.setObjectId(mClassData.get(groupPosition).getObjectId());
+                                                                        mClass.delete(new UpdateListener() {
+                                                                            @Override
+                                                                            public void done(BmobException e) {
+                                                                                if (e == null) {
+                                                                                    mContactViewModel.loadClassList();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
                                                             }
                                                         });
 
                                                         if (e == null && list.size() != 0) {
+                                                            for (final HomeWork homeWork : list) {
 
-                                                            for (Commit commit : list) {
-                                                                commit.delete(new UpdateListener() {
+                                                                BmobQuery<Commit> query = new BmobQuery<>();
+                                                                query.addWhereEqualTo("mHomework", new BmobPointer(homeWork));
+                                                                query.findObjects(new FindListener<Commit>() {
                                                                     @Override
-                                                                    public void done(BmobException e) {
+                                                                    public void done(List<Commit> list, BmobException e) {
 
+                                                                        homeWork.delete(new UpdateListener() {
+                                                                            @Override
+                                                                            public void done(BmobException e) {
+
+                                                                            }
+                                                                        });
+
+                                                                        if (e == null && list.size() != 0) {
+
+                                                                            for (Commit commit : list) {
+                                                                                commit.delete(new UpdateListener() {
+                                                                                    @Override
+                                                                                    public void done(BmobException e) {
+
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        }
                                                                     }
                                                                 });
                                                             }
@@ -300,88 +348,93 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                                                     }
                                                 });
                                             }
+
                                         }
-                                    }
-                                });
-                            }
+                                    });
 
-                        }
-                    });
+                                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    });
 
-                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+                                    myDialog = builder.create();
+                                    myDialog.show();
 
-                    myDialog = builder.create();
-                    myDialog.show();
+                                } else {
 
-                } else {
+                                    AlertDialog myDialog;
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
+                                    builder.setTitle(getString(R.string.exit_class));
+                                    builder.setMessage(getString(R.string.exit_class_message));
+                                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            mRefreshLayout.setRefreshing(true);
 
-                    AlertDialog myDialog;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ContactActivity.this);
-                    builder.setTitle(getString(R.string.exit_class));
-                    builder.setMessage(getString(R.string.exit_class_message));
-                    builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mRefreshLayout.setRefreshing(true);
+                                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
+                                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
+                                                    if (groupMember.getMemberUser().getObjectId().equals(user.getObjectId())) {
 
-                            for (final GroupInfo groupInfo : mClassData.get(groupPosition).getGroupInfos()) {
-                                for (GroupMember groupMember : groupInfo.getGroupMembers()) {
-                                    if (groupMember.getMemberUser().getObjectId().equals(user.getObjectId())) {
+                                                        groupMember.delete(new UpdateListener() {
+                                                            @Override
+                                                            public void done(BmobException e) {
+                                                                if (e == null) {
 
-                                        groupMember.delete(new UpdateListener() {
-                                            @Override
-                                            public void done(BmobException e) {
-                                                if (e == null) {
+                                                                    GroupInfo mGroupInfo = new GroupInfo();
+                                                                    mGroupInfo.setMemberSize(groupInfo.getMemberSize() - 1);
+                                                                    mGroupInfo.update(groupInfo.getObjectId(), new UpdateListener() {
+                                                                        @Override
+                                                                        public void done(BmobException e) {
+                                                                            if (e == null) {
 
-                                                    GroupInfo mGroupInfo = new GroupInfo();
-                                                    mGroupInfo.setMemberSize(groupInfo.getMemberSize() - 1);
-                                                    mGroupInfo.update(groupInfo.getObjectId(), new UpdateListener() {
-                                                        @Override
-                                                        public void done(BmobException e) {
-                                                            if (e == null) {
-
-                                                                Class mClass = new Class();
-                                                                if (groupInfo.getAuth() == 0) {
-                                                                    mClass.setStudentSize(mClassData.get(groupPosition).getStudentSize() - 1);
-                                                                } else {
-                                                                    mClass.setTeacherSize(mClassData.get(groupPosition).getTeacherSize() - 1);
-                                                                }
-                                                                mClass.update(mClassData.get(groupPosition).getObjectId(), new UpdateListener() {
-                                                                    @Override
-                                                                    public void done(BmobException e) {
-                                                                        if (e == null) {
-                                                                            mContactViewModel.loadClassList();
+                                                                                Class mClass = new Class();
+                                                                                if (groupInfo.getAuth() == 0) {
+                                                                                    mClass.setStudentSize(mClassData.get(groupPosition).getStudentSize() - 1);
+                                                                                } else {
+                                                                                    mClass.setTeacherSize(mClassData.get(groupPosition).getTeacherSize() - 1);
+                                                                                }
+                                                                                mClass.update(mClassData.get(groupPosition).getObjectId(), new UpdateListener() {
+                                                                                    @Override
+                                                                                    public void done(BmobException e) {
+                                                                                        if (e == null) {
+                                                                                            mContactViewModel.loadClassList();
+                                                                                        }
+                                                                                    }
+                                                                                });
+                                                                            }
                                                                         }
-                                                                    }
-                                                                });
+                                                                    });
+                                                                }
                                                             }
-                                                        }
-                                                    });
+                                                        });
+                                                    }
                                                 }
                                             }
-                                        });
-                                    }
+
+                                        }
+                                    });
+
+                                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    });
+
+                                    myDialog = builder.create();
+                                    myDialog.show();
                                 }
-                            }
 
+                                break;
+                            default:
                         }
-                    });
+                    }
+                });
 
-                    builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+                dialog.initDialog();
 
-                    myDialog = builder.create();
-                    myDialog.show();
-                }
 
             }
             return false;

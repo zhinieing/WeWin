@@ -2,23 +2,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/expand_lv_first_height"
+    android:layout_height="@dimen/expand_lv_third_height"
     android:paddingLeft="@dimen/expand_lv_third_padding"
     android:paddingRight="@dimen/activity_horizontal_margin">
 
     <ImageView
         android:id="@+id/third_iv"
         android:layout_centerVertical="true"
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
 
     <TextView
         android:id="@+id/third_tv"
         android:layout_centerVertical="true"
         android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/text_size_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:layout_toRightOf="@id/third_iv"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/padding_medium"
+        android:layout_toRightOf="@id/third_iv"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divideColor" />
 
 </RelativeLayout>

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/expand_lv_first_height"
+    android:layout_height="@dimen/expand_lv_second_height"
     android:paddingLeft="@dimen/expand_lv_second_padding"
     android:paddingRight="@dimen/activity_horizontal_margin">
 
