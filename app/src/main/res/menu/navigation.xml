@@ -3,21 +3,25 @@
 
     <item
         android:id="@+id/navigation_task"
+        android:orderInCategory="0"
         android:icon="@drawable/ic_task"
         android:title="@string/title_task" />
 
     <item
         android:id="@+id/navigation_send"
+        android:orderInCategory="1"
         android:icon="@drawable/ic_send"
         android:title="@string/title_send" />
 
     <item
         android:id="@+id/navigation_receive"
+        android:orderInCategory="2"
         android:icon="@drawable/ic_receive"
         android:title="@string/title_receive" />
 
     <item
         android:id="@+id/navigation_message"
+        android:orderInCategory="3"
         android:icon="@drawable/ic_message"
         android:title="@string/title_message" />
 

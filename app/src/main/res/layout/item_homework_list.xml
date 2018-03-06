@@ -3,16 +3,17 @@
     android:id="@+id/homework_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/padding_medium"
+    android:paddingRight="@dimen/padding_medium"
     android:background="@color/colorPrimary">
 
     <ImageView
         android:id="@+id/item_submitter_img"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/padding_medium"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
         android:src="@drawable/ic_default_user_img" />
 
     <TextView
@@ -20,12 +21,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="@dimen/padding_medium"
+        android:layout_marginTop="@dimen/padding_medium"
         android:layout_toRightOf="@id/item_submitter_img"
         android:text="@string/user_display_name_modify"
+        android:textStyle="bold"
         android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_huge" />
+        android:textSize="@dimen/text_size_large" />
+
+    <TextView
+        android:id="@+id/item_submit_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/item_submitter_img"
+        android:layout_below="@id/item_submitter_name"
+        android:layout_marginLeft="@dimen/padding_medium"
+        android:layout_marginTop="2dp"
+        android:text="@string/release_date"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="@dimen/text_size_small" />
+
 
     <TextView
         android:id="@+id/item_price"
@@ -37,26 +52,16 @@
         android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/text_size_medium" />
 
-    <TextView
-        android:id="@+id/item_submit_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/release_date"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_small" />
 
     <TextView
         android:id="@+id/item_submit_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_submitter_img"
-        android:layout_margin="5dp"
+        android:layout_marginTop="@dimen/padding_small"
+        android:layout_marginBottom="@dimen/padding_small"
         android:text="@string/title"
         android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_huge" />
+        android:textSize="@dimen/text_size_large" />
 
 </RelativeLayout>

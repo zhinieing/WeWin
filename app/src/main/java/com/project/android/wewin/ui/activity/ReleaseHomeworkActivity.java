@@ -224,6 +224,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                 public void done(String s, BmobException e) {
                     if (e == null) {
                         Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                        setResult(2);
                         finish();
                     } else {
                         Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -245,6 +246,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                         public void done(String s, BmobException e) {
                             if (e == null) {
                                 Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                                setResult(2);
                                 finish();
                             } else {
                                 Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();

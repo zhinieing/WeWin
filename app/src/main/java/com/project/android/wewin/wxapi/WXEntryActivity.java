@@ -12,11 +12,7 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.ui.activity.LoginActivity;
 import com.project.android.wewin.utils.Constants;
 import com.project.android.wewin.utils.Util;
-import com.tencent.mm.opensdk.constants.ConstantsAPI;
-import com.tencent.mm.opensdk.modelbase.BaseReq;
-import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +22,7 @@ import cn.bmob.v3.BmobUser.BmobThirdUserAuth;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.LogInListener;
 
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+/*public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +98,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 public void done(JSONObject jsonObject, BmobException e) {
                     if (e == null) {
                         Log.d("wewin", jsonObject.toString());
-                               
+
                     } else {
                         Toast.makeText(WXEntryActivity.this,
                                 "第三方登陆失败：" + e.toString(), Toast.LENGTH_LONG).show();
@@ -114,4 +110,4 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         } catch (JSONException e) {
         }
     }
-}
+}*/

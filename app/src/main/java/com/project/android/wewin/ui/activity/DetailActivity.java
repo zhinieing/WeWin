@@ -295,10 +295,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void done(String s, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -316,10 +316,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                         @Override
                         public void done(String s, BmobException e) {
                             if (e == null) {
-                                Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(DetailActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
                                 finish();
                             } else {
-                                Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(DetailActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -336,7 +336,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 mReply.setClickable(true);
                 mReply.setText(R.string.confirm_release);
                 mReply.setBackgroundColor(ContextCompat.getColor(DetailActivity.this, R.color.colorAccent));
-                Toast.makeText(DetailActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(DetailActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
                 Log.i("error", "errorcode:" + i + " message:" + s);
             }
         });

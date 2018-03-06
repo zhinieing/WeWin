@@ -13,20 +13,25 @@ import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
-import com.project.android.wewin.ui.adapter.ViewPagerAdapter;
+import com.project.android.wewin.ui.adapter.LazyFragmentPagerAdapter;
+import com.project.android.wewin.ui.adapter.LazyViewPager;
 import com.project.android.wewin.ui.fragment.MainFragment;
 import com.project.android.wewin.ui.menu.DrawerAdapter;
 import com.project.android.wewin.ui.menu.DrawerItem;
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
     @BindView(R.id.main_viewpager)
-    ViewPager mainViewpager;
+    LazyViewPager mainViewpager;
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
@@ -88,21 +93,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_task:
-                    mainViewpager.setCurrentItem(0);
-                    return true;
-                case R.id.navigation_send:
-                    mainViewpager.setCurrentItem(1);
-                    return true;
-                case R.id.navigation_receive:
-                    mainViewpager.setCurrentItem(2);
-                    return true;
-                case R.id.navigation_message:
-                    //mainViewpager.setCurrentItem(3);
-                    return true;
-            }
-            return false;
+            mainViewpager.setCurrentItem(item.getOrder());
+            return true;
         }
 
     };
@@ -175,11 +167,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         /*Viewpager页面设置*/
         mainViewpager.addOnPageChangeListener(mOnPageChangeListener);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(MainFragment.newInstance(1));
-        viewPagerAdapter.addFragment(MainFragment.newInstance(2));
-        viewPagerAdapter.addFragment(MainFragment.newInstance(3));
-        mainViewpager.setAdapter(viewPagerAdapter);
+        mainViewpager.setAdapter(new CustomLazyFragmentPagerAdapter(getSupportFragmentManager()));
 
 
 
@@ -259,6 +247,26 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     }
 
+
+    /*自定义懒加载FragmentPagerAdapter*/
+    private static class CustomLazyFragmentPagerAdapter extends LazyFragmentPagerAdapter {
+
+        private CustomLazyFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(ViewGroup container, int position) {
+            return MainFragment.newInstance(position + 1);
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+    }
+
+
     /*侧边栏点击事件*/
     @Override
     public void onItemSelected(int position) {
@@ -324,5 +332,37 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    /*向双层嵌套Fragment分发onActivityResult*/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        FragmentManager fragmentManager=getSupportFragmentManager();
+        for(int indext=0;indext<fragmentManager.getFragments().size();indext++)
+        {
+            Fragment fragment=fragmentManager.getFragments().get(indext);
+            if (fragment != null) {
+                handleResult(fragment,requestCode,resultCode,data);
+            }
+        }
+    }
+
+    private void handleResult(Fragment fragment,int requestCode,int resultCode,Intent data)
+    {
+        fragment.onActivityResult(requestCode, resultCode, data);
+
+        List<Fragment> childFragment = fragment.getChildFragmentManager().getFragments();
+        if(childFragment!=null) {
+            for(Fragment f:childFragment) {
+                if(f!=null)
+                {
+                    handleResult(f, requestCode, resultCode, data);
+                }
+            }
+        }
+
     }
 }

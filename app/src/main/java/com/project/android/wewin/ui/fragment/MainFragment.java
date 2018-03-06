@@ -25,6 +25,7 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.ui.activity.ReleaseHomeworkActivity;
+import com.project.android.wewin.ui.adapter.LazyFragmentPagerAdapter;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
 import java.lang.reflect.Field;
@@ -40,7 +41,7 @@ import butterknife.Unbinder;
  * @date 2017/11/3
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.Laziable{
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -48,7 +49,8 @@ public class MainFragment extends Fragment {
 
     private HomeWorkListViewModel mHomeWorkListViewModel;
 
-    private boolean isTeacher = false ;
+    private boolean isTeacher = false;
+
 
     Unbinder unbinder;
     @BindView(R.id.main_tabs)
@@ -102,7 +104,7 @@ public class MainFragment extends Fragment {
                             if (!isTeacher) {
                                 Toast.makeText(view.getContext(), getString(R.string.is_not_any_class_teacher), Toast.LENGTH_SHORT).show();
                             } else {
-                                startActivity(new Intent(view.getContext(), ReleaseHomeworkActivity.class));
+                                startActivityForResult(new Intent(view.getContext(), ReleaseHomeworkActivity.class), 1);
                             }
                             break;
                         case 1:
@@ -155,7 +157,6 @@ public class MainFragment extends Fragment {
             }
         });
 
-
     }
 
 
@@ -201,6 +202,7 @@ public class MainFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
+
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
                     return TaskFragment.newInstance(position + 1);
@@ -211,6 +213,7 @@ public class MainFragment extends Fragment {
                 default:
             }
             return null;
+
         }
 
         @Override

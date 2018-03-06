@@ -8,7 +8,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
- * Created by pengming on 25/12/2017.
+ *
+ * @author pengming
+ * @date 25/12/2017
  */
 
 public class MyAlertDialog {

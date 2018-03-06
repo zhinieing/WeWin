@@ -65,6 +65,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.4.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
-    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    //compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     compile 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
 }

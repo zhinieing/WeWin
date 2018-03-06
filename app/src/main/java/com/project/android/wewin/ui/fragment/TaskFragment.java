@@ -3,12 +3,14 @@ package com.project.android.wewin.ui.fragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +49,7 @@ import cn.bmob.v3.listener.FindListener;
  * @date 2017/11/4
  */
 
-public class TaskFragment extends Fragment {
+public class TaskFragment extends LazyLoadFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     @BindView(R.id.task_list)
@@ -60,8 +62,10 @@ public class TaskFragment extends Fragment {
 
 
     private TaskRvAdapter taskRvAdapter;
-
     private HomeWorkListViewModel mHomeWorkListViewModel;
+    private Context context;
+
+    private boolean nextPage = false;
 
 
     private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
@@ -69,9 +73,9 @@ public class TaskFragment extends Fragment {
                 @Override
                 public void onClick(HomeWork homeWork) {
                     if (Util.isNetworkConnected(MyApplication.getInstance())) {
-                        DetailActivity.startDetailActivity(getActivity(), homeWork.getObjectId());
+                        DetailActivity.startDetailActivity((MainActivity)context, homeWork.getObjectId());
                     } else {
-                        Toast.makeText(getActivity(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                     }
                 }
             };
@@ -88,17 +92,62 @@ public class TaskFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        Log.d("wewein", "onAttach: 1");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("wewein", "onCreate: 1");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("wewein", "onActivityCreated: 1");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("wewein", "onResume: 1");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("wewein", "onStart: 1");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("wewein", "onDestroy: 1");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("wewein", "onDetach: 1");
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("wewein", "onCreateView: 1");
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         taskList.setLayoutManager(llm);
-        taskList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        taskList.setItemAnimator(new DefaultItemAnimator());
+        taskList.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         taskList.addOnScrollListener(new HomeWorkOnScrollListener());
 
         mRefreshLayout.setOnRefreshListener(new HomeWorSwipeListener());
@@ -110,7 +159,7 @@ public class TaskFragment extends Fragment {
                 android.R.color.holo_red_light);
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            taskRvAdapter = new TaskRvAdapter(getActivity(), homeWorkOnItemClickListener);
+            taskRvAdapter = new TaskRvAdapter(context, homeWorkOnItemClickListener);
             taskList.setAdapter(taskRvAdapter);
         } else {
 
@@ -123,6 +172,7 @@ public class TaskFragment extends Fragment {
     private class HomeWorSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
+            nextPage = false;
             mRefreshLayout.setRefreshing(true);
             mHomeWorkListViewModel.refreshHomeWorkListData();
 
@@ -139,23 +189,26 @@ public class TaskFragment extends Fragment {
                     .findLastVisibleItemPosition();
             if (lastPosition == taskRvAdapter.getItemCount() - 1) {
 
+                nextPage = true;
                 mHomeWorkListViewModel.loadNextPageHomeWorkList();
+
             }
         }
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
+    @Override
+    public void requestData() {
+        nextPage = false;
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
             subscribeUI();
         }
-
     }
 
 
     private void subscribeUI() {
+        Log.d("wewein", "subscribeUI: TaskFragment");
+
         if (!isAdded()) {
             return;
         }
@@ -170,7 +223,15 @@ public class TaskFragment extends Fragment {
                     return;
                 }
 
-                taskRvAdapter.clearHomeWorkList();
+
+                if (!nextPage) {
+                    taskRvAdapter.clearHomeWorkList();
+                } else {
+                    if (homeWorks.size() == 0) {
+                        Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                 taskRvAdapter.setHomeWorkList(homeWorks);
             }
         });
@@ -193,6 +254,7 @@ public class TaskFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        Log.d("wewein", "onDestroyView: 1");
         super.onDestroyView();
         unbinder.unbind();
     }
