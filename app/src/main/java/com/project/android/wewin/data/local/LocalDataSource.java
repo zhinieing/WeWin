@@ -52,10 +52,6 @@ public class LocalDataSource implements DataSource{
         return null;
     }
 
-    @Override
-    public LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId) {
-        return null;
-    }
 
     @Override
     public LiveData<Boolean> isClassTeacher() {

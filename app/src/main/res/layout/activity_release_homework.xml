@@ -8,153 +8,197 @@
     android:orientation="vertical"
     tools:context="com.project.android.wewin.ui.activity.ReleaseHomeworkActivity">
 
-    <include
-        android:id="@+id/release_homework_toolbar"
-        layout="@layout/toolbar_default" />
-
-    <View
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:text="@string/title"
-            android:textSize="@dimen/text_size_huge" />
-
-        <EditText
-            android:id="@+id/release_homework_title"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/release_homework_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:maxLines="1"
-            android:textSize="@dimen/text_size_huge" />
-    </LinearLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
+            <ImageView
+                android:id="@+id/toolbar_user_photo"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimary"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <ImageButton
+                android:id="@+id/release_homework_confirm"
+                android:layout_gravity="right"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/layout_ripple_default"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:src="@drawable/ic_release_submit"/>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/divideColor">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/release_homework_content"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:background="@null"
-                android:gravity="top"
-                android:hint="@string/homework_content"
-                android:minLines="7"
-                android:textSize="@dimen/text_size_huge" />
+                android:orientation="vertical"
+                android:background="@color/colorPrimary">
+
+                <EditText
+                    android:id="@+id/release_homework_title"
+                    android:layout_marginTop="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_medium"
+                    android:hint="@string/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:maxLines="1"
+                    android:maxLength="30"
+                    android:background="@null"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:textSize="@dimen/text_size_huge"
+                    android:textColor="@color/textColorPrimary"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/padding_medium"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:background="@color/divideColor" />
+
+                <EditText
+                    android:id="@+id/release_homework_content"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_medium"
+                    android:background="@null"
+                    android:textCursorDrawable="@drawable/cursor_multi"
+                    android:gravity="top"
+                    android:hint="@string/homework_content"
+                    android:minLines="7"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textSize="@dimen/text_size_large"
+                    android:textColor="@color/textColorContent"/>
+
+                <LinearLayout
+                    android:id="@+id/release_homework_attachment_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/release_homework_attachment"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="@dimen/padding_medium"
+                    android:background="@drawable/button_upload_file" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
 
             <RelativeLayout
+                android:id="@+id/upload_add_target"
+                android:background="@drawable/layout_ripple_default"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
+                android:clickable="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="15dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <ImageButton
-                    android:id="@+id/release_homework_attachment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="15dp"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_attachment" />
-
-                <Button
-                    android:id="@+id/release_deadline"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginRight="15dp"
-                    android:background="@drawable/shape"
-                    android:text="@string/deadline"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/text_size_large" />
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/release_homework_attachment_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="15dp"
-                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="15dp"
                     android:text="@string/send_to"
-                    android:textSize="@dimen/text_size_huge" />
-
-                <Button
-                    android:id="@+id/release_add_target"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/shape"
-                    android:text="@string/add"
-                    android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/text_size_large"
-                    tools:ignore="SpUsage" />
-            </LinearLayout>
+                    android:textColor="@color/textColorPrimary"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/release_add_target"
+                    android:textSize="@dimen/text_size_large"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/alert_group_img1"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/alert_group_img1"
+                    android:src="@drawable/ic_layout_arrow"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
+                android:layout_height="1dp"/>
 
-            <Button
-                android:id="@+id/release_homework_confirm"
+            <RelativeLayout
+                android:id="@+id/upload_deadline"
+                android:background="@drawable/layout_ripple_default"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
+                android:clickable="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/shape"
-                android:text="@string/confirm_release"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/text_size_huge" />
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:text="@string/deadline"
+                    android:textSize="@dimen/text_size_large"
+                    android:textColor="@color/textColorPrimary"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/release_deadline"
+                    android:textSize="@dimen/text_size_large"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/alert_group_img2"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/alert_group_img2"
+                    android:src="@drawable/ic_layout_arrow"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 

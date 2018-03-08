@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,13 +42,12 @@ import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.MyAlertDialog;
-import com.project.android.wewin.viewmodel.ContactViewModel;
+import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.ReleaseHomeWorkViewModel;
 
-
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +60,6 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
-import cn.bmob.v3.listener.UploadFileListener;
 
 /**
  * ReleaseHomeworkActivity class
@@ -75,35 +74,35 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
     private final static String TAG = "Wewin";
     @BindView(R.id.release_homework_toolbar)
-    Toolbar mToolbar;
-
-    @BindView(R.id.toolbar_title)
-    TextView mToolbarTitle;
+    Toolbar toolbar;
+    @BindView(R.id.toolbar_user_photo)
+    ImageView toolbarUserPhoto;
+    @BindView(R.id.release_homework_confirm)
+    ImageButton mConfirm;
 
     @BindView(R.id.release_homework_title)
     EditText mHomeworkTitle;
-
     @BindView(R.id.release_homework_content)
     EditText mHomeworkContent;
-
     @BindView(R.id.release_homework_attachment)
-    ImageButton mAttachment;
+    Button mAttachment;
 
     @BindView(R.id.release_homework_attachment_layout)
     LinearLayout mAttachmentLayout;
 
+    @BindView(R.id.upload_add_target)
+    RelativeLayout uploadAddTarget;
+    @BindView(R.id.upload_deadline)
+    RelativeLayout uploadDeadline;
     @BindView(R.id.release_deadline)
-    Button mDeadline;
-
+    TextView mDeadline;
     @BindView(R.id.release_add_target)
-    Button mAddTarget;
+    TextView mAddTarget;
 
-    @BindView(R.id.release_homework_confirm)
-    Button mConfirm;
 
     private TimePickerDialog mDialogAll;
 
-    private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private HomeWork mHomeWork = new HomeWork();
     private MyUser user;
@@ -116,34 +115,45 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_release_homework);
         ButterKnife.bind(this);
-        mToolbarTitle.setText(R.string.release);
-        mToolbar.setNavigationIcon(R.drawable.ic_release_cancel);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+        toolbar.setNavigationIcon(R.drawable.ic_release_cancel);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        mDeadline.setOnClickListener(this);
+
+        uploadAddTarget.setOnClickListener(this);
+        uploadDeadline.setOnClickListener(this);
         mAttachment.setOnClickListener(this);
-        mAddTarget.setOnClickListener(this);
         mConfirm.setOnClickListener(this);
-        initTimePicker();
+
+
         user = BmobUser.getCurrentUser(MyUser.class);
+        if (user.getUserPhoto() != null) {
+            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), toolbarUserPhoto);
+        } else {
+            Util.loadCircleImage(Uri.parse(""), toolbarUserPhoto);
+        }
+
+        initTimePicker();
+        subscribeUI();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.release_deadline:
+            case R.id.upload_deadline:
                 mDialogAll.show(getSupportFragmentManager(), "all");
                 break;
             case R.id.release_homework_attachment:
                 addAttachment();
                 break;
-            case R.id.release_add_target:
+            case R.id.upload_add_target:
                 addTarget();
                 break;
             case R.id.release_homework_confirm:
@@ -155,11 +165,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        subscribeUI();
-    }
 
     private void subscribeUI() {
 
@@ -176,6 +181,16 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
                 mClassData.clear();
                 mClassData.addAll(classes);
+
+                mAddTarget.setText(classes.get(0).getClassName());
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DAY_OF_YEAR, 1);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                mDeadline.setText(sf.format(cal.getTime()));
             }
         });
 
@@ -215,19 +230,18 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
     private void uploadAttachment() {
         mConfirm.setClickable(false);
-        mConfirm.setText(R.string.uploading);
-        mConfirm.setBackgroundColor(ContextCompat.getColor(this, R.color.textColorSecondary));
+
         int size = mAttachmentLayout.getChildCount();
         if (size == 0) {
             mHomeWork.save(new SaveListener<String>() {
                 @Override
                 public void done(String s, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_success), Toast.LENGTH_SHORT).show();
                         setResult(2);
                         finish();
                     } else {
-                        Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_fail), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -264,9 +278,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             @Override
             public void onError(int i, String s) {
                 mConfirm.setClickable(true);
-                mConfirm.setText(R.string.confirm_release);
-                mConfirm.setBackgroundColor(ContextCompat.getColor(ReleaseHomeworkActivity.this, R.color.colorAccent));
-                Toast.makeText(ReleaseHomeworkActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(ReleaseHomeworkActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
                 Log.i("error", "errorcode:" + i + " message:" + s);
             }
         });
@@ -279,87 +292,23 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             return;
         }
 
-        View alertView = LayoutInflater.from(this).inflate(R.layout.alert_add_group, null);
-        RelativeLayout alertRlClass = alertView.findViewById(R.id.alert_group_class);
-        RelativeLayout alertRlGroup = alertView.findViewById(R.id.alert_group_group);
-
-        final TextView tvClass = alertView.findViewById(R.id.alert_group_choose_class);
-        final TextView tvGroup = alertView.findViewById(R.id.alert_group_choose_group);
-
-        alertRlGroup.setVisibility(View.GONE);
-        tvGroup.setVisibility(View.GONE);
 
         final String[] classNames = new String[mClassData.size()];
         for (int i = 0; i < mClassData.size(); i++) {
             classNames[i] = mClassData.get(i).getClassName();
         }
 
-        final int[] index = new int[1];
-        final boolean[] isTeacher = new boolean[1];
-
-        alertRlClass.setOnClickListener(new View.OnClickListener() {
+        final MyAlertDialog dialog = new MyAlertDialog(ReleaseHomeworkActivity.this, classNames, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                final MyAlertDialog dialog = new MyAlertDialog(ReleaseHomeworkActivity.this, classNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        tvClass.setText(classNames[i]);
+            public void onClick(final DialogInterface dialogInterface, final int i) {
 
-                        index[0] = i;
+                mAddTarget.setText(classNames[i]);
+                mHomeWork.setGroupInfo(mClassData.get(i).getGroupInfos().get(0));
 
-                        BmobQuery<GroupMember> query = new BmobQuery<>();
-                        query.addWhereEqualTo("memberUser", user);
-
-                        BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
-                        innerQuery.addWhereEqualTo("targetClass", mClassData.get(i));
-                        innerQuery.addWhereEqualTo("auth", 1);
-
-                        query.addWhereMatchesQuery("targetGroupInfo", "GroupInfo", innerQuery);
-                        query.findObjects(new FindListener<GroupMember>() {
-                            @Override
-                            public void done(List<GroupMember> list, BmobException e) {
-                                if (e == null && list.size() != 0) {
-                                    isTeacher[0] = true;
-                                } else {
-                                    isTeacher[0] = false;
-                                }
-                            }
-                        });
-
-                    }
-                });
-
-                dialog.initDialog();
             }
         });
 
-        AlertDialog myDialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.alert_group_class);
-        builder.setView(alertView);
-        builder.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (!isTeacher[0]) {
-                    Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_homework_not_this_class_teacher), Toast.LENGTH_SHORT).show();
-                    dialogInterface.dismiss();
-                    return;
-                }
-
-                mHomeWork.setGroupInfo(mClassData.get(index[0]).getGroupInfos().get(0));
-                mAddTarget.setText(classNames[index[0]]);
-            }
-        });
-
-        builder.setNegativeButton(R.string.alert_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        myDialog = builder.create();
-        myDialog.show();
+        dialog.initDialog();
 
     }
 
@@ -369,7 +318,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
             startActivityForResult(Intent.createChooser(intent, "请选择一个要上传的文件"), FILE_SELECT_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(this, "请安装文件管理器", Toast.LENGTH_SHORT).show();
         }
     }
@@ -417,7 +366,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                 .setMinMillseconds(System.currentTimeMillis())
                 .setMaxMillseconds(System.currentTimeMillis() + fiveYears)
                 .setCurrentMillseconds(System.currentTimeMillis())
-                .setThemeColor(ContextCompat.getColor(this, R.color.colorAccent))
+                .setThemeColor(ContextCompat.getColor(this, R.color.color_button_default))
                 .setType(Type.ALL)
                 .setWheelItemTextNormalColor(ContextCompat.getColor(this, R.color.textColorPrimary))
                 .setWheelItemTextSelectorColor(ContextCompat.getColor(this, R.color.textColorPrimary))
@@ -444,9 +393,9 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         } else if (mHomeWork.getHomeworkContent().isEmpty()) {
             Toast.makeText(this, "请输入作业内容", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getHomeworkDeadline() == null) {
-            Toast.makeText(this, "请选择截止时间", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请选择截止日期", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getGroupInfo() == null) {
-            Toast.makeText(this, "请选择发送对象", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请选择接收作业的班级", Toast.LENGTH_SHORT).show();
         } else {
             homeworkValid = true;
         }

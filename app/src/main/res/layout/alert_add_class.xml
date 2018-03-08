@@ -11,7 +11,15 @@
         android:layout_width="match_parent"
         android:hint="@string/alert_class_name"
         android:textColor="@color/textColorPrimary"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:textCursorDrawable="@drawable/cursor"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/padding_small"
+        android:layout_height="1dp"
+        android:background="@color/textColorSecondary" />
 
     <TextView
         android:layout_width="match_parent"

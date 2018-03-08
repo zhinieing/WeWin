@@ -136,6 +136,7 @@ public class PostedTaskFragment extends LazyLoadFragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -224,9 +225,9 @@ public class PostedTaskFragment extends LazyLoadFragment {
                 if (!nextPage) {
                     taskRvAdapter.clearHomeWorkList();
                 } else {
-                    if (homeWorks.size() == 0) {
+                    /*if (homeWorks.size() == 0) {
                         Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
                 }
                 taskRvAdapter.setHomeWorkList(homeWorks);
             }

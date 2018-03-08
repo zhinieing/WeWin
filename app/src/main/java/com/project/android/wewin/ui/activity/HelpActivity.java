@@ -26,12 +26,5 @@ public class HelpActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mToolbarTitle.setText(R.string.help_and_feedback);
         mToolbar.setTitle("");
-        mToolbar.setNavigationIcon(R.drawable.ic_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
     }
 }

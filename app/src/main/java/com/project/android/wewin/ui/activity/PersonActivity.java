@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,9 +14,14 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Util;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FetchUserInfoListener;
 
 /**
  * @author pengming
@@ -30,6 +36,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.person_toolbar)
     Toolbar toolbar;
 
+    private MyUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +55,13 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
 
-        MyUser user = BmobUser.getCurrentUser(MyUser.class);
-        initView(user);
+        user = BmobUser.getCurrentUser(MyUser.class);
+
+        initView();
+
     }
 
-    private void initView(MyUser user) {
+    private void initView() {
 
         if (user.getUserPhoto() != null) {
             Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
@@ -61,6 +70,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
         }
 
     }
+
 
     @Override
     public void onClick(View view) {

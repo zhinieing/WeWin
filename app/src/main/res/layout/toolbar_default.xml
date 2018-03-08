@@ -5,8 +5,7 @@
     android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary"
     app:layout_scrollFlags="scroll|enterAlways"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    >
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
     <TextView
         android:id="@+id/toolbar_title"
@@ -14,6 +13,6 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="center"
         android:gravity="center_vertical"
-        android:textColor="@color/color_button_default"
+        android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/text_size_huge" />
 </android.support.v7.widget.Toolbar>

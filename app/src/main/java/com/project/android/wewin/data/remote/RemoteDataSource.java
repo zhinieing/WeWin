@@ -39,8 +39,6 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<HomeWork>> mPostedHomeWorkList = new MutableLiveData<>();
 
-    private final MutableLiveData<HomeWork> mHomeWork = new MutableLiveData<>();
-
     private final MutableLiveData<Boolean> mIsClassTeacher = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
@@ -48,6 +46,7 @@ public class RemoteDataSource implements DataSource {
     private final MutableLiveData<List<Class>> mClassList = new MutableLiveData<>();
 
     private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
+
 
     private int indexClass;
     private int indexGroup;
@@ -90,6 +89,7 @@ public class RemoteDataSource implements DataSource {
                         BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
                         innerQuery.addWhereContainedIn("objectId", groupIds);
                         query.addWhereMatchesQuery("groupInfo", "GroupInfo", innerQuery);
+                        
                         query.include("creatorUser");
                         query.setSkip(10*(index - 1));
                         query.setLimit(10);
@@ -157,24 +157,6 @@ public class RemoteDataSource implements DataSource {
     @Override
     public LiveData<Boolean> isLoadingPostedHomeWorkList() {
         return mIsLoadingPostedHomeWorkList;
-    }
-
-
-
-    @Override
-    public LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId) {
-
-        BmobQuery<HomeWork> query = new BmobQuery<>();
-        query.include("creatorUser");
-        query.getObject(mHomeWorkId, new QueryListener<HomeWork>() {
-            @Override
-            public void done(HomeWork homeWork, BmobException e) {
-                if (e == null) {
-                    mHomeWork.setValue(homeWork);
-                }
-            }
-        });
-        return mHomeWork;
     }
 
 
@@ -318,6 +300,11 @@ public class RemoteDataSource implements DataSource {
 
             BmobQuery<GroupMember> query = new BmobQuery<>();
             query.addWhereEqualTo("memberUser", user);
+
+            BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
+            innerQuery.addWhereEqualTo("auth", 1);
+
+            query.addWhereMatchesQuery("targetGroupInfo", "GroupInfo", innerQuery);
             query.include("targetGroupInfo");
             query.findObjects(new FindListener<GroupMember>() {
                 @Override

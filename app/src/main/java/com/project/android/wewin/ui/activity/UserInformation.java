@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -226,20 +229,50 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
         super.onStop();
 
         MyUser newMyUser = new MyUser();
+
         if (checks[0]) {
             newMyUser.setUserPhoto(changes[0]);
         }
         if (checks[1]) {
             newMyUser.setUsername(changes[1]);
         }
-        newMyUser.update(user.getObjectId(), new UpdateListener() {
-            @Override
-            public void done(BmobException e) {
-                if (e == null) {
+
+        if (checks[0] || checks[1]) {
+            newMyUser.update(user.getObjectId(), new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
+
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "您点击了返回按钮", Toast.LENGTH_LONG).show();
+
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Toast.makeText(this, "您an了返回按钮", Toast.LENGTH_LONG).show();
+
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
 
 
     /*private void uploadImg2QiNiu(String path) {

@@ -27,12 +27,6 @@ public interface DataSource {
 
 
 
-    /*作业详情页*/
-
-    LiveData<HomeWork> getHomeWorkDetail(String mHomeWorkId);
-
-
-
     /*通讯录*/
 
     LiveData<List<Class>> getClassList();

@@ -8,74 +8,22 @@
     android:orientation="vertical"
     tools:context="com.project.android.wewin.ui.activity.DetailActivity">
 
-    <include
-        android:id="@+id/detail_toolbar"
-        layout="@layout/toolbar_default" />
 
-    <View
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
+        android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        <include
+            android:id="@+id/detail_toolbar"
+            layout="@layout/toolbar_default" />
 
-        <ImageView
-            android:id="@+id/detail_user_img"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/ic_default_user_img" />
+    </android.support.design.widget.AppBarLayout>
 
-        <TextView
-            android:id="@+id/detail_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/detail_user_img"
-            android:text="@string/user_name"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/text_size_huge" />
-
-        <TextView
-            android:id="@+id/detail_release_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="3dp"
-            android:text="@string/deadline"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/text_size_small" />
-
-        <TextView
-            android:id="@+id/detail_deadline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/detail_release_date"
-            android:layout_margin="3dp"
-            android:text="@string/deadline"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/text_size_small" />
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
 
         <LinearLayout
@@ -83,41 +31,108 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
-            <TextView
-                android:id="@+id/detail_title"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="15dp"
-                android:background="@null"
-                android:hint="@string/title"
-                android:maxLines="1"
-                android:textSize="@dimen/text_size_huge" />
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
+                android:paddingTop="@dimen/padding_medium"
+                android:paddingBottom="@dimen/padding_small">
+
+                <ImageView
+                    android:id="@+id/detail_user_img"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/ic_person_img" />
+
+                <TextView
+                    android:id="@+id/detail_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/padding_medium"
+                    android:layout_toRightOf="@id/detail_user_img"
+                    android:text="@string/user_display_name_modify"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large" />
+
+                <TextView
+                    android:id="@+id/item_submit_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/detail_user_img"
+                    android:layout_below="@id/detail_user_name"
+                    android:layout_marginLeft="@dimen/padding_medium"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/release_date"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/text_size_small" />
+
+
+                <TextView
+                    android:id="@+id/detail_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/deadline"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large"/>
+
+                <TextView
+                    android:id="@+id/detail_deadline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/detail_release_date"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/deadline"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="@dimen/text_size_small"/>
+
+            </RelativeLayout>
+
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
+                android:layout_marginLeft="@dimen/padding_medium"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:background="@color/divideColor" />
+
+            <TextView
+                android:id="@+id/detail_title"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:maxLines="1"
+                android:background="@null"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/text_size_huge" />
+
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:layout_marginLeft="@dimen/padding_medium"-->
+                <!--android:layout_marginRight="@dimen/padding_medium"-->
+                <!--android:background="@color/divideColor" />-->
 
             <TextView
                 android:id="@+id/detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:background="@null"
-                android:gravity="top"
-                android:hint="@string/homework_content"
-                android:minLines="8"
-                android:textSize="@dimen/text_size_huge" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
+                android:minLines="7"
+                android:lineSpacingMultiplier="1.2"
+                android:textColor="@color/textColorContent"
+                android:textSize="@dimen/text_size_large" />
 
             <LinearLayout
                 android:id="@+id/detail_attachment_layout"
@@ -128,56 +143,59 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/detail_reply_attachment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_attachment" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/detail_reply_attachment_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
-
-            <Button
-                android:id="@+id/detail_reply"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/shape"
-                android:text="@string/reply"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/text_size_huge" />
         </LinearLayout>
 
-
     </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/detail_reply"
+        android:clickable="true"
+        android:background="@drawable/layout_ripple_bottom"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:elevation="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold"
+            android:textColor="@color/textColorPrimary"
+            android:text="@string/reply"/>
+    </LinearLayout>
+
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="15dp"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/detail_reply_attachment"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/colorPrimary"-->
+            <!--android:src="@drawable/ic_attachment" />-->
+
+    <!--</LinearLayout>-->
+
+
+
+
+
+    <!--<Button-->
+        <!--android:id="@+id/detail_reply"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="20dp"-->
+        <!--android:background="@drawable/shape"-->
+        <!--android:text="@string/reply"-->
+        <!--android:textColor="@color/colorPrimary"-->
+        <!--android:textSize="@dimen/text_size_huge" />-->
 
 </LinearLayout>

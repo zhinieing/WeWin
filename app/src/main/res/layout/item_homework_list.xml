@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/padding_medium"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/ic_default_user_img" />
+        android:src="@drawable/ic_person_img" />
 
     <TextView
         android:id="@+id/item_submitter_name"

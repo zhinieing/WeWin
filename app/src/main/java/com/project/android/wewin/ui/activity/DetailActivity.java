@@ -2,53 +2,48 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
-import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Util;
-import com.project.android.wewin.viewmodel.DetailViewModel;
-
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
 
 import java.io.File;
-import java.net.URL;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 
@@ -64,85 +59,78 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private final static int FILE_SELECT_CODE = 0;
 
     @BindView(R.id.detail_toolbar)
-    Toolbar mToolbar;
-
+    Toolbar toolbar;
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
 
     @BindView(R.id.detail_user_img)
     ImageView mUserImg;
-
     @BindView(R.id.detail_user_name)
     TextView mUserName;
-
+    @BindView(R.id.item_submit_time)
+    TextView mSubmitTime;
     @BindView(R.id.detail_deadline)
     TextView mDeadline;
 
     @BindView(R.id.detail_title)
     TextView mDetailTitle;
-
     @BindView(R.id.detail_content)
     TextView mDetailContent;
-
     @BindView(R.id.detail_attachment_layout)
     LinearLayout mAttachmentLayout;
 
-    @BindView(R.id.detail_reply_attachment_layout)
-    LinearLayout mReplyLayout;
-
-    @BindView(R.id.detail_reply_attachment)
-    ImageButton mAttachment;
 
     @BindView(R.id.detail_reply)
-    Button mReply;
+    LinearLayout mReply;
+
 
     private HomeWork mHomeWork;
     private String mHomeWorkId;
     private Commit mCommit = new Commit();
     private MyUser user;
+    //ImageButton mAttachment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-        mToolbar.setTitle("");
-        mToolbarTitle.setText(R.string.content);
-        mToolbar.setNavigationIcon(R.drawable.ic_back);
-        setSupportActionBar(mToolbar);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+        mToolbarTitle.setText(R.string.homework);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        mAttachment.setOnClickListener(this);
+
+        //mAttachment.setOnClickListener(this);
         mReply.setOnClickListener(this);
         mHomeWorkId = getIntent().getStringExtra("homework_detail");
         user = BmobUser.getCurrentUser(MyUser.class);
 
-        Log.d("wewein", "onCreate detail: ");
         subscribeUI();
     }
 
 
     private void subscribeUI() {
-        DetailViewModel.Factory factory = new DetailViewModel.Factory(MyApplication.getInstance(),
-                Injection.getDataRepository(MyApplication.getInstance()), mHomeWorkId);
-        DetailViewModel detailViewModel = ViewModelProviders.of(this, factory).get(DetailViewModel.class);
-        detailViewModel.getHomeWorkDetail().observe(this, new Observer<HomeWork>() {
+        BmobQuery<HomeWork> query = new BmobQuery<>();
+        query.include("creatorUser");
+        query.getObject(mHomeWorkId, new QueryListener<HomeWork>() {
             @Override
-            public void onChanged(@Nullable HomeWork homeWork) {
-                if (homeWork == null) {
-                    return;
+            public void done(HomeWork homeWork, BmobException e) {
+                if (e == null) {
+                    if (homeWork != null) {
+                        mHomeWork = homeWork;
+                        initDetail(homeWork);
+                    }
                 }
-
-
-                initDetail(homeWork);
-
-                mHomeWork = homeWork;
             }
         });
+
     }
 
 
@@ -228,15 +216,67 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.detail_reply:
-                replyConfirm();
-                break;
-            case R.id.detail_reply_attachment:
-                addAttachment();
+                toReply();
+//                addAttachment();
+//                replyConfirm();
                 break;
             default:
                 break;
         }
     }
+
+
+    private void toReply() {
+        final BottomSheetDialog dialog=new BottomSheetDialog(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_dialog_upload, null);
+
+        LinearLayout mAttachment = dialogView.findViewById(R.id.detail_reply_attachment);
+        final TextView mAttachmentWord = dialogView.findViewById(R.id.detail_reply_word);
+
+        mAttachment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAttachmentWord.setText(getString(R.string.submit));
+
+                if (getString(R.string.submit).equals(mAttachmentWord.getText())) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog.setContentView(dialogView);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+
+
+        /*禁止BottomSheetDialog向下滑动隐藏*/
+        try {
+            Field mBehaviorField = dialog.getClass().getDeclaredField("mBehavior");
+            mBehaviorField.setAccessible(true);
+            final BottomSheetBehavior behavior = (BottomSheetBehavior) mBehaviorField.get(dialog);
+            behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                    if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                }
+            });
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+        dialog.show();
+
+    }
+
 
     private void replyConfirm() {
         mCommit.setCreatorUser(user);
@@ -247,7 +287,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         } else {
             if (isReplyValid()) {
-                uploadAttachment();
+                //uploadAttachment();
             }
         }
     }
@@ -268,7 +308,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    uploadAttachment();
+                    //uploadAttachment();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -285,10 +325,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void uploadAttachment() {
+    /*private void uploadAttachment() {
         mReply.setClickable(false);
-        mReply.setText(R.string.uploading);
-        mReply.setBackgroundColor(ContextCompat.getColor(this, R.color.textColorSecondary));
+
         int size = mReplyLayout.getChildCount();
         if (size == 0) {
             mCommit.save(new SaveListener<String>() {
@@ -334,14 +373,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onError(int i, String s) {
                 mReply.setClickable(true);
-                mReply.setText(R.string.confirm_release);
-                mReply.setBackgroundColor(ContextCompat.getColor(DetailActivity.this, R.color.colorAccent));
+
                 //Toast.makeText(DetailActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
                 Log.i("error", "errorcode:" + i + " message:" + s);
             }
         });
 
-    }
+    }*/
 
 
     private void addAttachment() {
@@ -350,7 +388,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
             startActivityForResult(Intent.createChooser(intent, "请选择一个要上传的文件"), FILE_SELECT_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(this, "请安装文件管理器", Toast.LENGTH_SHORT).show();
         }
     }
@@ -371,13 +409,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 textView.setLayoutParams(layoutParams);
                 textView.setBackgroundColor(ContextCompat.getColor(this, R.color.attachmentBackground));
                 textView.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-                textView.setOnClickListener(new View.OnClickListener() {
+                /*textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         mReplyLayout.removeView(textView);
                     }
                 });
-                mReplyLayout.addView(textView);
+                mReplyLayout.addView(textView);*/
             }
         }
     }

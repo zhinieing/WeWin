@@ -81,7 +81,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="15dp"
                     android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_attachment" />
+                    android:src="@drawable/ic_person_img" />
 
             </RelativeLayout>
 
@@ -135,7 +135,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_margin="10dp"
                         android:background="@color/colorPrimary"
-                        android:src="@drawable/ic_move" />
+                        android:src="@drawable/ic_person_img" />
                 </RelativeLayout>
 
                 <View
@@ -166,7 +166,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_margin="10dp"
                         android:background="@color/colorPrimary"
-                        android:src="@drawable/ic_move" />
+                        android:src="@drawable/ic_person_img" />
                 </RelativeLayout>
 
                 <View
