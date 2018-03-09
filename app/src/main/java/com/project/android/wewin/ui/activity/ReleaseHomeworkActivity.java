@@ -45,6 +45,7 @@ import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.ReleaseHomeWorkViewModel;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +56,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -134,11 +136,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
 
         user = BmobUser.getCurrentUser(MyUser.class);
-        if (user.getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), toolbarUserPhoto);
-        } else {
-            Util.loadCircleImage(Uri.parse(""), toolbarUserPhoto);
-        }
+        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), toolbarUserPhoto);
 
         initTimePicker();
         subscribeUI();
@@ -378,7 +376,18 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
         String text = getDateToString(millseconds);
         mDeadline.setText(text);
-        mHomeWork.setHomeworkDeadline(text);
+
+        Log.d("wewein", "onDateSet: "+text);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        try {
+            Date date = sdf.parse(text);
+            Log.d("wewein", "onDateSet: "+date);
+            mHomeWork.setHomeworkDeadline(new BmobDate(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getDateToString(long time) {
@@ -392,10 +401,10 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             Toast.makeText(this, "请输入作业标题", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getHomeworkContent().isEmpty()) {
             Toast.makeText(this, "请输入作业内容", Toast.LENGTH_SHORT).show();
-        } else if (mHomeWork.getHomeworkDeadline() == null) {
-            Toast.makeText(this, "请选择截止日期", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getGroupInfo() == null) {
             Toast.makeText(this, "请选择接收作业的班级", Toast.LENGTH_SHORT).show();
+        } else if (mHomeWork.getHomeworkDeadline() == null) {
+            Toast.makeText(this, "请选择截止日期", Toast.LENGTH_SHORT).show();
         } else {
             homeworkValid = true;
         }

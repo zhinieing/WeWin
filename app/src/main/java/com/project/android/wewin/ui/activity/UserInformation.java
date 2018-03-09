@@ -92,11 +92,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
 
     private void initView() {
 
-        if (user.getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
-        } else {
-            Util.loadCircleImage(Uri.parse(""), modifiedUserPhoto);
-        }
+        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), modifiedUserPhoto);
 
         modifiedUserDisplayName.setText(user.getUsername());
     }

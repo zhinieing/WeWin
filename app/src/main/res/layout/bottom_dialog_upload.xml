@@ -25,7 +25,7 @@
         android:layout_height="50dp">
 
         <TextView
-            android:id="@+id/detail_reply_word"
+            android:id="@+id/detail_reply_attachment_word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

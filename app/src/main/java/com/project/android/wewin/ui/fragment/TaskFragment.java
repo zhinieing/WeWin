@@ -73,7 +73,7 @@ public class TaskFragment extends LazyLoadFragment {
                 @Override
                 public void onClick(HomeWork homeWork) {
                     if (Util.isNetworkConnected(MyApplication.getInstance())) {
-                        DetailActivity.startDetailActivity((MainActivity)context, homeWork.getObjectId());
+                        DetailActivity.startDetailActivity((MainActivity)context, homeWork, 0);
                     } else {
                         Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                     }

@@ -67,6 +67,8 @@
     <string name="release_success">上传成功</string>
     <string name="release_fail">上传失败</string>
 
+    <string name="deadline_time_left">距离提交作业截止时间</string>
+    <string name="deadline_passed">作业已过期！</string>
     <string name="reply_submit">点击添加附件</string>
     <string name="confirm_release">确认发布</string>
     <string name="addition_info">附加信息：</string>
@@ -75,6 +77,7 @@
     <string name="release">发布</string>
     <string name="content">内容</string>
     <string name="reply">回 复</string>
+    <string name="modify">修 改</string>
     <string name="submit">提 交</string>
     <string name="link1">附件1链接</string>
     <string name="reply_content">回复内容</string>

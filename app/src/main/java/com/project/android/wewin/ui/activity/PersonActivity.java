@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -63,11 +64,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
 
-        if (user.getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
-        } else {
-            Util.loadCircleImage(Uri.parse(""), userPhoto);
-        }
+        Util.loadCircleImage(Uri.parse(user.getUserPhoto()), userPhoto);
 
     }
 
@@ -81,4 +78,6 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
             default:
         }
     }
+
+
 }

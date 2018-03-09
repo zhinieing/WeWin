@@ -11,11 +11,15 @@ import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -85,15 +89,24 @@ public class RemoteDataSource implements DataSource {
                             groupIds.add(groupMember.getTargetGroupInfo().getObjectId());
                         }
 
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date date = null;
+                        try {
+                            date = sdf.parse(sdf.format(new Date()));
+                            Log.d("wewein", "done: "+date);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
                         BmobQuery<HomeWork> query = new BmobQuery<>();
                         BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
                         innerQuery.addWhereContainedIn("objectId", groupIds);
                         query.addWhereMatchesQuery("groupInfo", "GroupInfo", innerQuery);
-                        
+                        query.addWhereGreaterThan("homeworkDeadline", new BmobDate(date));
                         query.include("creatorUser");
                         query.setSkip(10*(index - 1));
                         query.setLimit(10);
-                        query.order("createdAt");
+                        query.order("homeworkDeadline");
                         query.findObjects(new FindListener<HomeWork>() {
                             @Override
                             public void done(List<HomeWork> list, BmobException e) {
@@ -135,7 +148,7 @@ public class RemoteDataSource implements DataSource {
             query.include("creatorUser");
             query.setSkip(10*(index - 1));
             query.setLimit(10);
-            query.order("createdAt");
+            query.order("-createdAt");
             query.findObjects(new FindListener<HomeWork>() {
                 @Override
                 public void done(List<HomeWork> list, BmobException e) {

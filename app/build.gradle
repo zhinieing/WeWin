@@ -27,6 +27,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobDate;
 
 /**
  * HomeWork class
@@ -18,7 +19,7 @@ import cn.bmob.v3.BmobObject;
 public class HomeWork extends BmobObject {
     private String homeworkTitle;
     private String homeworkContent;
-    private String homeworkDeadline;
+    private BmobDate homeworkDeadline;
     private MyUser creatorUser;
     private GroupInfo groupInfo;
     private List<String> attachmentPath;
@@ -43,11 +44,11 @@ public class HomeWork extends BmobObject {
         this.homeworkContent = homeworkContent;
     }
 
-    public String getHomeworkDeadline() {
+    public BmobDate getHomeworkDeadline() {
         return homeworkDeadline;
     }
 
-    public void setHomeworkDeadline(String homeworkDeadline) {
+    public void setHomeworkDeadline(BmobDate homeworkDeadline) {
         this.homeworkDeadline = homeworkDeadline;
     }
 

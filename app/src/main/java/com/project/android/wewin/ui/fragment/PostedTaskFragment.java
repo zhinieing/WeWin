@@ -63,7 +63,7 @@ public class PostedTaskFragment extends LazyLoadFragment {
                 @Override
                 public void onClick(HomeWork homeWork) {
                     if (Util.isNetworkConnected(MyApplication.getInstance())) {
-                        DetailActivity.startDetailActivity((MainActivity)context, homeWork.getObjectId());
+                        DetailActivity.startDetailActivity((MainActivity)context, homeWork, 1);
                     } else {
                         Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                     }
@@ -131,7 +131,6 @@ public class PostedTaskFragment extends LazyLoadFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1 && resultCode == 2) {
-            Log.d("wewein", "!!!!!!!!!!!!!!!!!!onActivityResult: ");
             requestData();
         }
     }

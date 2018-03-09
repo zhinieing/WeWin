@@ -23,6 +23,8 @@ import com.project.android.wewin.data.remote.model.MyUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -101,6 +103,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.login_get_confirm:
+                if (!validatePhoneForm()) {
+                    break;
+                }
                 new MyCountDownTimer(60000, 1000).start();
                 getConfirmSMS(loginPhone.getText().toString());
                 break;
@@ -154,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void signIn(String phone, String password) {
 
         if (passwordLogin) {
-            if (!validatePasswordForm()) {
+            if (!validatePasswordForm() || !validatePhoneForm()) {
                 return;
             }
 
@@ -181,7 +186,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
         } else {
-            if (!validateCodeForm()) {
+            if (!validateCodeForm() || !validatePhoneForm()) {
                 return;
             }
 
@@ -213,7 +218,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void signUp(String phone, String password, String code) {
 
-        if (!validatePasswordForm() || !validateCodeForm()) {
+        if (!validatePasswordForm() || !validateCodeForm() || !validatePhoneForm()) {
             return;
         }
 
@@ -243,6 +248,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+    }
+
+
+    private boolean validatePhoneForm() {
+        boolean valid = true;
+
+        String phone = loginPhone.getText().toString();
+        String regExp = "^((13[0-9])|(15[^4])|(166)|(17[0-8])|(18[0-9])|(19[8-9])|(147,145))\\d{8}$";
+        Pattern p = Pattern.compile(regExp);
+        Matcher m = p.matcher(phone);
+
+        if (TextUtils.isEmpty(phone)) {
+            Toast.makeText(this, getString(R.string.error_phone_required), Toast.LENGTH_SHORT).show();
+            valid = false;
+        } else if (!m.matches()) {
+            Toast.makeText(this, getString(R.string.error_phone_style), Toast.LENGTH_SHORT).show();
+            valid = false;
+        }
+
+        return valid;
     }
 
     private boolean validatePasswordForm() {

@@ -212,11 +212,7 @@ public class ExpandListViewAdapter extends BaseExpandableListAdapter {
             }
 
             String imgUrl = listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getMemberUser().getUserPhoto();
-            if (imgUrl != null) {
-                Util.loadCircleImage(Uri.parse(imgUrl), holder.iv);
-            } else {
-                Util.loadCircleImage(Uri.parse(""), holder.iv);
-            }
+            Util.loadCircleImage(Uri.parse(imgUrl), holder.iv);
 
             holder.tv.setText(listSecondModel.get(groupPosition).getGroupMembers().get(childPosition).getMemberUser().getUsername());
 

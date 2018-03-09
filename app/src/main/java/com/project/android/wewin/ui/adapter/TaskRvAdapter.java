@@ -46,11 +46,7 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
     public void onBindViewHolder(final TaskRvAdapter.ViewHolder holder, int position) {
         final HomeWork homeWork = homeWorkList.get(position);
 
-        if (homeWork.getCreatorUser().getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(homeWork.getCreatorUser().getUserPhoto()), holder.userPhoto);
-        } else {
-            Util.loadCircleImage(Uri.parse(""), holder.userPhoto);
-        }
+        Util.loadCircleImage(Uri.parse(homeWork.getCreatorUser().getUserPhoto()), holder.userPhoto);
 
         holder.userName.setText(homeWork.getCreatorUser().getUsername());
         holder.submitTime.setText(homeWork.getCreatedAt().substring(0, 16));

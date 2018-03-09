@@ -237,9 +237,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
         if (user != null) {
             PersonItem personItem = (PersonItem) items.get(0);
-            if (user.getUserPhoto() != null) {
-                personItem.setImageUri(Uri.parse(user.getUserPhoto()));
-            }
+            personItem.setImageUri(Uri.parse(user.getUserPhoto()));
             personItem.setUsername(user.getUsername());
 
             drawerAdapter.notifyDataSetChanged();

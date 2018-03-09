@@ -5,22 +5,25 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,22 +33,23 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.databinding.ActivityDetailBinding;
 import com.project.android.wewin.utils.Util;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UploadBatchListener;
 
 /**
  * DetailActivity class
@@ -54,14 +58,19 @@ import cn.bmob.v3.listener.UploadBatchListener;
  * @date 2017/12/10
  */
 
-public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class DetailActivity extends AppCompatActivity {
 
     private final static int FILE_SELECT_CODE = 0;
 
-    @BindView(R.id.detail_toolbar)
+    /*@BindView(R.id.detail_toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
+
+    @BindView(R.id.detail_left_time)
+    TextView detailLeftTime;
+    @BindView(R.id.detail_left_second)
+    TextView detailLeftSecond;
 
     @BindView(R.id.detail_user_img)
     ImageView mUserImg;
@@ -79,71 +88,131 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @BindView(R.id.detail_attachment_layout)
     LinearLayout mAttachmentLayout;
 
-
     @BindView(R.id.detail_reply)
-    LinearLayout mReply;
+    LinearLayout mReply;*/
 
 
     private HomeWork mHomeWork;
-    private String mHomeWorkId;
+    private int menuIndex;
     private Commit mCommit = new Commit();
     private MyUser user;
+
+    private ActivityDetailBinding binding;
+    private CountDownTimer countDownTimer;
     //ImageButton mAttachment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+
+        setSupportActionBar(binding.detailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-        mToolbarTitle.setText(R.string.homework);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+        binding.detailToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        //mAttachment.setOnClickListener(this);
-        mReply.setOnClickListener(this);
-        mHomeWorkId = getIntent().getStringExtra("homework_detail");
+        mHomeWork = (HomeWork) getIntent().getSerializableExtra("homework_detail");
+        menuIndex = getIntent().getIntExtra("menu_index", 0);
+        binding.setHomework(mHomeWork);
+        binding.setDetailActivity(this);
+
         user = BmobUser.getCurrentUser(MyUser.class);
-
-        subscribeUI();
+        initView();
     }
 
 
-    private void subscribeUI() {
-        BmobQuery<HomeWork> query = new BmobQuery<>();
-        query.include("creatorUser");
-        query.getObject(mHomeWorkId, new QueryListener<HomeWork>() {
-            @Override
-            public void done(HomeWork homeWork, BmobException e) {
-                if (e == null) {
-                    if (homeWork != null) {
-                        mHomeWork = homeWork;
-                        initDetail(homeWork);
-                    }
-                }
-            }
-        });
+    private void initView() {
+        if (menuIndex == 0) {
 
-    }
-
-
-    private void initDetail(HomeWork homeWork) {
-        mAttachmentLayout.removeAllViews();
-        if (homeWork.getCreatorUser().getUserPhoto() != null) {
-            Util.loadCircleImage(Uri.parse(homeWork.getCreatorUser().getUserPhoto()), mUserImg);
+        } else if (menuIndex == 1) {
+            binding.detailReply.setVisibility(View.GONE);
         } else {
-            Util.loadCircleImage(Uri.parse(""), mUserImg);
+            binding.detailReplyWord.setText(getString(R.string.modify));
         }
+    }
+
+
+    public static void startDetailActivity(Activity activity, HomeWork homeWork, int index) {
+        Intent intent = new Intent(activity, DetailActivity.class);
+        intent.putExtra("homework_detail", homeWork);
+        intent.putExtra("menu_index", index);
+        activity.startActivity(intent);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        countDown();
+    }
+
+    private void countDown() {
+        final long timeLeft = BmobDate.getTimeStamp(mHomeWork.getHomeworkDeadline().getDate()) - System.currentTimeMillis();
+
+        if (timeLeft < 0) {
+            binding.countDownBackground.setBackgroundColor(Color.parseColor("#888888"));
+            binding.setLeftTime(getString(R.string.deadline_passed));
+            binding.setLeftSecond("");
+            binding.detailReply.setVisibility(View.GONE);
+        }
+
+        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+            @Override
+            public void onTick(long l) {
+                long day = l / (24*60*60*1000);
+                long hour = (l / (60*60*1000) - day*24);
+                long min = ((l / (60*1000)) - day*24*60 - hour*60);
+                long second = (l / 1000 - day*24*60*60 - hour*60*60 - min*60);
+
+                binding.setLeftTime(getString(R.string.deadline_time_left) + "  " +day+"天"+hour+"小时"+min+"分钟");
+                binding.setLeftSecond(second + "秒");
+
+                ScaleAnimation animation = new ScaleAnimation(1.0f, 0.857f,
+                        1.0f, 0.857f, Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f);
+                animation.setDuration(1000);
+                binding.detailLeftSecond.startAnimation(animation);
+            }
+
+            @Override
+            public void onFinish() {
+                binding.countDownBackground.setBackgroundColor(Color.parseColor("#888888"));
+                binding.setLeftTime(getString(R.string.deadline_passed));
+                binding.setLeftSecond("");
+                binding.detailReply.setVisibility(View.GONE);
+            }
+        };
+
+        countDownTimer.start();
+    }
+
+
+    public void onReplyClick(View view) {
+        toReply();
+        //addAttachment();
+        //replyConfirm();
+    }
+
+
+    @BindingAdapter({"imageUrl"})
+    public static void loadImage(ImageView imageView, String url) {
+        Util.loadCircleImage(Uri.parse(url), imageView);
+    }
+
+
+    /*private void initDetail(HomeWork homeWork) {
+        mAttachmentLayout.removeAllViews();
+
         mUserName.setText(homeWork.getCreatorUser().getUsername());
         Log.i("homework get", "initDetail: " + homeWork.getAttachmentPath());
-        mDeadline.setText(homeWork.getHomeworkDeadline());
+        mDeadline.setText(homeWork.getHomeworkDeadline().getDate());
         mDetailTitle.setText(homeWork.getHomeworkTitle());
         mDetailContent.setText(homeWork.getHomeworkContent());
         List<String> mDetailAttachment = homeWork.getAttachmentPath();
@@ -175,7 +244,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             });
             mAttachmentLayout.addView(textView);
         }
-    }
+    }*/
 
 
     private void downloadFile(BmobFile file) {
@@ -205,29 +274,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    public static void startDetailActivity(Activity activity, String homeWorkId) {
-        Intent intent = new Intent(activity, DetailActivity.class);
-        intent.putExtra("homework_detail", homeWorkId);
-        activity.startActivity(intent);
-    }
 
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.detail_reply:
-                toReply();
-//                addAttachment();
-//                replyConfirm();
-                break;
-            default:
-                break;
-        }
-    }
 
 
     private void toReply() {
-        final BottomSheetDialog dialog=new BottomSheetDialog(this);
+        final BottomSheetDialog dialog = new BottomSheetDialog(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_dialog_upload, null);
 
         LinearLayout mAttachment = dialogView.findViewById(R.id.detail_reply_attachment);
@@ -295,11 +347,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isReplyValid() {
         boolean replyValid = false;
         //todo 判断回复是否有效，content和attachment
-        if (mAttachmentLayout.getChildCount() > 0) {
+        /*if (mAttachmentLayout.getChildCount() > 0) {
             replyValid = true;
         } else {
             Toast.makeText(DetailActivity.this, "回复不能为空", Toast.LENGTH_SHORT).show();
-        }
+        }*/
         return replyValid;
     }
 
@@ -324,6 +376,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+
+
+
 
     /*private void uploadAttachment() {
         mReply.setClickable(false);
@@ -419,4 +474,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        countDownTimer.cancel();
+    }
+
 }

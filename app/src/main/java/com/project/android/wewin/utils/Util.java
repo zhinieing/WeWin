@@ -61,6 +61,10 @@ public class Util {
     }
 
     public static void loadCircleImage(Uri imageUri, ImageView imageView){
+        if (imageUri == null) {
+            imageUri = Uri.parse("");
+        }
+
         RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.ic_person_img)
                 .error(R.drawable.ic_person_img);
