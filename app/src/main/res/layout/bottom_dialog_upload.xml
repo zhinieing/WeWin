@@ -4,14 +4,61 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/detail_reply_attachment_layout"
+    <ScrollView
+        android:scrollbarSize="3dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:elevation="5dp"
-        android:orientation="vertical">
+        android:layout_height="350dp">
 
-    </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <HorizontalScrollView
+                android:scrollbarSize="3dp"
+                android:scrollbarStyle="insideInset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/detail_reply_attachment_media"
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/padding_medium"
+                    android:paddingRight="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+
+            <LinearLayout
+                android:id="@+id/detail_reply_attachment_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_medium"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/detail_delete_file"
+                android:clickable="true"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/padding_small"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_add_file"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
 
 
     <LinearLayout

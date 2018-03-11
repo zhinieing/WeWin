@@ -2,13 +2,14 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,11 +19,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,14 +38,14 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Class;
-import com.project.android.wewin.data.remote.model.GroupInfo;
-import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
 import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.ReleaseHomeWorkViewModel;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,12 +55,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 
@@ -86,11 +85,12 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     EditText mHomeworkTitle;
     @BindView(R.id.release_homework_content)
     EditText mHomeworkContent;
+    @BindView(R.id.release_attachment_media)
+    GridLayout releaseAttachmentMedia;
+    @BindView(R.id.release_attachment_file)
+    LinearLayout releaseAttachmentFile;
     @BindView(R.id.release_homework_attachment)
     Button mAttachment;
-
-    @BindView(R.id.release_homework_attachment_layout)
-    LinearLayout mAttachmentLayout;
 
     @BindView(R.id.upload_add_target)
     RelativeLayout uploadAddTarget;
@@ -163,7 +163,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
 
-
     private void subscribeUI() {
 
         ReleaseHomeWorkViewModel.Factory factory = new ReleaseHomeWorkViewModel
@@ -193,8 +192,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         });
 
         mReleaseHomeWorkViewModel.loadStudentClassList();
-
     }
+
 
     private void releaseConfirm() {
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
@@ -206,7 +205,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         } else {
             if (isHomeworkValid()) {
-                uploadAttachment();
+                //uploadAttachment();
             }
         }
     }
@@ -216,7 +215,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    uploadAttachment();
+                    //uploadAttachment();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -226,7 +225,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         }
     }
 
-    private void uploadAttachment() {
+    /*private void uploadAttachment() {
         mConfirm.setClickable(false);
 
         int size = mAttachmentLayout.getChildCount();
@@ -282,7 +281,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             }
         });
 
-    }
+    }*/
 
     private void addTarget() {
         if (mClassData.size() == 0) {
@@ -327,26 +326,124 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == FILE_SELECT_CODE) {
                 Uri uri = data.getData();
-                String fileName = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
-                final TextView textView = new TextView(this);
-                textView.setText(fileName);
-                textView.setTextSize(16);
-                textView.setTag(uri.getPath());
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                layoutParams.setMargins(5, 5, 5, 5);
-                textView.setLayoutParams(layoutParams);
-                textView.setBackgroundColor(ContextCompat.getColor(this, R.color.attachmentBackground));
-                textView.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mAttachmentLayout.removeView(textView);
-                    }
-                });
-                mAttachmentLayout.addView(textView);
+                String path = Util.getPath(this, uri);
+
+                String type = Util.fileType(path.substring(path.lastIndexOf(".") + 1));
+
+                if ("image".equals(type) || "video".equals(type)) {
+                    releaseAttachmentMedia.addView(initMediaView(path));
+                } else {
+                    releaseAttachmentFile.addView(initFileView(path));
+                }
             }
         }
     }
+
+
+    private View initMediaView(String path) {
+        releaseAttachmentMedia.setVisibility(View.VISIBLE);
+
+        String type = Util.fileType(path.substring(path.lastIndexOf(".") + 1));
+
+        final View itemMediaView = View.inflate(this, R.layout.item_attachment_media, null);
+        ImageView itemImage = itemMediaView.findViewById(R.id.item_media_image);
+        FixedTextureVideoView itemVideo = itemMediaView.findViewById(R.id.item_media_video);
+        final ImageView itemDelete = itemMediaView.findViewById(R.id.item_media_delete);
+        itemMediaView.setTag(path);
+
+        if ("image".equals(type)) {
+            itemImage.setImageBitmap(BitmapFactory.decodeFile(path));
+            itemImage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    itemDelete.setVisibility(View.VISIBLE);
+                    return true;
+                }
+            });
+        } else {
+            itemVideo.setVisibility(View.VISIBLE);
+
+            itemVideo.setFixedSize(Util.dip2px(this, 100), Util.dip2px(this, 100));
+            itemVideo.invalidate();
+
+            itemVideo.setVideoPath(path);
+            itemVideo.start();
+
+            itemVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                    mp.setLooping(true);
+                }
+            });
+
+            itemVideo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    itemDelete.setVisibility(View.VISIBLE);
+                    return true;
+                }
+            });
+        }
+
+        itemDelete.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemDelete.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
+        itemDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                releaseAttachmentMedia.removeView(itemMediaView);
+
+                if (releaseAttachmentMedia.getChildCount() == 0) {
+                    releaseAttachmentMedia.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        return itemMediaView;
+    }
+
+
+    private View initFileView(String path) {
+        releaseAttachmentFile.setVisibility(View.VISIBLE);
+
+        File file = new File(path);
+        String fileSize = Util.ShowLongFileSzie(file.length());
+        String fileName = path.substring(path.lastIndexOf("/") + 1);
+        int fileIcon = Util.fileIcon(Util.fileType(path.substring(path.lastIndexOf(".") + 1)));
+
+        final View itemFileView = View.inflate(this, R.layout.item_attachment_file, null);
+        ImageView itemFileIcon = itemFileView.findViewById(R.id.item_file_icon);
+        TextView itemFileName = itemFileView.findViewById(R.id.item_file_name);
+        TextView itemFileSize = itemFileView.findViewById(R.id.item_file_size);
+        itemFileView.setTag(path);
+
+        itemFileIcon.setImageResource(fileIcon);
+        itemFileName.setText(fileName);
+        itemFileSize.setText(fileSize);
+        itemFileView.findViewById(R.id.item_file_delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                releaseAttachmentFile.removeView(itemFileView);
+
+                if (releaseAttachmentFile.getChildCount() == 0) {
+                    releaseAttachmentFile.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, Util.dip2px(this, 8));
+        itemFileView.setLayoutParams(layoutParams);
+
+        return itemFileView;
+    }
+
 
     private void initTimePicker() {
         long fiveYears = 5L * 365 * 24L * 60 * 60 * 1000;
@@ -377,13 +474,13 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         String text = getDateToString(millseconds);
         mDeadline.setText(text);
 
-        Log.d("wewein", "onDateSet: "+text);
+        Log.d("wewein", "onDateSet: " + text);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         try {
             Date date = sdf.parse(text);
-            Log.d("wewein", "onDateSet: "+date);
+            Log.d("wewein", "onDateSet: " + date);
             mHomeWork.setHomeworkDeadline(new BmobDate(date));
         } catch (ParseException e) {
             e.printStackTrace();

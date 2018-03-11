@@ -41,6 +41,7 @@
 
 
     <ScrollView
+        android:scrollbarSize="3dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/divideColor">
@@ -53,14 +54,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium"
                 android:orientation="vertical"
                 android:background="@color/colorPrimary">
 
                 <EditText
                     android:id="@+id/release_homework_title"
                     android:layout_marginTop="@dimen/padding_small"
-                    android:paddingLeft="@dimen/padding_medium"
-                    android:paddingRight="@dimen/padding_medium"
                     android:hint="@string/title"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -74,8 +75,6 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/padding_medium"
-                    android:layout_marginRight="@dimen/padding_medium"
                     android:background="@color/divideColor" />
 
                 <EditText
@@ -83,8 +82,6 @@
                     android:paddingTop="@dimen/padding_medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_medium"
-                    android:paddingRight="@dimen/padding_medium"
                     android:background="@null"
                     android:textCursorDrawable="@drawable/cursor_multi"
                     android:gravity="top"
@@ -94,19 +91,52 @@
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/textColorContent"/>
 
+                <!--<HorizontalScrollView-->
+                    <!--android:scrollbarSize="3dp"-->
+                    <!--android:scrollbarStyle="insideInset"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content">-->
+
+                    <!--<LinearLayout-->
+                        <!--android:id="@+id/release_attachment_media"-->
+                        <!--android:visibility="gone"-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:paddingTop="@dimen/padding_medium"-->
+                        <!--android:paddingBottom="@dimen/padding_medium"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content">-->
+                    <!--</LinearLayout>-->
+
+                <!--</HorizontalScrollView>-->
+
+                <GridLayout
+                    android:id="@+id/release_attachment_media"
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:columnCount="3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </GridLayout>
+
+
                 <LinearLayout
-                    android:id="@+id/release_homework_attachment_layout"
+                    android:id="@+id/release_attachment_file"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_medium"
                     android:orientation="vertical">
-
                 </LinearLayout>
+
 
                 <Button
                     android:id="@+id/release_homework_attachment"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_margin="@dimen/padding_medium"
+                    android:layout_marginTop="@dimen/padding_medium"
+                    android:layout_marginBottom="@dimen/padding_medium"
                     android:background="@drawable/button_upload_file" />
 
             </LinearLayout>

@@ -1,9 +1,15 @@
 package com.project.android.wewin.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Video;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -75,6 +81,154 @@ public class Util {
                 .apply(RequestOptions.bitmapTransform(new CropCircleTransformation()))
                 .into(imageView);
     }
+
+
+    public static String getPath(Context context, Uri uri) {
+        String data = null;
+
+        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+            data = uri.getPath();
+        } else if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            Cursor cursor = context.getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
+            if ( null != cursor ) {
+                if ( cursor.moveToFirst() ) {
+                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
+                    if ( index > -1 ) {
+                        data = cursor.getString( index );
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return data;
+    }
+
+
+    public static String ShowLongFileSzie(Long length) {
+        if (length >= 1048576) {
+            return (length / 1048576) + "MB";
+        } else if (length >= 1024) {
+            return (length / 1024) + "KB";
+        } else if (length < 1024) {
+            return length + "B";
+        } else {
+            return "0KB";
+        }
+    }
+
+
+    public static String fileType(String end) {
+        if (end.equalsIgnoreCase("jpg") || end.equalsIgnoreCase("jpeg")
+                || end.equals("gif") || end.equals("png") || end.equals("bmp")) {
+            return "image";
+        } else if (end.equals("mp4") || end.equals("avi") || end.equals("mkv")
+                || end.equals("flv") || end.equals("rmvb")) {
+            return "video";
+        } else if (end.equals("mp3") || end.equals("wav") || end.equals("aac")) {
+            return "music";
+        } else if (end.equals("pdf")) {
+            return "pdf";
+        } else if (end.equals("doc") || end.equals("docx")) {
+            return "doc";
+        } else if (end.equals("ppt") || end.equals("pptx")) {
+            return "ppt";
+        } else if (end.equals("xls") || end.equals("xlsx")) {
+            return "xls";
+        }
+        return "unknown";
+    }
+
+
+    public static int fileIcon(String kind) {
+        switch (kind) {
+            case "music": return R.drawable.ic_music;
+            case "pdf": return R.drawable.ic_pdf;
+            case "doc": return R.drawable.ic_word;
+            case "ppt": return R.drawable.ic_ppt;
+            case "xls": return R.drawable.ic_excel;
+
+            default:
+                return R.drawable.ic_file_default;
+        }
+    }
+
+
+
+    public static String queryImageThumbnailByPath(Context context, String path) {
+        Uri uri = Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = new String[] { Images.Media._ID };
+        String selection = Images.Media.DATA + " = ? ";
+        String[] selectionArgs = new String[] { path };
+
+        Cursor cursor = query(context, uri, projection, selection,
+                selectionArgs);
+        int id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndex(Images.Media._ID));
+        }
+        cursor.close();
+        if (id == -1) {
+            return null;
+        }
+
+        uri = Images.Thumbnails.EXTERNAL_CONTENT_URI;
+        projection = new String[] { Images.Thumbnails.DATA };
+        selection = Images.Thumbnails.IMAGE_ID + " = ? ";
+        selectionArgs = new String[] { String.valueOf(id) };
+
+        cursor = query(context, uri, projection, selection, selectionArgs);
+        String thumbnail = null;
+        if (cursor.moveToFirst()) {
+            int idxData = cursor.getColumnIndex(Images.Thumbnails.DATA);
+            thumbnail = cursor.getString(idxData);
+        }
+        cursor.close();
+        return thumbnail;
+    }
+
+    public static String queryVideoThumbnailByPath(Context context, String path) {
+        Uri uri = Video.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = new String[] { Video.Media._ID };
+        String selection = Video.Media.DATA + " = ? ";
+        String[] selectionArgs = new String[] { path };
+
+        Cursor cursor = query(context, uri, projection, selection,
+                selectionArgs);
+        int mediaId = -1;
+        if (cursor.moveToFirst()) {
+            int idxId = cursor.getColumnIndex(Video.Media._ID);
+            mediaId = cursor.getInt(idxId);
+        }
+        cursor.close();
+        if (mediaId == -1) {
+            return null;
+        }
+
+        uri = Video.Thumbnails.EXTERNAL_CONTENT_URI;
+        projection = new String[] { Video.Thumbnails.DATA };
+        selection = Video.Thumbnails.VIDEO_ID + " =  ? ";
+        selectionArgs = new String[] { String.valueOf(mediaId) };
+
+        cursor = query(context, uri, projection, selection, selectionArgs);
+        String thumbnail = null;
+        if (cursor.moveToFirst()) {
+            int idxData = cursor.getColumnIndex(Video.Thumbnails.DATA);
+            thumbnail = cursor.getString(idxData);
+        }
+        cursor.close();
+        return thumbnail;
+    }
+
+    private static Cursor query(Context context, Uri uri, String[] projection,
+                                String selection, String[] selectionArgs) {
+        ContentResolver cr = context.getContentResolver();
+        Cursor cursor = cr.query(uri, projection, selection, selectionArgs,
+                null);
+        return cursor;
+    }
+
+
+
 
     /**
      * 根据手机的分辨率从 dp 的单位 转成为 px(像素)

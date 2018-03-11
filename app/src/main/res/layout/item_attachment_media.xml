@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/item_media_image"
+        android:longClickable="true"
+        android:scaleType="centerCrop"
+        android:layout_gravity="left|top"
+        android:layout_marginRight="@dimen/padding_small"
+        android:layout_marginBottom="@dimen/padding_small"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <com.project.android.wewin.ui.adapter.FixedTextureVideoView
+        android:id="@+id/item_media_video"
+        android:visibility="gone"
+        android:longClickable="true"
+        android:layout_gravity="left|top"
+        android:layout_marginRight="@dimen/padding_small"
+        android:layout_marginBottom="@dimen/padding_small"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <ImageView
+        android:id="@+id/item_media_delete"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="left|top"
+        android:layout_marginRight="@dimen/padding_small"
+        android:layout_marginBottom="@dimen/padding_small"
+        android:padding="@dimen/padding_huge"
+        android:clickable="true"
+        android:longClickable="true"
+        android:visibility="gone"
+        android:alpha="0.8"
+        android:background="@color/colorPrimary"
+        android:src="@drawable/ic_delete_media"/>
+
+</FrameLayout>
