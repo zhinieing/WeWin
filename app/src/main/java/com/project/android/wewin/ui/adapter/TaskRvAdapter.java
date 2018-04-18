@@ -28,6 +28,7 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
     private OnItemClickListener<HomeWork> homeWorkOnItemClickListener = null;
 
 
+
     public TaskRvAdapter(Context context, OnItemClickListener<HomeWork> listener){
         this.context = context;
         homeWorkList = new ArrayList<>();
@@ -80,6 +81,7 @@ public class TaskRvAdapter extends RecyclerView.Adapter<TaskRvAdapter.ViewHolder
         homeWorkList.clear();
         notifyDataSetChanged();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public View homeWorkItem;

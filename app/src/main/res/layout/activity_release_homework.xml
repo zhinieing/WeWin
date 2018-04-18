@@ -154,15 +154,13 @@
                 android:paddingRight="@dimen/padding_medium"
                 android:clickable="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="@dimen/title_height">
 
 
                 <TextView
                     android:text="@string/send_to"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/textColorPrimary"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -197,15 +195,13 @@
                 android:paddingRight="@dimen/padding_medium"
                 android:clickable="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="@dimen/title_height">
 
 
                 <TextView
                     android:text="@string/deadline"
                     android:textSize="@dimen/text_size_large"
                     android:textColor="@color/textColorPrimary"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

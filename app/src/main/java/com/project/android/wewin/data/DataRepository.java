@@ -12,7 +12,9 @@ import com.project.android.wewin.utils.Util;
 import java.util.List;
 
 /**
- * Created by pengming on 2017/11/24.
+ *
+ * @author pengming
+ * @date 2017/11/24
  */
 
 public class DataRepository {

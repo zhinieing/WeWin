@@ -249,7 +249,6 @@ public class TaskFragment extends LazyLoadFragment {
         mRefreshLayout.setRefreshing(true);
         mHomeWorkListViewModel.refreshHomeWorkListData();
 
-
     }
 
     @Override

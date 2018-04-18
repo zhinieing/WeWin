@@ -19,11 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.jph.takephoto.app.TakePhoto;
+/*import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.compress.CompressConfig;
 import com.jph.takephoto.model.CropOptions;
-import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.model.TResult;*/
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.utils.Constants;
@@ -47,7 +47,7 @@ import cn.bmob.v3.listener.UploadFileListener;
 /**
  * @author pengming
  */
-public class UserInformation extends TakePhotoActivity implements View.OnClickListener {
+/*public class UserInformation extends TakePhotoActivity implements View.OnClickListener {
 
     @BindView(R.id.modify_user_toolbar)
     Toolbar toolbar;
@@ -246,7 +246,7 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
     }
 
 
-    /*@Override
+    *//*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -268,10 +268,10 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }*/
+    }*//*
 
 
-    /*private void uploadImg2QiNiu(String path) {
+    *//*private void uploadImg2QiNiu(String path) {
         final UploadManager uploadManager = new UploadManager();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -288,6 +288,6 @@ public class UserInformation extends TakePhotoActivity implements View.OnClickLi
                 changes[0] = imgPath;
             }
         }, null);
-    }*/
-}
+    }*//*
+}*/
 

@@ -6,7 +6,9 @@ import com.project.android.wewin.data.local.LocalDataSource;
 import com.project.android.wewin.data.remote.RemoteDataSource;
 
 /**
- * Created by pengming on 18/12/2017.
+ *
+ * @author pengming
+ * @date 18/12/2017
  */
 
 public class Injection {

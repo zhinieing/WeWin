@@ -73,7 +73,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.user_modify:
-                startActivity(new Intent(PersonActivity.this, UserInformation.class));
+                //startActivity(new Intent(PersonActivity.this, UserInformation.class));
                 break;
             default:
         }

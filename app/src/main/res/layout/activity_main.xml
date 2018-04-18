@@ -20,14 +20,14 @@
             android:background="@color/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
     </android.support.design.widget.AppBarLayout>
 
     <com.project.android.wewin.ui.adapter.LazyViewPager
         android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:init_lazy_item_offset="0.3"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:init_lazy_item_offset="0.3" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

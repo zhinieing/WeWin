@@ -10,10 +10,12 @@ import com.project.android.wewin.data.remote.model.HomeWork;
 import java.util.List;
 
 /**
- * Created by pengming on 2017/11/24.
+ *
+ * @author pengming
+ * @date 2017/11/24
  */
 
-public class LocalDataSource implements DataSource{
+public class LocalDataSource implements DataSource {
 
     private static LocalDataSource INSTANCE = null;
 

@@ -5,7 +5,8 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/layout_ripple_default">
 
     <ImageView
         android:id="@+id/icon"
