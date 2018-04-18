@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
@@ -63,6 +64,21 @@ public class DataRepository {
         }
     }
 
+    public LiveData<List<Task>> getTaskList(int index) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getTaskList(index);
+        } else {
+            return mLocalDataSource.getTaskList(index);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingTaskList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingTaskList();
+        } else {
+            return mLocalDataSource.isLoadingTaskList();
+        }
+    }
 
     public LiveData<List<HomeWork>> getPostedHomeWorkList(int index) {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
@@ -77,6 +93,38 @@ public class DataRepository {
             return mRemoteDataSource.isLoadingPostedHomeWorkList();
         } else {
             return mLocalDataSource.isLoadingPostedHomeWorkList();
+        }
+    }
+
+    public LiveData<List<Task>> getPostedTaskList(int index) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getPostedTaskList(index);
+        } else {
+            return mLocalDataSource.getPostedTaskList(index);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingPostedTaskList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingPostedTaskList();
+        } else {
+            return mLocalDataSource.isLoadingPostedTaskList();
+        }
+    }
+
+    public LiveData<List<Task>> getReceivedTaskList(int index) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getReceivedTaskList(index);
+        } else {
+            return mLocalDataSource.getReceivedTaskList(index);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingReceivedTaskList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingReceivedTaskList();
+        } else {
+            return mLocalDataSource.isLoadingReceivedTaskList();
         }
     }
 
