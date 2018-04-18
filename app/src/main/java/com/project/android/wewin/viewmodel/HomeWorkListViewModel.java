@@ -15,12 +15,12 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.data.DataRepository;
 
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
 
 /**
- *
  * @author pengming
  * @date 2017/11/24
  */
@@ -35,6 +35,20 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
     private final LiveData<List<HomeWork>> mPostedHomeWorkList;
 
+    //任务相关
+
+    private final MutableLiveData<Integer> mTaskPageIndex = new MutableLiveData<>();
+
+    private final LiveData<List<Task>> mTaskList;
+
+    private final MutableLiveData<Integer> mPostedTaskPageIndex = new MutableLiveData<>();
+
+    private final LiveData<List<Task>> mPostedTaskList;
+
+    private final MutableLiveData<Integer> mReceivedTaskPageIndex = new MutableLiveData<>();
+
+    private final LiveData<List<Task>> mReceivedTaskList;
+
     private DataRepository mHomeWorkDataRepository = null;
 
     public HomeWorkListViewModel(Application application, DataRepository homeWorkDataRepository) {
@@ -47,20 +61,42 @@ public class HomeWorkListViewModel extends AndroidViewModel {
             }
         });
 
-        mPostedHomeWorkList =Transformations.switchMap(mPostedHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWork>>>() {
+        mPostedHomeWorkList = Transformations.switchMap(mPostedHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWork>>>() {
             @Override
             public LiveData<List<HomeWork>> apply(Integer input) {
                 return mHomeWorkDataRepository.getPostedHomeWorkList(input);
             }
         });
+
+        mTaskList = Transformations.switchMap(mTaskPageIndex, new Function<Integer, LiveData<List<Task>>>() {
+            @Override
+            public LiveData<List<Task>> apply(Integer input) {
+                return mHomeWorkDataRepository.getTaskList(input);
+            }
+        });
+
+        mPostedTaskList = Transformations.switchMap(mPostedTaskPageIndex, new Function<Integer, LiveData<List<Task>>>() {
+            @Override
+            public LiveData<List<Task>> apply(Integer input) {
+                return mHomeWorkDataRepository.getPostedTaskList(input);
+            }
+        });
+
+        mReceivedTaskList = Transformations.switchMap(mReceivedTaskPageIndex, new Function<Integer, LiveData<List<Task>>>() {
+            @Override
+            public LiveData<List<Task>> apply(Integer input) {
+                return mHomeWorkDataRepository.getReceivedTaskList(input);
+            }
+        });
     }
 
     /*TaskFragment*/
-    public LiveData<List<HomeWork>> getHomeWorkList(){
+
+    public LiveData<List<HomeWork>> getHomeWorkList() {
         return mHomeWorkList;
     }
 
-    public void refreshHomeWorkListData(){
+    public void refreshHomeWorkListData() {
         mHomeWorkPageIndex.setValue(1);
     }
 
@@ -77,11 +113,12 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
 
     /*PostedTaskFragment*/
-    public LiveData<List<HomeWork>> getPostedHomeWorkList(){
+
+    public LiveData<List<HomeWork>> getPostedHomeWorkList() {
         return mPostedHomeWorkList;
     }
 
-    public void refreshPostedHomeWorkListData(){
+    public void refreshPostedHomeWorkListData() {
         mPostedHomeWorkPageIndex.setValue(1);
     }
 
@@ -98,8 +135,72 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
 
     /*MainFragment*/
+
     public LiveData<Boolean> isClassTeacher() {
         return mHomeWorkDataRepository.isClassTeacher();
+    }
+
+    /*TaskFragment*/
+
+    public LiveData<List<Task>> getTaskList() {
+        return mTaskList;
+    }
+
+    public void refreshTaskListData() {
+        mTaskPageIndex.setValue(1);
+    }
+
+    public void loadNextPageTaskList() {
+        if (!Util.isNetworkConnected(MyApplication.getInstance())) {
+            return;
+        }
+        mTaskPageIndex.setValue((mTaskPageIndex.getValue() == null ? 1 : mTaskPageIndex.getValue() + 1));
+    }
+
+    public LiveData<Boolean> isLoadingTaskList() {
+        return mHomeWorkDataRepository.isLoadingTaskList();
+    }
+
+    /*PostedTaskFragment*/
+
+    public LiveData<List<Task>> getPostedTaskList() {
+        return mPostedTaskList;
+    }
+
+    public void refreshPostedTaskListData() {
+        mPostedTaskPageIndex.setValue(1);
+    }
+
+    public void loadNextPostedPageTaskList() {
+        if (!Util.isNetworkConnected(MyApplication.getInstance())) {
+            return;
+        }
+        mPostedTaskPageIndex.setValue((mPostedTaskPageIndex.getValue() == null ? 1 : mPostedTaskPageIndex.getValue() + 1));
+    }
+
+    public LiveData<Boolean> isLoadingPostedTaskList() {
+        return mHomeWorkDataRepository.isLoadingPostedTaskList();
+    }
+
+    /*ReceivedTaskFragment*/
+
+    public LiveData<List<Task>> getReceivedTaskList() {
+        return mReceivedTaskList;
+    }
+
+    public void refreshReceivedTaskListData() {
+        mReceivedTaskPageIndex.setValue(1);
+    }
+
+    public void loadNextReceivedPageTaskList() {
+        if (!Util.isNetworkConnected(MyApplication.getInstance())) {
+            return;
+        }
+        mReceivedTaskPageIndex.setValue((mReceivedTaskPageIndex.getValue() == null ? 1 : mReceivedTaskPageIndex.getValue() + 1));
+    }
+
+    public LiveData<Boolean> isLoadingReceivedTaskList() {
+        return mHomeWorkDataRepository.isLoadingReceivedTaskList();
     }
 
 
