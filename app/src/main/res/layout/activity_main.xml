@@ -28,16 +28,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:init_lazy_item_offset="0.3"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_behavior="com.project.android.wewin.ui.behavior.ScrollAwareFABBehaviorDefault"
-        app:srcCompat="@drawable/ic_add_white" />
+        android:layout_marginRight="@dimen/padding_medium"
+        android:layout_marginBottom="72dp"
+        app:srcCompat="@drawable/ic_add_white"
+        app:layout_behavior="@string/bye_burger_float_behavior"/>
 
 
     <android.support.design.widget.BottomNavigationView
@@ -46,9 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
-        app:itemTextColor="@color/textColorSecondary"
-        app:layout_behavior="com.project.android.wewin.ui.behavior.BottomNavigationViewBehavior"
-        app:layout_insetEdge="bottom"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation"
+        app:layout_behavior="@string/bye_burger_bottom_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>
