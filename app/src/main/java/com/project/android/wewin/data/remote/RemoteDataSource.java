@@ -10,6 +10,8 @@ import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.utils.L;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +28,6 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 
 /**
- *
  * @author pengming
  * @date 2017/11/24
  */
@@ -50,6 +51,20 @@ public class RemoteDataSource implements DataSource {
     private final MutableLiveData<List<Class>> mClassList = new MutableLiveData<>();
 
     private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
+
+    /*发布任务*/
+
+    private final MutableLiveData<Boolean> mIsLoadingTaskList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Task>> mTaskList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingPostedTaskList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Task>> mPostedTaskList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingReceivedTaskList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Task>> mReceivedTaskList = new MutableLiveData<>();
 
 
     private int indexClass;
@@ -93,7 +108,7 @@ public class RemoteDataSource implements DataSource {
                         Date date = null;
                         try {
                             date = sdf.parse(sdf.format(new Date()));
-                            Log.d("wewein", "done: "+date);
+                            Log.d("wewein", "done: " + date);
                         } catch (ParseException e1) {
                             e1.printStackTrace();
                         }
@@ -104,7 +119,7 @@ public class RemoteDataSource implements DataSource {
                         query.addWhereMatchesQuery("groupInfo", "GroupInfo", innerQuery);
                         query.addWhereGreaterThan("homeworkDeadline", new BmobDate(date));
                         query.include("creatorUser");
-                        query.setSkip(10*(index - 1));
+                        query.setSkip(10 * (index - 1));
                         query.setLimit(10);
                         query.order("homeworkDeadline");
                         query.findObjects(new FindListener<HomeWork>() {
@@ -143,10 +158,10 @@ public class RemoteDataSource implements DataSource {
         final MyUser user = BmobUser.getCurrentUser(MyUser.class);
 
         if (user != null) {
-            BmobQuery<HomeWork> query =new BmobQuery<>();
+            BmobQuery<HomeWork> query = new BmobQuery<>();
             query.addWhereEqualTo("creatorUser", new BmobPointer(user));
             query.include("creatorUser");
-            query.setSkip(10*(index - 1));
+            query.setSkip(10 * (index - 1));
             query.setLimit(10);
             query.order("-createdAt");
             query.findObjects(new FindListener<HomeWork>() {
@@ -369,5 +384,111 @@ public class RemoteDataSource implements DataSource {
         }
 
         return mStudentClassList;
+    }
+
+    @Override
+    public LiveData<List<Task>> getTaskList(int index) {
+        mIsLoadingTaskList.setValue(true);
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        if (user != null) {
+            BmobQuery<Task> query = new BmobQuery<>();
+            //添加条件，查询completed字段为非true的任务
+            query.addWhereNotEqualTo("completed", true);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date currentDate = null;
+            try {
+                currentDate = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                L.i("date parse failed");
+            }
+            //查询taskDeadline大于或等于当前时间的任务
+            query.addWhereGreaterThanOrEqualTo("taskDeadline", new BmobDate(currentDate));
+
+            query.setSkip(10 * (index - 1));
+            query.setLimit(10);
+            query.order("taskDeadline");
+            query.findObjects(new FindListener<Task>() {
+                @Override
+                public void done(List<Task> list, BmobException e) {
+                    mIsLoadingTaskList.setValue(false);
+                    if (e == null) {
+                        mTaskList.setValue(list);
+                    }
+                }
+            });
+        } else {
+            mIsLoadingTaskList.setValue(false);
+        }
+
+        return mTaskList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingTaskList() {
+        return mIsLoadingTaskList;
+    }
+
+    @Override
+    public LiveData<List<Task>> getPostedTaskList(int index) {
+        mIsLoadingPostedTaskList.setValue(true);
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        if (user != null) {
+            BmobQuery<Task> query = new BmobQuery<>();
+            query.addWhereEqualTo("creatorUser", new BmobPointer(user));
+            query.include("creatorUser");
+            query.setSkip(10 * (index - 1));
+            query.setLimit(10);
+            query.order("-createdAt");
+            query.findObjects(new FindListener<Task>() {
+                @Override
+                public void done(List<Task> list, BmobException e) {
+                    mIsLoadingTaskList.setValue(false);
+                    if (e == null) {
+                        mPostedTaskList.setValue(list);
+                    }
+                }
+            });
+        } else {
+            mIsLoadingPostedTaskList.setValue(false);
+        }
+        return mPostedTaskList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingPostedTaskList() {
+        return mIsLoadingPostedTaskList;
+    }
+
+    @Override
+    public LiveData<List<Task>> getReceivedTaskList(int index) {
+        mIsLoadingReceivedTaskList.setValue(true);
+        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        if (user != null) {
+            BmobQuery<Task> query = new BmobQuery<>();
+            query.addWhereEqualTo("receiverUser", new BmobPointer(user));
+            query.include("receiverUser");
+            query.setSkip(10 * (index - 1));
+            query.setLimit(10);
+            query.order("taskDeadline");
+            query.findObjects(new FindListener<Task>() {
+                @Override
+                public void done(List<Task> list, BmobException e) {
+                    mIsLoadingReceivedTaskList.setValue(false);
+                    if (e == null) {
+                        mReceivedTaskList.setValue(list);
+                    }
+                }
+            });
+        } else {
+            mIsLoadingReceivedTaskList.setValue(false);
+        }
+        return mReceivedTaskList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingReceivedTaskList() {
+        return mIsLoadingReceivedTaskList;
     }
 }

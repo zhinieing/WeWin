@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.Task;
 
 import java.util.List;
 
@@ -37,4 +38,15 @@ public interface DataSource {
 
     LiveData<List<Class>> getStudentClassList();
 
+
+    /*发布任务*/
+
+    LiveData<List<Task>> getTaskList(int index);
+    LiveData<Boolean> isLoadingTaskList();
+
+    LiveData<List<Task>> getPostedTaskList(int index);
+    LiveData<Boolean> isLoadingPostedTaskList();
+
+    LiveData<List<Task>> getReceivedTaskList(int index);
+    LiveData<Boolean> isLoadingReceivedTaskList();
 }

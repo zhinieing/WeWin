@@ -6,7 +6,9 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.project.android.wewin.data.local.db.entity.TaskRoom;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,12 @@ public class AppDatabaseManager {
     private final MutableLiveData<Boolean> mIsLoadingHomeWorkList = new MutableLiveData<>();
 
     private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingTaskList = new MutableLiveData<>();
+
+    //TaskRoom??
+
+    private final MutableLiveData<List<Task>> mTaskList = new MutableLiveData<>();
 
     private static AppDatabaseManager INSTANCE = null;
 
@@ -70,6 +78,10 @@ public class AppDatabaseManager {
         }.execute();*/
     }
 
+    public void insertTaskList(List<Task> taskRoomList) {
+        //todo
+    }
+
     public LiveData<List<HomeWork>> loadHomeWorkList() {
         mIsLoadingHomeWorkList.setValue(true);
         /*new AsyncTask<Void, Void, List<HomeWork>>() {
@@ -104,8 +116,19 @@ public class AppDatabaseManager {
         return mHomeWorkList;
     }
 
+    public LiveData<List<Task>> loadTaskList() {
+        mIsLoadingTaskList.setValue(true);
+
+        //todo
+
+        return mTaskList;
+    }
+
     public LiveData<Boolean> isLoadingHomeWorkList() {
         return mIsLoadingHomeWorkList;
     }
 
+    public LiveData<Boolean> isLoadingTaskList() {
+        return mIsLoadingTaskList;
+    }
 }
