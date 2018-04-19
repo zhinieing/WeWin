@@ -120,5 +120,7 @@
 
     <string name="network_error">当前网络环境不好，请稍后再试哦~</string>
     <string name="view">次浏览</string>
+    <string name="set_reward">设置报酬</string>
+    <string name="describe_task">描述一下问题</string>
 
 </resources>

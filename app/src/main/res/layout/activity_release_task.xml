@@ -6,194 +6,264 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context="com.project.android.wewin.ui.activity.ReleaseHomeworkActivity">
+    tools:context="com.project.android.wewin.ui.activity.ReleaseTaskActivity">
 
-    <include
-        android:id="@+id/release_task_toolbar"
-        layout="@layout/toolbar_default" />
-
-    <View
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:text="@string/title"
-            android:textSize="@dimen/text_size_huge" />
-
-        <EditText
-            android:id="@+id/release_task_title"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/release_task_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:textSize="@dimen/text_size_huge" />
-    </LinearLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/color_button_default" />
+            <ImageView
+                android:id="@+id/toolbar_user_photo_task"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimary" />
+
+            <ImageButton
+                android:id="@+id/release_task_confirm"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:background="@drawable/layout_ripple_default"
+                android:src="@drawable/ic_release_submit" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/divideColor"
+        android:scrollbarSize="3dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/release_task_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:background="@null"
-                android:gravity="top"
-                android:hint="@string/homework_content"
-                android:minLines="6"
-                android:textSize="@dimen/text_size_huge" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="15dp"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/release_task_attachment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="15dp"
-                    android:background="@color/colorPrimary"
-                    android:src="@drawable/ic_person_img" />
-
-            </RelativeLayout>
-
             <LinearLayout
-                android:id="@+id/release_task_attachment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:orientation="vertical" />
+                android:background="@color/colorPrimary"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium">
+
+                <EditText
+                    android:id="@+id/release_task_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="@dimen/padding_small"
+                    android:background="@null"
+                    android:hint="@string/title"
+                    android:maxLength="30"
+                    android:maxLines="1"
+                    android:textColor="@color/textColorPrimary"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:textSize="@dimen/text_size_huge" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divideColor" />
+
+                <EditText
+                    android:id="@+id/release_task_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:gravity="top"
+                    android:hint="@string/describe_task"
+                    android:lineSpacingMultiplier="1.2"
+                    android:minLines="7"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:textColor="@color/textColorContent"
+                    android:textCursorDrawable="@drawable/cursor_multi"
+                    android:textSize="@dimen/text_size_large" />
+
+                <!--<HorizontalScrollView-->
+                <!--android:scrollbarSize="3dp"-->
+                <!--android:scrollbarStyle="insideInset"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <!--<LinearLayout-->
+                <!--android:id="@+id/release_attachment_media"-->
+                <!--android:visibility="gone"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:paddingTop="@dimen/padding_medium"-->
+                <!--android:paddingBottom="@dimen/padding_medium"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+                <!--</LinearLayout>-->
+
+                <!--</HorizontalScrollView>-->
+
+                <GridLayout
+                    android:id="@+id/release_attachment_media_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_medium"
+                    android:visibility="gone" />
+
+
+                <LinearLayout
+                    android:id="@+id/release_attachment_file_task"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_medium"
+                    android:orientation="vertical"
+                    android:visibility="gone" />
+
+
+                <Button
+                    android:id="@+id/release_task_attachment"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="@dimen/padding_medium"
+                    android:layout_marginTop="@dimen/padding_medium"
+                    android:background="@drawable/button_upload_file" />
+
+            </LinearLayout>
 
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
+                android:layout_height="50dp" />
 
-            <LinearLayout
+
+            <RelativeLayout
+                android:id="@+id/upload_add_reward"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="15dp"
-                android:orientation="vertical">
+                android:layout_height="@dimen/title_height"
+                android:background="@drawable/layout_ripple_default"
+                android:clickable="true"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium">
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:text="@string/addition_info"
-                    android:textSize="@dimen/text_size_huge" />
+                    android:layout_centerVertical="true"
+                    android:text="@string/set_reward"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large" />
 
-                <RelativeLayout
-                    android:id="@+id/release_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/release_add_reward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:layout_toLeftOf="@+id/alert_group_img1_task"
+                    android:textSize="@dimen/text_size_large" />
 
-                    <TextView
-                        android:id="@+id/addition_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_margin="10dp"
-                        android:text="@string/price"
-                        android:textColor="@color/color_button_default"
-                        android:textSize="@dimen/text_size_large" />
+                <ImageView
+                    android:id="@+id/alert_group_img1_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_layout_arrow" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="10dp"
-                        android:background="@color/colorPrimary"
-                        android:src="@drawable/ic_person_img" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@color/color_button_default" />
-
-                <RelativeLayout
-                    android:id="@+id/release_tag"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/addition_tag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_margin="10dp"
-                        android:text="@string/variety"
-                        android:textColor="@color/color_button_default"
-                        android:textSize="@dimen/text_size_large" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_margin="10dp"
-                        android:background="@color/colorPrimary"
-                        android:src="@drawable/ic_person_img" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@color/color_button_default" />
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@color/color_button_default" />
+                android:layout_height="1dp" />
 
-            <Button
-                android:id="@+id/release_task_confirm"
+            <RelativeLayout
+                android:id="@+id/upload_add_category"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/shape"
-                android:text="@string/confirm_release"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/text_size_huge" />
+                android:layout_height="@dimen/title_height"
+                android:background="@drawable/layout_ripple_default"
+                android:clickable="true"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="问题类型"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large" />
+
+                <TextView
+                    android:id="@+id/release_add_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:layout_toLeftOf="@+id/alert_group_img3_task"
+                    android:textSize="@dimen/text_size_large" />
+
+                <ImageView
+                    android:id="@+id/alert_group_img3_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_layout_arrow" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <RelativeLayout
+                android:id="@+id/upload_deadline_task"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/title_height"
+                android:background="@drawable/layout_ripple_default"
+                android:clickable="true"
+                android:paddingLeft="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_medium">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/deadline"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large" />
+
+                <TextView
+                    android:id="@+id/release_deadline_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/padding_medium"
+                    android:layout_toLeftOf="@+id/alert_group_img2_task"
+                    android:textSize="@dimen/text_size_large" />
+
+                <ImageView
+                    android:id="@+id/alert_group_img2_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_layout_arrow" />
+
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 

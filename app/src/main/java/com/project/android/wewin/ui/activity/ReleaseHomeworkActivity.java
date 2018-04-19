@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -140,6 +141,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
 
         initTimePicker();
         subscribeUI();
+        checkPermissions();
     }
 
     @Override
@@ -199,31 +201,12 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorUser(user);
-        if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        } else {
-            if (isHomeworkValid()) {
-                //uploadAttachment();
-            }
+        if (isHomeworkValid()) {
+
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //uploadAttachment();
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                break;
-        }
-    }
+
 
     /*private void uploadAttachment() {
         mConfirm.setClickable(false);
@@ -289,7 +272,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             return;
         }
 
-
         final String[] classNames = new String[mClassData.size()];
         for (int i = 0; i < mClassData.size(); i++) {
             classNames[i] = mClassData.get(i).getClassName();
@@ -306,8 +288,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         });
 
         dialog.initDialog();
-
     }
+
 
     private void addAttachment() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -493,7 +475,6 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     }
 
     public boolean isHomeworkValid() {
-        boolean homeworkValid = false;
         if (mHomeWork.getHomeworkTitle().isEmpty()) {
             Toast.makeText(this, "请输入作业标题", Toast.LENGTH_SHORT).show();
         } else if (mHomeWork.getHomeworkContent().isEmpty()) {
@@ -503,8 +484,33 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         } else if (mHomeWork.getHomeworkDeadline() == null) {
             Toast.makeText(this, "请选择截止日期", Toast.LENGTH_SHORT).show();
         } else {
-            homeworkValid = true;
+            return true;
         }
-        return homeworkValid;
+        return false;
+    }
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(ReleaseHomeworkActivity.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

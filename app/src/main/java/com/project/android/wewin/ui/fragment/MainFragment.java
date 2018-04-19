@@ -25,6 +25,7 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.ui.activity.ReleaseHomeworkActivity;
+import com.project.android.wewin.ui.activity.ReleaseTaskActivity;
 import com.project.android.wewin.ui.adapter.LazyFragmentPagerAdapter;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
@@ -109,6 +110,7 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
                             break;
                         case 1:
                             Toast.makeText(view.getContext(), "add questions", Toast.LENGTH_SHORT).show();
+                            startActivityForResult(new Intent(view.getContext(), ReleaseTaskActivity.class), 2);
                             break;
                         default:
                     }

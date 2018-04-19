@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -140,6 +141,7 @@ public class DetailActivity extends AppCompatActivity {
 
         user = BmobUser.getCurrentUser(MyUser.class);
         initView();
+        checkPermissions();
     }
 
 
@@ -181,12 +183,12 @@ public class DetailActivity extends AppCompatActivity {
         countDownTimer = new CountDownTimer(timeLeft, 1000) {
             @Override
             public void onTick(long l) {
-                long day = l / (24*60*60*1000);
-                long hour = (l / (60*60*1000) - day*24);
-                long min = ((l / (60*1000)) - day*24*60 - hour*60);
-                long second = (l / 1000 - day*24*60*60 - hour*60*60 - min*60);
+                long day = l / (24 * 60 * 60 * 1000);
+                long hour = (l / (60 * 60 * 1000) - day * 24);
+                long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
+                long second = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
 
-                binding.setLeftTime(getString(R.string.deadline_time_left) + "  " +day+"天"+hour+"小时"+min+"分钟");
+                binding.setLeftTime(getString(R.string.deadline_time_left) + "  " + day + "天" + hour + "小时" + min + "分钟");
                 binding.setLeftSecond(second + "秒");
 
                 ScaleAnimation animation = new ScaleAnimation(1.0f, 0.857f,
@@ -290,7 +292,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-
     private void toReply() {
         final BottomSheetDialog dialog = new BottomSheetDialog(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_dialog_upload, null);
@@ -356,15 +357,7 @@ public class DetailActivity extends AppCompatActivity {
     private void replyConfirm() {
         mCommit.setCreatorUser(user);
         mCommit.setmHomework(mHomeWork);
-        if (ActivityCompat.checkSelfPermission(DetailActivity.this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        } else {
-            if (isReplyValid()) {
-                //uploadAttachment();
-            }
-        }
+
     }
 
     private boolean isReplyValid() {
@@ -376,30 +369,6 @@ public class DetailActivity extends AppCompatActivity {
             Toast.makeText(DetailActivity.this, "回复不能为空", Toast.LENGTH_SHORT).show();
         }*/
         return replyValid;
-    }
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getPath(uri);
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case 0:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //download
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                break;
-        }
     }
 
 
@@ -478,15 +447,7 @@ public class DetailActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == FILE_SELECT_CODE) {
                 uri = data.getData();
-
-                if (ActivityCompat.checkSelfPermission(DetailActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                } else {
-                    getPath(uri);
-                }
-
+                getPath(uri);
                 mAttachmentWord.setText(getString(R.string.submit));
                 mAttachmentAdd.setVisibility(View.VISIBLE);
             }
@@ -495,9 +456,9 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private void getPath(Uri uri) {
-        Log.d("wewein", "onActivityResult: "+uri);
+        Log.d("wewein", "onActivityResult: " + uri);
         String path = Util.getPath(this, uri);
-        Log.d("wewein", "getPath: "+path);
+        Log.d("wewein", "getPath: " + path);
 
         if (path == null) {
             return;
@@ -634,6 +595,31 @@ public class DetailActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         countDownTimer.cancel();
+    }
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(DetailActivity.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }
