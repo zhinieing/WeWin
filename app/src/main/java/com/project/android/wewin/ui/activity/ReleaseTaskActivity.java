@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,11 +51,17 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadBatchListener;
 
 /**
  * ReleaseTaskActivity class
@@ -106,6 +113,10 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
 
     private Task mTask = new Task();
 
+    LinkedList<String> attachments = new LinkedList<>();
+
+    private Dialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +145,14 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
 
         initTimePicker();
         checkPermissions();
+
+        progressDialog = new Dialog(ReleaseTaskActivity.this, R.style.progress_dialog);
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.setCancelable(false);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        TextView msg = progressDialog.findViewById(R.id.id_tv_loadingmsg);
+        msg.setText("正在上传中");
+
     }
 
     @Override
@@ -177,6 +196,9 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             if (requestCode == FILE_SELECT_CODE) {
                 Uri uri = data.getData();
                 String path = Util.getPath(this, uri);
+                L.i(path);
+                //保存附件路径
+                attachments.add(path);
 
                 String type = Util.fileType(path.substring(path.lastIndexOf(".") + 1));
 
@@ -189,7 +211,111 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private View initMediaView(String path) {
+
+    private void releaseConfirm() {
+        mTask.setTaskTitle(mTaskTitle.getText().toString());
+        mTask.setTaskContent(mTaskContent.getText().toString());
+        mTask.setCreatorUser(user);
+        mTask.setCompleted(false);
+        mTask.setReceiverUser(null);
+
+        L.i(attachments.toString());
+        if (isTaskValid()) {
+            uploadAttachment();
+        }
+    }
+
+    private void uploadAttachment() {
+        progressDialog.show();
+        L.i("start upload");
+        if (attachments.size() == 0) {
+            mTask.save(new SaveListener<String>() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        progressDialog.dismiss();
+                        Toast.makeText(ReleaseTaskActivity.this, "文件上传成功", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+            });
+        } else {
+            final String[] filePaths = new String[attachments.size()];
+            for (int i = 0; i < attachments.size(); i++) {
+                filePaths[i] = attachments.get(i);
+            }
+            L.i(filePaths[0]);
+            BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+                @Override
+                public void onSuccess(List<BmobFile> list, List<String> list1) {
+                    if (list1.size() == filePaths.length) {
+                        L.i(list1.toString());
+
+                        mTask.setAttachmentPath(list1);
+                        mTask.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+                                Toast.makeText(ReleaseTaskActivity.this, "Task上传成功", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                finish();
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onProgress(int i, int i1, int i2, int i3) {
+
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    L.i(s + " upload error code:" + i);
+                }
+            });
+        }
+    }
+
+    private void addReward() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ReleaseTaskActivity.this);
+        View view = View.inflate(ReleaseTaskActivity.this, R.layout.dialog_reward, null);
+        final EditText editText = view.findViewById(R.id.dialog_reward);
+        builder.setView(view);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    mTask.setTaskReward(Double.parseDouble(editText.getText().toString()));
+                    mAddReward.setText(editText.getText().toString());
+                } catch (Exception e) {
+                    L.i("null reward");
+                }
+            }
+        });
+        final AlertDialog dialog = builder.create();
+
+        dialog.show();
+
+    }
+
+    private void addCategory() {
+        final String[] categoryNames = new String[]{"经济金融", "健康生活", "娱乐休闲", "企业管理",
+                "体育运动", "地区", "法律法规", "文化艺术", "心理分析", "社会民生", "电子数码", "医疗卫生",
+                "科学教育", "电脑网络"};
+
+        final MyAlertDialog dialog = new MyAlertDialog(ReleaseTaskActivity.this, categoryNames, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialogInterface, final int i) {
+                mAddCategory.setText(categoryNames[i]);
+                mTask.setTaskCategory(categoryNames[i]);
+            }
+        });
+
+        dialog.initDialog();
+    }
+
+
+    private View initMediaView(final String path) {
         releaseAttachmentMedia.setVisibility(View.VISIBLE);
 
         String type = Util.fileType(path.substring(path.lastIndexOf(".") + 1));
@@ -247,7 +373,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(View v) {
                 releaseAttachmentMedia.removeView(itemMediaView);
-
+                attachments.remove(path);
                 if (releaseAttachmentMedia.getChildCount() == 0) {
                     releaseAttachmentMedia.setVisibility(View.GONE);
                 }
@@ -258,7 +384,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-    private View initFileView(String path) {
+    private View initFileView(final String path) {
         releaseAttachmentFile.setVisibility(View.VISIBLE);
 
         File file = new File(path);
@@ -279,7 +405,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(View v) {
                 releaseAttachmentFile.removeView(itemFileView);
-
+                attachments.remove(path);
                 if (releaseAttachmentFile.getChildCount() == 0) {
                     releaseAttachmentFile.setVisibility(View.GONE);
                 }
@@ -291,57 +417,6 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
         itemFileView.setLayoutParams(layoutParams);
 
         return itemFileView;
-    }
-
-    private void releaseConfirm() {
-        mTask.setTaskTitle(mTaskTitle.getText().toString());
-        mTask.setTaskContent(mTaskContent.getText().toString());
-        mTask.setCreatorUser(user);
-        mTask.setCompleted(false);
-        mTask.setReceiverUser(null);
-
-        if (isTaskValid()) {
-
-        }
-    }
-
-
-    private void addReward() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ReleaseTaskActivity.this);
-        View view = View.inflate(ReleaseTaskActivity.this, R.layout.dialog_reward, null);
-        final EditText editText = view.findViewById(R.id.dialog_reward);
-        builder.setView(view);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                try {
-                    mTask.setTaskReward(Double.parseDouble(editText.getText().toString()));
-                    mAddReward.setText(editText.getText().toString());
-                } catch (Exception e) {
-                    L.i("null reward");
-                }
-            }
-        });
-        final AlertDialog dialog = builder.create();
-
-        dialog.show();
-
-    }
-
-    private void addCategory() {
-        final String[] categoryNames = new String[]{"经济金融", "健康生活", "娱乐休闲", "企业管理",
-                "体育运动", "地区", "法律法规", "文化艺术", "心理分析", "社会民生", "电子数码", "医疗卫生",
-                "科学教育", "电脑网络"};
-
-        final MyAlertDialog dialog = new MyAlertDialog(ReleaseTaskActivity.this, categoryNames, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialogInterface, final int i) {
-                mAddCategory.setText(categoryNames[i]);
-                mTask.setTaskCategory(categoryNames[i]);
-            }
-        });
-
-        dialog.initDialog();
     }
 
     private boolean isTaskValid() {
