@@ -5,7 +5,7 @@
     android:background="@drawable/ic_loading_bg"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="16.0dip" >
+    android:padding="16.0dip">
 
 
     <ProgressBar
@@ -14,10 +14,19 @@
         android:indeterminateDrawable="@drawable/progress_drawable_white" />
 
     <TextView
+        android:id="@+id/progress_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="8.0dip"
+        android:textColor="#fff"
+        android:textSize="16.0dip" />
+
+    <TextView
         android:id="@+id/id_tv_loadingmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:layout_marginTop="8.0dip"
         android:textColor="#fff"
         android:textSize="16.0dip" />

@@ -395,6 +395,7 @@ public class RemoteDataSource implements DataSource {
             BmobQuery<Task> query = new BmobQuery<>();
             //添加条件，查询completed字段为非true的任务
             query.addWhereNotEqualTo("completed", true);
+            query.include("creatorUser");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date currentDate = null;
             try {
@@ -469,6 +470,7 @@ public class RemoteDataSource implements DataSource {
             BmobQuery<Task> query = new BmobQuery<>();
             query.addWhereEqualTo("receiverUser", new BmobPointer(user));
             query.include("receiverUser");
+            query.include("creatorUser");
             query.setSkip(10 * (index - 1));
             query.setLimit(10);
             query.order("taskDeadline");

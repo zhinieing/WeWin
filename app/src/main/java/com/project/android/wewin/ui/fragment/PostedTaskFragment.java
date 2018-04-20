@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,7 +23,7 @@ import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
-import com.project.android.wewin.ui.adapter.TaskRvAdapter;
+import com.project.android.wewin.ui.adapter.HomeworkRvAdapter;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
@@ -51,7 +50,7 @@ public class PostedTaskFragment extends LazyLoadFragment {
 
     Unbinder unbinder;
 
-    private TaskRvAdapter taskRvAdapter;
+    private HomeworkRvAdapter homeworkRvAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
 
@@ -158,8 +157,8 @@ public class PostedTaskFragment extends LazyLoadFragment {
                 android.R.color.holo_red_light);
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            taskRvAdapter = new TaskRvAdapter(context, homeWorkOnItemClickListener);
-            postedTaskList.setAdapter(taskRvAdapter);
+            homeworkRvAdapter = new HomeworkRvAdapter(context, homeWorkOnItemClickListener);
+            postedTaskList.setAdapter(homeworkRvAdapter);
         } else {
 
         }
@@ -185,7 +184,7 @@ public class PostedTaskFragment extends LazyLoadFragment {
                     recyclerView.getLayoutManager();
             int lastPosition = layoutManager
                     .findLastVisibleItemPosition();
-            if (lastPosition == taskRvAdapter.getItemCount() - 1) {
+            if (lastPosition == homeworkRvAdapter.getItemCount() - 1) {
 
                 nextPage = true;
                 mHomeWorkListViewModel.loadNextPostedPageHomeWorkList();
@@ -222,13 +221,13 @@ public class PostedTaskFragment extends LazyLoadFragment {
 
 
                 if (!nextPage) {
-                    taskRvAdapter.clearHomeWorkList();
+                    homeworkRvAdapter.clearHomeWorkList();
                 } else {
                     /*if (homeWorks.size() == 0) {
                         Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
                     }*/
                 }
-                taskRvAdapter.setHomeWorkList(homeWorks);
+                homeworkRvAdapter.setHomeWorkList(homeWorks);
             }
         });
 

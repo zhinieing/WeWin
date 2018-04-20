@@ -109,7 +109,6 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
                             }
                             break;
                         case 1:
-                            Toast.makeText(view.getContext(), "add questions", Toast.LENGTH_SHORT).show();
                             startActivityForResult(new Intent(view.getContext(), ReleaseTaskActivity.class), 2);
                             break;
                         default:

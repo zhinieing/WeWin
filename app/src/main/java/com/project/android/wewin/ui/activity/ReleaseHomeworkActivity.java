@@ -43,6 +43,7 @@ import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
 import com.project.android.wewin.utils.MyAlertDialog;
+import com.project.android.wewin.utils.MyProgressDialog;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.ReleaseHomeWorkViewModel;
 
@@ -113,6 +114,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private List<Class> mClassData = new ArrayList<>();
     private ReleaseHomeWorkViewModel mReleaseHomeWorkViewModel;
 
+    private MyProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +144,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         initTimePicker();
         subscribeUI();
         checkPermissions();
+        progressDialog = new MyProgressDialog(ReleaseHomeworkActivity.this,R.style.progress_dialog);
+
     }
 
     @Override
@@ -201,9 +205,11 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorUser(user);
+        progressDialog.show();
         if (isHomeworkValid()) {
 
         }
+        progressDialog.dismiss();
     }
 
 

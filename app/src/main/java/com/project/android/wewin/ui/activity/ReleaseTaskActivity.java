@@ -2,7 +2,6 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,14 +17,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -45,6 +39,7 @@ import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
 import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.MyAlertDialog;
+import com.project.android.wewin.utils.MyProgressDialog;
 import com.project.android.wewin.utils.Util;
 
 import java.io.File;
@@ -115,7 +110,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
 
     LinkedList<String> attachments = new LinkedList<>();
 
-    private Dialog progressDialog;
+    private MyProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,12 +141,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
         initTimePicker();
         checkPermissions();
 
-        progressDialog = new Dialog(ReleaseTaskActivity.this, R.style.progress_dialog);
-        progressDialog.setContentView(R.layout.progress_dialog);
-        progressDialog.setCancelable(false);
-        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        TextView msg = progressDialog.findViewById(R.id.id_tv_loadingmsg);
-        msg.setText("正在上传中");
+        progressDialog = new MyProgressDialog(ReleaseTaskActivity.this, R.style.progress_dialog);
 
     }
 
@@ -229,6 +219,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
         progressDialog.show();
         L.i("start upload");
         if (attachments.size() == 0) {
+            progressDialog.hideProgress();
             mTask.save(new SaveListener<String>() {
                 @Override
                 public void done(String s, BmobException e) {
@@ -265,7 +256,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
 
                 @Override
                 public void onProgress(int i, int i1, int i2, int i3) {
-
+                    progressDialog.setProgress(i + "/" + i2 + " " + i1 + "%");
                 }
 
                 @Override
@@ -286,7 +277,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
                     mTask.setTaskReward(Double.parseDouble(editText.getText().toString()));
-                    mAddReward.setText(editText.getText().toString());
+                    mAddReward.setText(editText.getText().toString() + "元");
                 } catch (Exception e) {
                     L.i("null reward");
                 }
