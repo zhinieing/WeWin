@@ -40,6 +40,7 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Commit;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.databinding.ActivityDetailBinding;
 import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
 import com.project.android.wewin.utils.Util;
@@ -101,6 +102,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private HomeWork mHomeWork;
+    private Task mTask;
     private int menuIndex;
     private Commit mCommit = new Commit();
     private MyUser user;
@@ -135,8 +137,10 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         mHomeWork = (HomeWork) getIntent().getSerializableExtra("homework_detail");
-        menuIndex = getIntent().getIntExtra("menu_index", 0);
         binding.setHomework(mHomeWork);
+
+        menuIndex = getIntent().getIntExtra("menu_index", 0);
+        binding.setDetailActivity(this);
         binding.setDetailActivity(this);
 
         user = BmobUser.getCurrentUser(MyUser.class);
@@ -158,7 +162,9 @@ public class DetailActivity extends AppCompatActivity {
 
     public static void startDetailActivity(Activity activity, HomeWork homeWork, int index) {
         Intent intent = new Intent(activity, DetailActivity.class);
+
         intent.putExtra("homework_detail", homeWork);
+
         intent.putExtra("menu_index", index);
         activity.startActivity(intent);
     }

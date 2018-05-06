@@ -539,7 +539,7 @@ public class RemoteDataSource implements DataSource {
             query.findObjects(new FindListener<Task>() {
                 @Override
                 public void done(List<Task> list, BmobException e) {
-                    mIsLoadingTaskList.setValue(false);
+                    mIsLoadingPostedTaskList.setValue(false);
                     if (e == null) {
                         mPostedTaskList.setValue(list);
                     }

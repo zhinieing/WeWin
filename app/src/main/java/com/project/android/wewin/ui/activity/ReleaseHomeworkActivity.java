@@ -42,6 +42,7 @@ import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
+import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.MyAlertDialog;
 import com.project.android.wewin.utils.MyProgressDialog;
 import com.project.android.wewin.utils.Util;
@@ -53,6 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -114,7 +116,10 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
     private List<Class> mClassData = new ArrayList<>();
     private ReleaseHomeWorkViewModel mReleaseHomeWorkViewModel;
 
+    LinkedList<String> attachments = new LinkedList<>();
+
     private MyProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +149,7 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         initTimePicker();
         subscribeUI();
         checkPermissions();
-        progressDialog = new MyProgressDialog(ReleaseHomeworkActivity.this,R.style.progress_dialog);
+        progressDialog = new MyProgressDialog(ReleaseHomeworkActivity.this, R.style.progress_dialog);
 
     }
 
@@ -205,72 +210,63 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
         mHomeWork.setHomeworkTitle(mHomeworkTitle.getText().toString());
         mHomeWork.setHomeworkContent(mHomeworkContent.getText().toString());
         mHomeWork.setCreatorUser(user);
-        progressDialog.show();
         if (isHomeworkValid()) {
-
+            uploadAttachment();
         }
-        progressDialog.dismiss();
     }
 
 
-
-    /*private void uploadAttachment() {
-        mConfirm.setClickable(false);
-
-        int size = mAttachmentLayout.getChildCount();
-        if (size == 0) {
+    private void uploadAttachment() {
+        progressDialog.show();
+        L.i("start upload");
+        if (attachments.size() == 0) {
+            progressDialog.hideProgress();
             mHomeWork.save(new SaveListener<String>() {
                 @Override
                 public void done(String s, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_success), Toast.LENGTH_SHORT).show();
-                        setResult(2);
+                        progressDialog.dismiss();
+                        Toast.makeText(ReleaseHomeworkActivity.this, "文件上传成功", Toast.LENGTH_SHORT).show();
                         finish();
-                    } else {
-                        Toast.makeText(ReleaseHomeworkActivity.this, getString(R.string.release_fail), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-        }
-        final String[] filePaths = new String[size];
-        for (int i = 0; i < size; i++) {
-            filePaths[i] = mAttachmentLayout.getChildAt(i).getTag().toString();
-        }
-        BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
-            @Override
-            public void onSuccess(List<BmobFile> list, List<String> list1) {
-                if (list1.size() == filePaths.length) {
-                    mHomeWork.addAll("attachmentPath", list1);
-                    mHomeWork.save(new SaveListener<String>() {
-                        @Override
-                        public void done(String s, BmobException e) {
-                            if (e == null) {
-                                Toast.makeText(ReleaseHomeworkActivity.this, "success upload:" + s, Toast.LENGTH_SHORT).show();
-                                setResult(2);
+        } else {
+            final String[] filePaths = new String[attachments.size()];
+            for (int i = 0; i < attachments.size(); i++) {
+                filePaths[i] = attachments.get(i);
+            }
+            L.i(filePaths[0]);
+            BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
+                @Override
+                public void onSuccess(List<BmobFile> list, List<String> list1) {
+                    if (list1.size() == filePaths.length) {
+                        L.i(list1.toString());
+
+                        mHomeWork.setAttachmentPath(list1);
+                        mHomeWork.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+                                Toast.makeText(ReleaseHomeworkActivity.this, "Task上传成功", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                                 finish();
-                            } else {
-                                Toast.makeText(ReleaseHomeworkActivity.this, "fail upload" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onProgress(int i, int i1, int i2, int i3) {
-                Log.i("upload", "onProgress: " + "total:" + i2 + " percent:" + i3);
-            }
+                @Override
+                public void onProgress(int i, int i1, int i2, int i3) {
+                    progressDialog.setProgress(i + "/" + i2 + " " + i1 + "%");
+                }
 
-            @Override
-            public void onError(int i, String s) {
-                mConfirm.setClickable(true);
-
-                //Toast.makeText(ReleaseHomeworkActivity.this, "文件路径错误", Toast.LENGTH_SHORT).show();
-                Log.i("error", "errorcode:" + i + " message:" + s);
-            }
-        });
-
-    }*/
+                @Override
+                public void onError(int i, String s) {
+                    L.i(s + " upload error code:" + i);
+                }
+            });
+        }
+    }
 
     private void addTarget() {
         if (mClassData.size() == 0) {
@@ -315,6 +311,8 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
             if (requestCode == FILE_SELECT_CODE) {
                 Uri uri = data.getData();
                 String path = Util.getPath(this, uri);
+
+                attachments.add(path);
 
                 String type = Util.fileType(path.substring(path.lastIndexOf(".") + 1));
 

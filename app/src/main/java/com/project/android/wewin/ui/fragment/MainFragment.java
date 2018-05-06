@@ -206,12 +206,23 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
-
-                    return TaskFragment.newInstance(position + 1);
+                    if (position == 1){
+                        return new TaskFragment();
+                    }else {
+                        return new HomeworkFragment();
+                    }
                 case 2:
-                    return PostedTaskFragment.newInstance(position + 1);
+                    if (position == 1){
+                        return new PostedTaskFragment();
+                    }else {
+                        return new PostedHomeworkFragment();
+                    }
                 case 3:
-                    return GotTaskFragment.newInstance(position + 1);
+                    if (position == 1){
+                        return new GotTaskFragment();
+                    }else {
+                        return new GotHomeworkFragment();
+                    }
                 default:
             }
             return null;

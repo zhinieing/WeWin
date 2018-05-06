@@ -181,7 +181,6 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
                 }
             });
         }
-
     }
 
     @Override

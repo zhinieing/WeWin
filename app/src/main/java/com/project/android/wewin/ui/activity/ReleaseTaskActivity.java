@@ -415,7 +415,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             Toast.makeText(this, "请输入问答标题", Toast.LENGTH_SHORT).show();
         } else if (mTask.getTaskContent().isEmpty()) {
             Toast.makeText(this, "请输入问答内容", Toast.LENGTH_SHORT).show();
-        } else if (mTask.getTaskReward() <= 1e-7) {
+        } else if (mTask.getTaskReward() < 0.0) {
             Toast.makeText(this, "请设置问答报酬", Toast.LENGTH_SHORT).show();
         } else if (mTask.getTaskDeadline() == null) {
             Toast.makeText(this, "请选择截止日期", Toast.LENGTH_SHORT).show();

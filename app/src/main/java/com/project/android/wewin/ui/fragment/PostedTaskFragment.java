@@ -1,5 +1,6 @@
 package com.project.android.wewin.ui.fragment;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,13 +22,20 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
+import com.project.android.wewin.ui.activity.TaskDetailActivity;
+import com.project.android.wewin.ui.adapter.ItemClickListener;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.HomeworkRvAdapter;
+import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
+import com.project.android.wewin.ui.adapter.TaskRvAdapter;
+import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,47 +47,22 @@ import butterknife.Unbinder;
  * @date 2027/22/4
  */
 
-public class PostedTaskFragment extends LazyLoadFragment {
+public class PostedTaskFragment extends LazyLoadFragment implements ItemClickListener<Task> {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
-
-    @BindView(R.id.posted_task_list)
+    @BindView(R.id.task_list)
     RecyclerView postedTaskList;
 
-    @BindView(R.id.posted_homework_list_spl)
+    @BindView(R.id.homework_list_spl)
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
 
-    private HomeworkRvAdapter homeworkRvAdapter;
+    private List<Task> mTask = new ArrayList<>();
+    private SingleTypeAdapter<Task> taskSingleTypeAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
 
     private boolean nextPage = false;
-
-
-    private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
-            new OnItemClickListener<HomeWork>() {
-                @Override
-                public void onClick(HomeWork homeWork) {
-                    if (Util.isNetworkConnected(MyApplication.getInstance())) {
-                        DetailActivity.startDetailActivity((MainActivity)context, homeWork, 1);
-                    } else {
-                        Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-
-    public PostedTaskFragment() {
-    }
-
-    public static PostedTaskFragment newInstance(int sectionNumber) {
-        PostedTaskFragment fragment = new PostedTaskFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
 
     @Override
@@ -88,67 +72,20 @@ public class PostedTaskFragment extends LazyLoadFragment {
         Log.d("wewein", "onAttach: 2");
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("wewein", "onCreate: 2");
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("wewein", "onActivityCreated: 2");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("wewein", "onResume: 2");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("wewein", "onStart: 2");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("wewein", "onDestroy: 2");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d("wewein", "onDetach: 2");
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1 && resultCode == 2) {
-            requestData();
-        }
-    }
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d("wewein", "onCreateView: 2");
-        View view = inflater.inflate(R.layout.fragment_posted_task, container, false);
+        View view = inflater.inflate(R.layout.fragment_task, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         postedTaskList.setLayoutManager(llm);
+        postedTaskList.setItemAnimator(new DefaultItemAnimator());
         postedTaskList.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-        postedTaskList.addOnScrollListener(new PostedTaskFragment.HomeWorkOnScrollListener());
 
-        mRefreshLayout.setOnRefreshListener(new PostedTaskFragment.HomeWorSwipeListener());
         mRefreshLayout.setColorSchemeResources(
                 R.color.colorAccent,
                 android.R.color.holo_blue_bright,
@@ -156,55 +93,66 @@ public class PostedTaskFragment extends LazyLoadFragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            homeworkRvAdapter = new HomeworkRvAdapter(context, homeWorkOnItemClickListener);
-            postedTaskList.setAdapter(homeworkRvAdapter);
-        } else {
 
-        }
+        postedTaskList.addOnScrollListener(new TaskOnScrollListener());
+        mRefreshLayout.setOnRefreshListener(new TaskSwipeListener());
+
+        taskSingleTypeAdapter = new SingleTypeAdapter<>(context, R.layout.item_task_list);
+        taskSingleTypeAdapter.setPresenter(this);
+
+        postedTaskList.setAdapter(taskSingleTypeAdapter);
         return view;
     }
 
+    @Override
+    public void onItemClick(Task task) {
+        if (Util.isNetworkConnected(MyApplication.getInstance())) {
+            TaskDetailActivity.startDetailActivity((MainActivity) context, task, 1);
+        } else {
+            Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-    private class HomeWorSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
+
+    private class TaskSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
+
         @Override
         public void onRefresh() {
             nextPage = false;
             mRefreshLayout.setRefreshing(true);
-            mHomeWorkListViewModel.refreshPostedHomeWorkListData();
-
+            mHomeWorkListViewModel.refreshPostedTaskListData();
         }
     }
 
-    private class HomeWorkOnScrollListener extends RecyclerView.OnScrollListener {
+    private class TaskOnScrollListener extends RecyclerView.OnScrollListener {
 
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            LinearLayoutManager layoutManager = (LinearLayoutManager)
-                    recyclerView.getLayoutManager();
-            int lastPosition = layoutManager
-                    .findLastVisibleItemPosition();
-            if (lastPosition == homeworkRvAdapter.getItemCount() - 1) {
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy > 0) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager)
+                        recyclerView.getLayoutManager();
 
-                nextPage = true;
-                mHomeWorkListViewModel.loadNextPostedPageHomeWorkList();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+
+                if (!nextPage && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    nextPage = true;
+                    mHomeWorkListViewModel.loadNextPostedPageTaskList();
+                }
             }
         }
     }
 
-
     @Override
     public void requestData() {
         nextPage = false;
-        if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            subscribeUI();
-        }
+
+        subscribeTaskUI();
     }
 
-
-    private void subscribeUI() {
-        Log.d("wewein", "subscribeUI: PostedTaskFragment");
-
+    private void subscribeTaskUI() {
         if (!isAdded()) {
             return;
         }
@@ -212,40 +160,37 @@ public class PostedTaskFragment extends LazyLoadFragment {
                 .Factory(MyApplication.getInstance(),
                 Injection.getDataRepository(MyApplication.getInstance()));
         mHomeWorkListViewModel = ViewModelProviders.of(this, factory).get(HomeWorkListViewModel.class);
-        mHomeWorkListViewModel.getPostedHomeWorkList().observe(this, new Observer<List<HomeWork>>() {
+        mHomeWorkListViewModel.getPostedTaskList().observe(this, new Observer<List<Task>>() {
             @Override
-            public void onChanged(@Nullable List<HomeWork> homeWorks) {
-                if (homeWorks == null) {
+            public void onChanged(@Nullable List<Task> tasks) {
+                if (tasks == null) {
                     return;
                 }
 
-
                 if (!nextPage) {
-                    homeworkRvAdapter.clearHomeWorkList();
+                    taskSingleTypeAdapter.clear();
+                    mTask.clear();
                 } else {
-                    /*if (homeWorks.size() == 0) {
-                        Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
-                    }*/
+
                 }
-                homeworkRvAdapter.setHomeWorkList(homeWorks);
+                mTask.addAll(tasks);
+                taskSingleTypeAdapter.set(mTask);
             }
         });
-
-        mHomeWorkListViewModel.isLoadingPostedHomeWorkList().observe(this, new Observer<Boolean>() {
+        mHomeWorkListViewModel.isLoadingPostedTaskList().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean aBoolean) {
                 if (aBoolean == null) {
                     return;
                 }
-
                 mRefreshLayout.setRefreshing(aBoolean);
             }
         });
 
         mRefreshLayout.setRefreshing(true);
-        mHomeWorkListViewModel.refreshPostedHomeWorkListData();
-
+        mHomeWorkListViewModel.refreshPostedTaskListData();
     }
+
 
     @Override
     public void onDestroyView() {

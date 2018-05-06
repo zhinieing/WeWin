@@ -19,30 +19,21 @@ import android.widget.Toast;
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
-import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.data.remote.model.HomeWork;
+import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
-import com.project.android.wewin.ui.activity.TaskDetailActivity;
-import com.project.android.wewin.ui.adapter.BaseViewAdapter;
-import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
-import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
-import com.project.android.wewin.utils.L;
+import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/**
- * @author pengming
- * @date 2017/11/4
- */
-
-public class TaskFragment extends LazyLoadFragment implements ItemClickListener<Task> {
+public class HomeworkFragment extends LazyLoadFragment implements ItemClickListener<HomeWork> {
 
     @BindView(R.id.task_list)
     RecyclerView taskList;
@@ -51,22 +42,24 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
-
-    private List<Task> mTask = new ArrayList<>();
-    private SingleTypeAdapter<Task> taskSingleTypeAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
 
     private boolean nextPage = false;
 
+    private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
+            new OnItemClickListener<HomeWork>() {
+                @Override
+                public void onClick(HomeWork homeWork) {
+
+                }
+            };
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        Log.d("wewein", "onAttach: 1");
     }
-
 
     @Nullable
     @Override
@@ -89,68 +82,59 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
                 android.R.color.holo_red_light);
 
 
-        taskList.addOnScrollListener(new TaskOnScrollListener());
-        mRefreshLayout.setOnRefreshListener(new TaskSwipeListener());
+        taskList.addOnScrollListener(new HomeWorkOnScrollListener());
+        mRefreshLayout.setOnRefreshListener(new HomeWorkSwipeListener());
 
-        taskSingleTypeAdapter = new SingleTypeAdapter<>(context, R.layout.item_task_list);
-        taskSingleTypeAdapter.setPresenter(this);
-
-        taskList.setAdapter(taskSingleTypeAdapter);
+//        homeworkRvAdapter = new HomeworkRvAdapter(context, homeWorkOnItemClickListener);
+//        taskList.setAdapter(homeworkRvAdapter);
 
         return view;
     }
 
     @Override
-    public void onItemClick(Task task) {
+    public void onItemClick(HomeWork homeWork) {
         if (Util.isNetworkConnected(MyApplication.getInstance())) {
-            TaskDetailActivity.startDetailActivity((MainActivity) context, task, 0);
+            DetailActivity.startDetailActivity((MainActivity) context, homeWork, 0);
         } else {
             Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
         }
     }
 
-
-    private class TaskSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
-
+    private class HomeWorkSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
             nextPage = false;
             mRefreshLayout.setRefreshing(true);
-            mHomeWorkListViewModel.refreshTaskListData();
+            mHomeWorkListViewModel.refreshHomeWorkListData();
         }
     }
 
-
-    private class TaskOnScrollListener extends RecyclerView.OnScrollListener {
+    private class HomeWorkOnScrollListener extends RecyclerView.OnScrollListener {
 
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (dy > 0) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager)
-                        recyclerView.getLayoutManager();
-
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
-
-                if (!nextPage && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                    nextPage = true;
-                    mHomeWorkListViewModel.loadNextPageTaskList();
-                }
-            }
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager)
+                    recyclerView.getLayoutManager();
+            int lastPosition = layoutManager
+                    .findLastVisibleItemPosition();
+//            if (lastPosition == homeworkRvAdapter.getItemCount() - 1) {
+//
+//                nextPage = true;
+//                mHomeWorkListViewModel.loadNextPageHomeWorkList();
+//
+//            }
         }
     }
 
     @Override
     public void requestData() {
         nextPage = false;
-
-        subscribeTaskUI();
-
+        subscribeUI();
     }
 
-    private void subscribeTaskUI() {
+    private void subscribeUI() {
+        Log.d("wewein", "subscribeUI: TaskFragment");
+
         if (!isAdded()) {
             return;
         }
@@ -158,38 +142,41 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
                 .Factory(MyApplication.getInstance(),
                 Injection.getDataRepository(MyApplication.getInstance()));
         mHomeWorkListViewModel = ViewModelProviders.of(this, factory).get(HomeWorkListViewModel.class);
-        mHomeWorkListViewModel.getTaskList().observe(this, new Observer<List<Task>>() {
+        mHomeWorkListViewModel.getHomeWorkList().observe(this, new Observer<List<HomeWork>>() {
             @Override
-            public void onChanged(@Nullable List<Task> tasks) {
-                if (tasks == null) {
+            public void onChanged(@Nullable List<HomeWork> homeWorks) {
+                if (homeWorks == null) {
                     return;
                 }
 
-                if (!nextPage) {
-                    taskSingleTypeAdapter.clear();
-                    mTask.clear();
-                } else {
 
+                if (!nextPage) {
+//                    homeworkRvAdapter.clearHomeWorkList();
+                } else {
+                    /*if (homeWorks.size() == 0) {
+                        Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
+                    }*/
                 }
-                mTask.addAll(tasks);
-                taskSingleTypeAdapter.set(mTask);
+
+//                homeworkRvAdapter.setHomeWorkList(homeWorks);
 
             }
         });
-        mHomeWorkListViewModel.isLoadingTaskList().observe(this, new Observer<Boolean>() {
+        mHomeWorkListViewModel.isLoadingHomeWorkList().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean aBoolean) {
                 if (aBoolean == null) {
                     return;
                 }
+
                 mRefreshLayout.setRefreshing(aBoolean);
             }
         });
 
         mRefreshLayout.setRefreshing(true);
-        mHomeWorkListViewModel.refreshTaskListData();
-    }
+        mHomeWorkListViewModel.refreshHomeWorkListData();
 
+    }
 
     @Override
     public void onDestroyView() {
