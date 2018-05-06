@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    tools:context=".ui.activity.ReleaseClassActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/release_class_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/toolbar_user_photo"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimary"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+
+            <ImageButton
+                android:id="@+id/release_class_confirm"
+                android:layout_gravity="right"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/layout_ripple_default"
+                android:layout_marginRight="@dimen/padding_medium"
+                android:src="@drawable/ic_release_submit"/>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:id="@+id/release_homework_title"
+        android:layout_margin="@dimen/padding_medium"
+        android:paddingLeft="@dimen/padding_small"
+        android:hint="@string/alert_class_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:maxLines="1"
+        android:maxLength="30"
+        android:background="@drawable/edit_text_background"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="@dimen/text_size_large"
+        android:textColor="@color/textColorPrimary"/>
+
+
+    <Button
+        android:id="@+id/release_class_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="@dimen/padding_medium"
+        android:background="@drawable/button_upload_file" />
+
+    <LinearLayout
+        android:id="@+id/class_icon"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_margin="@dimen/padding_medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -104,7 +104,14 @@
     <string name="alert_class_auth">选择您的身份：</string>
     <string name="alert_class_teacher">老师</string>
     <string name="alert_class_student">学生</string>
-    <string name="contact_add_class_success">添加班级成功</string>
+
+    <string name="add_class_success">添加班级成功</string>
+    <string name="add_class_fail">添加班级失败</string>
+    <string name="update_class_success">修改班级成功</string>
+    <string name="update_class_fail">修改班级失败</string>
+    <string name="delete_class_success">删除班级成功</string>
+    <string name="delete_class_fail">删除班级失败</string>
+
 
     <string name="contact_add_group">添加群组</string>
     <string name="uploading">正在上传</string>
@@ -113,6 +120,7 @@
     <string name="contact_add_group_success">添加群组成功</string>
 
     <string name="alert_dialog_modify_classname">请输入新的班级名称</string>
+    <string name="update_class">修改班级</string>
     <string name="delete_class">删除班级</string>
     <string name="delete_class_message">删除班级会清除掉所有该班级下的用户信息，以及该班级的老师发布的所有作业！</string>
     <string name="exit_class">退出班级</string>
@@ -122,5 +130,6 @@
     <string name="view">次浏览</string>
     <string name="set_reward">设置报酬</string>
     <string name="describe_task">描述一下问题</string>
+    <string name="title_activity_class">ClassActivity</string>
 
 </resources>

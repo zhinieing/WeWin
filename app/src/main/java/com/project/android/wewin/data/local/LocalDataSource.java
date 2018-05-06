@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import com.project.android.wewin.data.DataSource;
 import com.project.android.wewin.data.local.db.AppDatabase;
 import com.project.android.wewin.data.local.db.AppDatabaseManager;
+import com.project.android.wewin.data.local.db.entity.ClassInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -58,16 +59,28 @@ public class LocalDataSource implements DataSource {
         return null;
     }
 
+    @Override
+    public LiveData<List<ClassInfo>> getCreatedClassList() {
+        return null;
+    }
+
+    @Override
+    public LiveData<List<ClassInfo>> getJoinedClassList() {
+        return null;
+    }
+
+
+    @Override
+    public String getOpenid(String phoneno) {
+        return null;
+    }
 
     @Override
     public LiveData<Boolean> isClassTeacher() {
         return null;
     }
 
-    @Override
-    public LiveData<List<Class>> getClassList() {
-        return null;
-    }
+
 
     @Override
     public LiveData<Boolean> isLoadingClassList() {

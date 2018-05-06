@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 startActivity(new Intent(MainActivity.this, PersonActivity.class));
                 break;
             case POS_CONTACT:
-                startActivity(new Intent(MainActivity.this, ContactActivity.class));
+                startActivity(new Intent(MainActivity.this, ClassActivity.class));
                 break;
             default:
 

@@ -33,38 +33,40 @@
         <activity
             android:name=".ui.activity.LoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.ReleaseHomeworkActivity" />
         <activity android:name=".ui.activity.ReleaseTaskActivity" />
         <activity android:name=".ui.activity.DetailActivity" />
         <activity android:name=".ui.activity.HelpActivity" />
         <activity
             android:name=".ui.activity.ContactActivity"
-            android:label="@string/title_activity_contact"
-            android:parentActivityName=".ui.activity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.project.android.wewin.ui.activity.MainActivity" />
-        </activity>
+            android:parentActivityName=".ui.activity.MainActivity" />
+        <activity
+            android:name=".ui.activity.ClassActivity"
+            android:parentActivityName=".ui.activity.MainActivity" />
         <activity
             android:name=".ui.activity.PersonActivity"
-            android:parentActivityName=".ui.activity.MainActivity"/>
-        <activity
+            android:parentActivityName=".ui.activity.MainActivity" />
+        <!--
+            <activity
             android:name=".ui.activity.UserInformation"
             android:parentActivityName=".ui.activity.PersonActivity" />
+        -->
 
-        <!--<receiver-->
-        <!--android:name=".ui.broadcast.AppRegister"-->
-        <!--android:permission="com.tencent.mm.plugin.permission.SEND">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
 
-        <!--<activity android:name=".wxapi.WXEntryActivity"-->
-        <!--android:exported="true"/>-->
+        <!-- <receiver -->
+        <!-- android:name=".ui.broadcast.AppRegister" -->
+        <!-- android:permission="com.tencent.mm.plugin.permission.SEND"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
+
+        <!-- <activity android:name=".wxapi.WXEntryActivity" -->
+        <!-- android:exported="true"/> -->
+
+        <activity android:name=".ui.activity.ReleaseClassActivity"></activity>
     </application>
 
 </manifest>

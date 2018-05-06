@@ -2,14 +2,22 @@ package com.project.android.wewin.data.remote;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.project.android.wewin.data.DataSource;
+import com.project.android.wewin.data.local.db.entity.ClassInfo;
+import com.project.android.wewin.data.remote.api.ApiClass;
+import com.project.android.wewin.data.remote.api.ApiManager;
+import com.project.android.wewin.data.remote.api.ApiOpenid;
+import com.project.android.wewin.data.remote.api.ApiQiniu;
 import com.project.android.wewin.data.remote.model.Class;
+import com.project.android.wewin.data.remote.model.ClassData;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.data.remote.model.OpenidData;
 import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.utils.L;
 
@@ -26,6 +34,9 @@ import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author pengming
@@ -35,6 +46,7 @@ import cn.bmob.v3.listener.QueryListener;
 public class RemoteDataSource implements DataSource {
 
     private static RemoteDataSource INSTANCE = null;
+
 
     private final MutableLiveData<Boolean> mIsLoadingHomeWorkList = new MutableLiveData<>();
 
@@ -46,11 +58,15 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<Boolean> mIsClassTeacher = new MutableLiveData<>();
 
+    private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
+
     private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
 
-    private final MutableLiveData<List<Class>> mClassList = new MutableLiveData<>();
+    private final MutableLiveData<List<ClassInfo>> mCreatedClassList = new MutableLiveData<>();
 
-    private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
+    private final MutableLiveData<List<ClassInfo>> mJoinedClassList = new MutableLiveData<>();
+
+
 
     /*发布任务*/
 
@@ -67,10 +83,18 @@ public class RemoteDataSource implements DataSource {
     private final MutableLiveData<List<Task>> mReceivedTaskList = new MutableLiveData<>();
 
 
+    private final ApiOpenid mApiOpenid;
+
+    private final ApiClass mApiClass;
+
+
     private int indexClass;
     private int indexGroup;
+    private String result;
 
     private RemoteDataSource() {
+        mApiOpenid = ApiManager.getInstance().getApiOpenid();
+        mApiClass = ApiManager.getInstance().getApiClass();
     }
 
     public static RemoteDataSource getInstance() {
@@ -83,6 +107,29 @@ public class RemoteDataSource implements DataSource {
         }
         return INSTANCE;
     }
+
+
+    @Override
+    public String getOpenid(String phoneno) {
+
+        mApiOpenid.getOpenid(phoneno)
+                .enqueue(new Callback<OpenidData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            result = response.body().data;
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<OpenidData> call, @NonNull Throwable t) {
+
+                    }
+                });
+
+        return result;
+    }
+
 
 
     @Override
@@ -223,12 +270,30 @@ public class RemoteDataSource implements DataSource {
 
 
     @Override
-    public LiveData<List<Class>> getClassList() {
+    public LiveData<List<ClassInfo>> getCreatedClassList() {
         mIsLoadingClassList.setValue(true);
 
-        final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+        mApiClass.getClassesCreate("oiooR1kiOuI242pqm0N9TIFLugeg")
+                .enqueue(new Callback<ClassData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ClassData> call, @NonNull Response<ClassData> response) {
+                        mIsLoadingClassList.setValue(false);
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            mCreatedClassList.setValue(response.body().data);
+                        }
+                    }
 
-        if (user != null) {
+                    @Override
+                    public void onFailure(@NonNull Call<ClassData> call, @NonNull Throwable t) {
+                        mIsLoadingClassList.setValue(false);
+                    }
+                });
+
+        return mCreatedClassList;
+
+        //final MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
+        /*if (user != null) {
             final List<Class> mClassData = new ArrayList<>();
 
             BmobQuery<GroupMember> query = new BmobQuery<>();
@@ -309,15 +374,44 @@ public class RemoteDataSource implements DataSource {
             });
         } else {
             mIsLoadingClassList.setValue(false);
-        }
-
-        return mClassList;
+        }*/
     }
+
+    @Override
+    public LiveData<List<ClassInfo>> getJoinedClassList() {
+        mIsLoadingClassList.setValue(true);
+
+        mApiClass.getClassesJoin("oiooR1kiOuI242pqm0N9TIFLugeg")
+                .enqueue(new Callback<ClassData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ClassData> call, @NonNull Response<ClassData> response) {
+                        mIsLoadingClassList.setValue(false);
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            mJoinedClassList.setValue(response.body().data);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ClassData> call, @NonNull Throwable t) {
+                        mIsLoadingClassList.setValue(false);
+                    }
+                });
+
+        return mJoinedClassList;
+    }
+
 
     @Override
     public LiveData<Boolean> isLoadingClassList() {
         return mIsLoadingClassList;
     }
+
+
+
+
+
+
+
 
     @Override
     public LiveData<List<Class>> getStudentClassList() {

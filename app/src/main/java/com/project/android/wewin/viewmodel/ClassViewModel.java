@@ -12,41 +12,50 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.project.android.wewin.data.DataRepository;
-import com.project.android.wewin.data.remote.model.Class;
-
+import com.project.android.wewin.data.local.db.entity.ClassInfo;
 
 import java.util.List;
 
 /**
- *
  * @author pengming
- * @date 03/01/2018
  */
+public class ClassViewModel extends AndroidViewModel {
 
-public class ContactViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> mRequestIndex = new MutableLiveData<>();
 
-    private LiveData<List<Class>> mClassList;
+    private LiveData<List<ClassInfo>> mCreatedClassList;
 
-    private DataRepository mClassDataRepository = null;
+    private LiveData<List<ClassInfo>> mJoinedClassList;
 
-    public ContactViewModel(Application application, DataRepository homeWorkDataRepository) {
+    private DataRepository mClassDataRepository;
+
+    public ClassViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mClassDataRepository = homeWorkDataRepository;
-        /*mClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<Class>>>() {
+        mCreatedClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<ClassInfo>>>() {
             @Override
-            public LiveData<List<Class>> apply(Integer input) {
-                //return mClassDataRepository.getClassList();
+            public LiveData<List<ClassInfo>> apply(Integer input) {
+                return mClassDataRepository.getCreatedClassList();
             }
-        });*/
+        });
+        mJoinedClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<ClassInfo>>>() {
+            @Override
+            public LiveData<List<ClassInfo>> apply(Integer input) {
+                return mClassDataRepository.getJoinedClassList();
+            }
+        });
     }
 
     public void loadClassList() {
         mRequestIndex.setValue((mRequestIndex.getValue() == null ? 1 : mRequestIndex.getValue() + 1));
     }
 
-    public LiveData<List<Class>> getClassList() {
-        return mClassList;
+    public LiveData<List<ClassInfo>> getCreatedClassList() {
+        return mCreatedClassList;
+    }
+
+    public LiveData<List<ClassInfo>> getJoinedClassList() {
+        return mJoinedClassList;
     }
 
     public LiveData<Boolean> isLoadingClassList() {
@@ -67,8 +76,8 @@ public class ContactViewModel extends AndroidViewModel {
         }
 
         @Override
-        public <T extends ViewModel> T create(java.lang.Class<T> modelClass) {
-            return (T) new ContactViewModel(mApplication, mClassDataRepository);
+        public <T extends ViewModel> T create(Class<T> modelClass) {
+            return (T) new ClassViewModel(mApplication, mClassDataRepository);
         }
     }
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.project.android.wewin.data.local.db.entity.ClassInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -137,11 +138,19 @@ public class DataRepository {
         }
     }
 
-    public LiveData<List<Class>> getClassList() {
+    public LiveData<List<ClassInfo>> getCreatedClassList() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
-            return mRemoteDataSource.getClassList();
+            return mRemoteDataSource.getCreatedClassList();
         } else {
-            return mLocalDataSource.getClassList();
+            return mLocalDataSource.getCreatedClassList();
+        }
+    }
+
+    public LiveData<List<ClassInfo>> getJoinedClassList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getJoinedClassList();
+        } else {
+            return mLocalDataSource.getJoinedClassList();
         }
     }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.activity.ClassActivity"
+    tools:showIn="@layout/activity_class">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/class_list_spl"
+        android:paddingTop="@dimen/padding_medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/class_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layoutManager="GridLayoutManager"
+            tools:listitem="@layout/item_class_list"
+            tools:spanCount="2"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</android.support.constraint.ConstraintLayout>

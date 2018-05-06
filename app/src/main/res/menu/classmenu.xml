@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/update_class"
+        android:orderInCategory="0"
+        android:title="@string/update_class" />
+
+    <item
+        android:id="@+id/delete_class"
+        android:orderInCategory="1"
+        android:title="@string/delete_class" />
+
+
+</menu>

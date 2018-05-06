@@ -2,6 +2,7 @@ package com.project.android.wewin.data;
 
 import android.arch.lifecycle.LiveData;
 
+import com.project.android.wewin.data.local.db.entity.ClassInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -16,6 +17,10 @@ import java.util.List;
 
 public interface DataSource {
 
+
+    String getOpenid(String phoneno);
+
+
     /*主界面*/
 
     LiveData<Boolean> isClassTeacher();
@@ -28,10 +33,12 @@ public interface DataSource {
 
 
 
-    /*通讯录*/
+    /*班级*/
 
-    LiveData<List<Class>> getClassList();
+    LiveData<List<ClassInfo>> getCreatedClassList();
+    LiveData<List<ClassInfo>> getJoinedClassList();
     LiveData<Boolean> isLoadingClassList();
+
 
 
     /*发布作业*/

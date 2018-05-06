@@ -82,6 +82,25 @@ public class Util {
                 .into(imageView);
     }
 
+    // todo don't use MyApplication.getContext()
+
+    public static void loadNormalImage(Uri imageUri, ImageView imageView){
+        if (imageUri == null) {
+            imageUri = Uri.parse("");
+        }
+
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(R.drawable.ic_login_icon)
+                .error(R.drawable.ic_login_icon);
+
+        Glide.with(MyApplication.getContext())
+                .load(imageUri)
+                .apply(requestOptions)
+                .into(imageView);
+    }
+
+
+
 
     public static String getPath(Context context, Uri uri) {
         String data = null;

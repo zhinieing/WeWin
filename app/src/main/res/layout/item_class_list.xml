@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.project.android.wewin.data.local.db.entity.ClassInfo" />
+        
+        <variable
+            name="presenter"
+            type="com.project.android.wewin.ui.adapter.ItemClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/padding_medium"
+            android:layout_marginRight="@dimen/padding_medium"
+            android:layout_marginBottom="@dimen/padding_small"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="4dp"
+            app:cardUseCompatPadding="true"
+            android:onClick="@{() -> presenter.onItemClick(item)}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.project.android.wewin.utils.MyImageView
+                        android:id="@+id/class_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        app:classImg="@{item.classIcon}"
+                        tools:src="@tools:sample/avatars" />
+
+                    <ImageView
+                        android:id="@+id/class_menu"
+                        android:clickable="true"
+                        android:layout_marginTop="4dp"
+                        android:layout_gravity="right"
+                        android:src="@drawable/ic_more_vert"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </FrameLayout>
+
+
+                <TextView
+                    android:id="@+id/class_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/title_height"
+                    android:gravity="center"
+                    tools:text="@tools:sample/full_names"
+                    android:text="@{item.className}"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</layout>
+
