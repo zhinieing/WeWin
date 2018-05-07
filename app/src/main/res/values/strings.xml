@@ -135,5 +135,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="best_reply">最佳答案</string>
+    <string name="delete_task">删除任务</string>
+    <string name="update_task">更新任务</string>
 
 </resources>

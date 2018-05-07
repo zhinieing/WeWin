@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.Reply;
+import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.ReplyRvAdapter;
 import com.project.android.wewin.utils.L;
@@ -41,7 +42,7 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
     private ReplyRvAdapter adapter;
     private int index;
     private List<Reply> replyList = new ArrayList<>();
-
+    private Task task;
     private final OnItemClickListener<Reply> replyOnItemClickListener =
             new OnItemClickListener<Reply>() {
                 @Override
@@ -61,9 +62,10 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     reply.setBestReply(1);
-                                    reply.getmTask().setReceiverUser(reply.getCreatorUser());
-                                    reply.getmTask().setCompleted(true);
-                                    reply.getmTask().update(reply.getmTask().getObjectId(), new UpdateListener() {
+                                    task.setReceiverUser(reply.getCreatorUser());
+                                    task.setCompleted(true);
+                                    L.i("price:" + task.getTaskReward());
+                                    task.update(reply.getmTask().getObjectId(), new UpdateListener() {
                                         @Override
                                         public void done(BmobException e) {
                                             if (e == null) {
@@ -99,9 +101,10 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
 
 
     @SuppressLint("ValidFragment")
-    public ReplyDialogFragment(List<Reply> replyList, int index) {
+    public ReplyDialogFragment(List<Reply> replyList, Task task, int index) {
         this.replyList = replyList;
         this.index = index;
+        this.task = task;
     }
 
     public ReplyDialogFragment() {

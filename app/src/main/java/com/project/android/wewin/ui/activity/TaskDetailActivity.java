@@ -70,7 +70,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer;
 
-    private List<BmobFile> attachments;
+    private List<BmobFile> attachments = new ArrayList<>();
 
     private TextView mAttachmentWord;
     private LinearLayout mAttachmentFile;
@@ -99,7 +99,9 @@ public class TaskDetailActivity extends AppCompatActivity {
         menuIndex = getIntent().getIntExtra("menu_index", 0);
         binding.setTaskDetailActivity(this);
         user = BmobUser.getCurrentUser(MyUser.class);
-        attachments = new ArrayList<>(mTask.getAttachmentPath());
+        if (mTask.getAttachmentPath() != null) {
+            attachments = mTask.getAttachmentPath();
+        }
         initView();
         checkPermissions();
         queryReplies();
@@ -115,7 +117,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
 
     public void showAnswers(View view) {
-        new ReplyDialogFragment(replies, menuIndex).show(getSupportFragmentManager(), "dialog");
+        new ReplyDialogFragment(replies, mTask, menuIndex).show(getSupportFragmentManager(), "dialog");
     }
 
     private void queryReplies() {

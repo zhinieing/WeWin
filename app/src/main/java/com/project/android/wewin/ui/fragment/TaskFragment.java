@@ -3,6 +3,7 @@ package com.project.android.wewin.ui.fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
@@ -24,6 +26,8 @@ import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.ui.activity.ClassActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
+import com.project.android.wewin.ui.activity.ReleaseClassActivity;
+import com.project.android.wewin.ui.activity.ReleaseTaskActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
 import com.project.android.wewin.ui.adapter.BindingViewHolder;
@@ -35,13 +39,14 @@ import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 import com.project.android.wewin.databinding.ItemTaskListBinding;
 
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * @author pengming
@@ -62,7 +67,6 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
     private SingleTypeAdapter<Task> taskSingleTypeAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
-
     private boolean nextPage = false;
 
 
@@ -114,6 +118,9 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
             Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     private class TaskSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
 

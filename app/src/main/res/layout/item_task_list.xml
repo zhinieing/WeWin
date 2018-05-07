@@ -70,8 +70,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="35dp"
             android:text="@{String.valueOf(item.taskReward)}"
             android:textColor="@color/textColorPrimary"
             android:textSize="@dimen/text_size_medium" />
@@ -89,12 +89,21 @@
             android:textSize="@dimen/text_size_large" />
 
         <ImageView
+            android:id="@+id/task_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="4dp"
+            android:clickable="true"
+            android:src="@drawable/ic_more_vert_black"
+            android:visibility="gone" />
+
+        <ImageView
             android:id="@+id/item_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="35dp"
             android:src="@drawable/ic_check"
             android:visibility="gone"
             tools:src="@drawable/ic_check" />

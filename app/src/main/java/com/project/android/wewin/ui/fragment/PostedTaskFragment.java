@@ -14,8 +14,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.project.android.wewin.MyApplication;
@@ -23,9 +25,13 @@ import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.databinding.ItemTaskListBinding;
 import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
+import com.project.android.wewin.ui.activity.ReleaseTaskActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
+import com.project.android.wewin.ui.adapter.BaseViewAdapter;
+import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.HomeworkRvAdapter;
@@ -41,6 +47,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * @author pengming
@@ -61,7 +69,7 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
     private SingleTypeAdapter<Task> taskSingleTypeAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
-
+    private Task task;
     private boolean nextPage = false;
 
 
@@ -99,6 +107,7 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
 
         taskSingleTypeAdapter = new SingleTypeAdapter<>(context, R.layout.item_task_list);
         taskSingleTypeAdapter.setPresenter(this);
+        taskSingleTypeAdapter.setDecorator(new AdapterDecorator());
 
         postedTaskList.setAdapter(taskSingleTypeAdapter);
         return view;
@@ -113,6 +122,54 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
         }
     }
 
+    private void deleteTask() {
+        task.delete(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    nextPage = false;
+                    mRefreshLayout.setRefreshing(true);
+                    mHomeWorkListViewModel.refreshPostedTaskListData();
+                } else {
+                    L.i("delete failed");
+                }
+            }
+        });
+    }
+
+    private class AdapterDecorator implements BaseViewAdapter.Decorator {
+
+        @Override
+        public void decorator(BindingViewHolder holder, final int position, int viewType) {
+            ItemTaskListBinding binding = (ItemTaskListBinding) holder.getBinding();
+            task = mTask.get(position);
+            binding.taskMenu.setVisibility(View.VISIBLE);
+            binding.taskMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popup = new PopupMenu(getContext(), v);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.update_task:
+                                    Intent intent = new Intent(getContext(), ReleaseTaskActivity.class);
+                                    startActivity(intent);
+                                    return true;
+                                case R.id.delete_task:
+                                    deleteTask();
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+                    });
+                    popup.inflate(R.menu.taskmenu);
+                    popup.show();
+                }
+            });
+        }
+    }
 
     private class TaskSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
 
