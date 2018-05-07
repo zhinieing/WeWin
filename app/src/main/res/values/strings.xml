@@ -69,6 +69,10 @@
 
     <string name="deadline_time_left">距离提交作业截止时间</string>
     <string name="deadline_passed">作业已过期！</string>
+
+    <string name="deadline_time_left_task">距离问答截止时间</string>
+    <string name="deadline_passed_task">问答已过期！</string>
+
     <string name="reply_submit">点击添加附件</string>
     <string name="confirm_release">确认发布</string>
     <string name="addition_info">附加信息：</string>

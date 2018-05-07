@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,8 +34,10 @@ import com.project.android.wewin.ui.activity.TaskDetailActivity;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
 import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
+import com.project.android.wewin.ui.adapter.ItemDissmissListener;
 import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.HomeworkRvAdapter;
+import com.project.android.wewin.ui.adapter.SimpleItemTouchHelperCallback;
 import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
 import com.project.android.wewin.ui.adapter.TaskRvAdapter;
 import com.project.android.wewin.utils.L;
@@ -71,6 +74,7 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
     private Context context;
     private Task task;
     private boolean nextPage = false;
+    private ItemTouchHelper.Callback callback;
 
 
     @Override
@@ -136,6 +140,7 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
             }
         });
     }
+
 
     private class AdapterDecorator implements BaseViewAdapter.Decorator {
 

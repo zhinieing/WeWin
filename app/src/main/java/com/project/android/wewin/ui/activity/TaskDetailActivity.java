@@ -242,7 +242,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         if (timeLeft < 0) {
             binding.countDownBackgroundTask.setBackgroundColor(Color.parseColor("#888888"));
-            binding.setLeftTime(getString(R.string.deadline_passed));
+            binding.setLeftTime(getString(R.string.deadline_passed_task));
             binding.setLeftSecond("");
             binding.detailReplyWordTask.setVisibility(View.GONE);
         }
@@ -255,7 +255,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                 long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
                 long second = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
 
-                binding.setLeftTime(getString(R.string.deadline_time_left) + "  " + day + "天" + hour + "小时" + min + "分钟");
+                binding.setLeftTime(getString(R.string.deadline_time_left_task) + "  " + day + "天" + hour + "小时" + min + "分钟");
                 binding.setLeftSecond(second + "秒");
 
                 ScaleAnimation animation = new ScaleAnimation(1.0f, 0.857f,
@@ -268,7 +268,7 @@ public class TaskDetailActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 binding.countDownBackgroundTask.setBackgroundColor(Color.parseColor("#888888"));
-                binding.setLeftTime(getString(R.string.deadline_passed));
+                binding.setLeftTime(getString(R.string.deadline_passed_task));
                 binding.setLeftSecond("");
                 binding.detailReplyTask.setVisibility(View.GONE);
             }

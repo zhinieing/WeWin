@@ -618,7 +618,6 @@ public class RemoteDataSource implements DataSource {
 
         if (user != null) {
             BmobQuery<Task> query = new BmobQuery<>();
-            //添加条件，查询completed字段为非true的任务
             query.include("creatorUser");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date currentDate = null;
