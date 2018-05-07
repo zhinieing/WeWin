@@ -2,6 +2,7 @@ package com.project.android.wewin.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.BindingAdapter;
@@ -10,14 +11,18 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
@@ -25,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.project.android.wewin.BuildConfig;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.data.remote.model.Reply;
@@ -32,16 +38,21 @@ import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.databinding.ActivityTaskDetailBinding;
 import com.project.android.wewin.ui.fragment.ReplyDialogFragment;
 import com.project.android.wewin.utils.L;
+import com.project.android.wewin.utils.OpenFileUtil;
 import com.project.android.wewin.utils.Util;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
@@ -59,8 +70,9 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer;
 
+    private List<BmobFile> attachments;
+
     private TextView mAttachmentWord;
-    private LinearLayout mAttachmentMedia;
     private LinearLayout mAttachmentFile;
     private ImageView mAttachmentAdd;
     public String mReplyContent = "";
@@ -87,6 +99,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         menuIndex = getIntent().getIntExtra("menu_index", 0);
         binding.setTaskDetailActivity(this);
         user = BmobUser.getCurrentUser(MyUser.class);
+        attachments = new ArrayList<>(mTask.getAttachmentPath());
         initView();
         checkPermissions();
         queryReplies();
@@ -94,19 +107,15 @@ public class TaskDetailActivity extends AppCompatActivity {
 
 
     private void initView() {
-
-        if (menuIndex == 0) {
-
-        } else if (menuIndex == 1) {
-            binding.detailReplyTask.setVisibility(View.GONE);
-        } else {
-            binding.detailReplyWordTask.setText(getString(R.string.modify));
+        mAttachmentFile = findViewById(R.id.detail_attachment_layout_task);
+        for (BmobFile file : attachments) {
+            mAttachmentFile.addView(initFileView(file));
         }
     }
 
 
     public void showAnswers(View view) {
-        new ReplyDialogFragment(replies).show(getSupportFragmentManager(), "dialog");
+        new ReplyDialogFragment(replies, menuIndex).show(getSupportFragmentManager(), "dialog");
     }
 
     private void queryReplies() {
@@ -157,6 +166,68 @@ public class TaskDetailActivity extends AppCompatActivity {
         intent.putExtra("menu_index", index);
         activity.startActivity(intent);
     }
+
+    private View initFileView(final BmobFile file) {
+        mAttachmentFile.setVisibility(View.VISIBLE);
+        final String path = file.getFileUrl();
+        final String name = file.getFilename();
+
+        int fileIcon = Util.fileIcon(Util.fileType(path.substring(path.lastIndexOf(".") + 1)));
+
+        final View itemFileView = View.inflate(this, R.layout.item_attachment_file, null);
+        ImageView itemFileIcon = itemFileView.findViewById(R.id.item_file_icon);
+        TextView itemFileName = itemFileView.findViewById(R.id.item_file_name);
+        TextView itemFileSize = itemFileView.findViewById(R.id.item_file_size);
+        itemFileView.setTag(path);
+
+        itemFileIcon.setImageResource(fileIcon);
+        itemFileName.setText(name);
+        itemFileSize.setVisibility(View.GONE);
+        itemFileView.findViewById(R.id.item_file_delete).setVisibility(View.GONE);
+
+        itemFileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadFile(file);
+            }
+        });
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, Util.dip2px(this, 8));
+        itemFileView.setLayoutParams(layoutParams);
+
+        return itemFileView;
+    }
+
+    private void downloadFile(BmobFile file) {
+        //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
+        final File saveFile = new File(Environment.getExternalStorageDirectory() + "/Wewin/download/task/" + mTask.getObjectId(), file.getFilename());
+        if (saveFile.exists()) {
+            startActivity(OpenFileUtil.openFile(saveFile.getPath(), TaskDetailActivity.this));
+        } else {
+            BmobFile toDownload = new BmobFile(file.getFilename(), "", file.getFileUrl());
+            L.i(file.getFileUrl());
+            toDownload.download(saveFile, new DownloadFileListener() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Toast.makeText(TaskDetailActivity.this, "下载成功,保存路径:" + s, Toast.LENGTH_SHORT).show();
+                        startActivity(OpenFileUtil.openFile(saveFile.getPath(), TaskDetailActivity.this));
+                    } else {
+                        Toast.makeText(TaskDetailActivity.this, "下载失败：" + e.getErrorCode() + "," + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onProgress(Integer integer, long l) {
+                    Log.i("bmob", "下载进度：" + l);
+
+                }
+            });
+
+        }
+    }
+
 
     @Override
     protected void onStart() {
@@ -241,6 +312,4 @@ public class TaskDetailActivity extends AppCompatActivity {
                 break;
         }
     }
-
-
 }

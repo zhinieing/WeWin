@@ -14,12 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
+
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.ui.activity.ClassActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
@@ -29,6 +32,9 @@ import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
 import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
+import com.project.android.wewin.databinding.ItemTaskListBinding;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +115,6 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
         }
     }
 
-
     private class TaskSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
 
         @Override
@@ -145,9 +150,7 @@ public class TaskFragment extends LazyLoadFragment implements ItemClickListener<
     @Override
     public void requestData() {
         nextPage = false;
-
         subscribeTaskUI();
-
     }
 
     private void subscribeTaskUI() {

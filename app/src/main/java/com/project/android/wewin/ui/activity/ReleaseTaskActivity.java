@@ -45,6 +45,7 @@ import com.project.android.wewin.utils.Util;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +109,7 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
 
     private Task mTask = new Task();
 
-    LinkedList<String> attachments = new LinkedList<>();
+    List<String> attachments = new ArrayList<>();
 
     private MyProgressDialog progressDialog;
 
@@ -232,17 +233,21 @@ public class ReleaseTaskActivity extends AppCompatActivity implements View.OnCli
             });
         } else {
             final String[] filePaths = new String[attachments.size()];
+            final String[] fileNames = new String[attachments.size()];
             for (int i = 0; i < attachments.size(); i++) {
                 filePaths[i] = attachments.get(i);
+                fileNames[i] = filePaths[i].substring(filePaths[i].lastIndexOf("/") + 1);
             }
-            L.i(filePaths[0]);
+
             BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
                 @Override
                 public void onSuccess(List<BmobFile> list, List<String> list1) {
                     if (list1.size() == filePaths.length) {
-                        L.i(list1.toString());
-
-                        mTask.setAttachmentPath(list1);
+                        List<BmobFile> bmobFiles = new ArrayList<>();
+                        for (int i = 0; i < list1.size(); i++) {
+                            bmobFiles.add(new BmobFile(fileNames[i], "", list1.get(i)));
+                        }
+                        mTask.setAttachmentPath(bmobFiles);
                         mTask.save(new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {

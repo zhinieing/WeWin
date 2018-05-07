@@ -39,13 +39,14 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
     private BottomSheetBehavior behavior;
     private RecyclerView recyclerView;
     private ReplyRvAdapter adapter;
+    private int index;
     private List<Reply> replyList = new ArrayList<>();
 
     private final OnItemClickListener<Reply> replyOnItemClickListener =
             new OnItemClickListener<Reply>() {
                 @Override
                 public void onClick(final Reply reply) {
-                    if (true) {
+                    if (index == 1) {
                         if (Util.isNetworkConnected(MyApplication.getInstance())) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                             builder.setTitle("");
@@ -61,6 +62,7 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     reply.setBestReply(1);
                                     reply.getmTask().setReceiverUser(reply.getCreatorUser());
+                                    reply.getmTask().setCompleted(true);
                                     reply.getmTask().update(reply.getmTask().getObjectId(), new UpdateListener() {
                                         @Override
                                         public void done(BmobException e) {
@@ -89,14 +91,17 @@ public class ReplyDialogFragment extends BottomSheetDialogFragment {
                         } else {
                             Toast.makeText(getContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(getContext(), "您不是问题的主人，不可以设置最佳答案呢！", Toast.LENGTH_SHORT).show();
                     }
                 }
             };
 
 
     @SuppressLint("ValidFragment")
-    public ReplyDialogFragment(List<Reply> replyList) {
+    public ReplyDialogFragment(List<Reply> replyList, int index) {
         this.replyList = replyList;
+        this.index = index;
     }
 
     public ReplyDialogFragment() {

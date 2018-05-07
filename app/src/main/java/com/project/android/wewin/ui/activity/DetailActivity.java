@@ -238,6 +238,7 @@ public class DetailActivity extends AppCompatActivity {
         mDeadline.setText(homeWork.getHomeworkDeadline().getDate());
         mDetailTitle.setText(homeWork.getHomeworkTitle());
         mDetailContent.setText(homeWork.getHomeworkContent());
+
         List<String> mDetailAttachment = homeWork.getAttachmentPath();
         for (int i = 0; i < mDetailAttachment.size(); i++) {
             final String url = mDetailAttachment.get(i);
@@ -287,6 +288,7 @@ public class DetailActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(DetailActivity.this, "下载失败：" + e.getErrorCode() + "," + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override

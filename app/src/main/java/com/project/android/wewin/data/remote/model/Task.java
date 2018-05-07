@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  * Created by zhoutao on 2018/4/18.
@@ -26,7 +27,7 @@ public class Task extends BmobObject {
 
     private double taskReward;
 
-    private List<String> attachmentPath;
+    private List<BmobFile> attachmentPath;
 
     public Task() {
     }
@@ -95,11 +96,11 @@ public class Task extends BmobObject {
         this.taskReward = taskReward;
     }
 
-    public List<String> getAttachmentPath() {
+    public List<BmobFile> getAttachmentPath() {
         return attachmentPath;
     }
 
-    public void setAttachmentPath(List<String> attachmentPath) {
+    public void setAttachmentPath(List<BmobFile> attachmentPath) {
         this.attachmentPath = attachmentPath;
     }
 }
