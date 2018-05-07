@@ -24,22 +24,15 @@ import android.widget.Toast;
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
-import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.databinding.ItemTaskListBinding;
-import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
 import com.project.android.wewin.ui.activity.ReleaseTaskActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
 import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
-import com.project.android.wewin.ui.adapter.ItemDissmissListener;
-import com.project.android.wewin.ui.adapter.OnItemClickListener;
-import com.project.android.wewin.ui.adapter.HomeworkRvAdapter;
-import com.project.android.wewin.ui.adapter.SimpleItemTouchHelperCallback;
 import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
-import com.project.android.wewin.ui.adapter.TaskRvAdapter;
 import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
@@ -74,7 +67,6 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
     private Context context;
     private Task task;
     private boolean nextPage = false;
-    private ItemTouchHelper.Callback callback;
 
 
     @Override

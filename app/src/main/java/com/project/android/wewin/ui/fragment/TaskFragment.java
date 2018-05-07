@@ -3,7 +3,6 @@ package com.project.android.wewin.ui.fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,10 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 
@@ -24,19 +21,12 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.remote.model.Task;
-import com.project.android.wewin.ui.activity.ClassActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
-import com.project.android.wewin.ui.activity.ReleaseClassActivity;
-import com.project.android.wewin.ui.activity.ReleaseTaskActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
-import com.project.android.wewin.ui.adapter.BaseViewAdapter;
-import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
 import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
-import com.project.android.wewin.utils.L;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
-import com.project.android.wewin.databinding.ItemTaskListBinding;
 
 
 import java.util.ArrayList;
@@ -45,8 +35,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * @author pengming

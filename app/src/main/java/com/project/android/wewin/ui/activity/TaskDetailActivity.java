@@ -72,11 +72,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private List<BmobFile> attachments = new ArrayList<>();
 
-    private TextView mAttachmentWord;
     private LinearLayout mAttachmentFile;
-    private ImageView mAttachmentAdd;
-    public String mReplyContent = "";
-    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
