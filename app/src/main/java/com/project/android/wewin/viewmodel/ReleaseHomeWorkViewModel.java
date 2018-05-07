@@ -29,15 +29,15 @@ public class ReleaseHomeWorkViewModel extends AndroidViewModel {
 
     private DataRepository mClassDataRepository = null;
 
-    public ReleaseHomeWorkViewModel(Application application, DataRepository homeWorkDataRepository) {
+    private ReleaseHomeWorkViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mClassDataRepository = homeWorkDataRepository;
-        mStudentClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<Class>>>() {
-            @Override
-            public LiveData<List<Class>> apply(Integer input) {
-                return mClassDataRepository.getStudentClassList();
-            }
-        });
+//        mStudentClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<Class>>>() {
+//            @Override
+//            public LiveData<List<Class>> apply(Integer input) {
+//                return mClassDataRepository.getStudentClassList();
+//            }
+//        });
     }
 
     public void loadStudentClassList() {

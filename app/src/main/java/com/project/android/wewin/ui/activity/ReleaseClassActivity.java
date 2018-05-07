@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,9 +22,8 @@ import com.project.android.wewin.data.remote.api.ApiClass;
 import com.project.android.wewin.data.remote.api.ApiManager;
 import com.project.android.wewin.data.remote.api.ApiQiniu;
 import com.project.android.wewin.data.remote.model.MyUser;
-import com.project.android.wewin.data.remote.model.OpenidData;
+import com.project.android.wewin.data.remote.model.ResultData;
 import com.project.android.wewin.data.remote.model.Uptoken;
-import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
 import com.project.android.wewin.utils.Util;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
@@ -315,9 +312,9 @@ public class ReleaseClassActivity extends AppCompatActivity implements View.OnCl
         mApiClass.postClass(releaseHomeworkTitle.getText().toString(),
                 "oiooR1kiOuI242pqm0N9TIFLugeg",
                 path)
-                .enqueue(new Callback<OpenidData>() {
+                .enqueue(new Callback<ResultData>() {
                     @Override
-                    public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
+                    public void onResponse(@NonNull Call<ResultData> call, @NonNull Response<ResultData> response) {
                         if (response.isSuccessful() || response.body().state == 0) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -331,7 +328,7 @@ public class ReleaseClassActivity extends AppCompatActivity implements View.OnCl
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<OpenidData> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<ResultData> call, @NonNull Throwable t) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -348,9 +345,9 @@ public class ReleaseClassActivity extends AppCompatActivity implements View.OnCl
     private void updateClass(String path) {
 
         mApiClass.updateClass(releaseHomeworkTitle.getText().toString(), classId, path)
-                .enqueue(new Callback<OpenidData>() {
+                .enqueue(new Callback<ResultData>() {
                     @Override
-                    public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
+                    public void onResponse(@NonNull Call<ResultData> call, @NonNull Response<ResultData> response) {
                         if (response.isSuccessful() || response.body().state == 0) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -364,7 +361,7 @@ public class ReleaseClassActivity extends AppCompatActivity implements View.OnCl
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<OpenidData> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<ResultData> call, @NonNull Throwable t) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

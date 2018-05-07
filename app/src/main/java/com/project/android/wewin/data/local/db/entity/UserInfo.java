@@ -1,28 +1,25 @@
-package com.project.android.wewin.data.remote.model;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import cn.bmob.v3.BmobUser;
+package com.project.android.wewin.data.local.db.entity;
 
 /**
- * Created by pengming on 28/12/2017.
+ * @author pengming
  */
+public class UserInfo {
 
-public class MyUser extends BmobUser {
-    private String userPhoto;
     private String openid;
+
     private String nickname;
+
     private String school;
+
     private String studentno;
+
     private String phoneno;
+
     private String unionid;
 
-    public MyUser() {
-    }
+    private String avatar;
+
+    public UserInfo() {}
 
     public String getOpenid() {
         return openid;
@@ -72,12 +69,11 @@ public class MyUser extends BmobUser {
         this.unionid = unionid;
     }
 
-    public String getUserPhoto() {
-        return userPhoto;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setUserPhoto(String userPhoto) {
-        this.userPhoto = userPhoto;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
-
 }

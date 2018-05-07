@@ -16,6 +16,7 @@
     <dimen name="padding_large">24dp</dimen>
     <dimen name="padding_huge">32dp</dimen>
     <dimen name="tool_bar_height">56dp</dimen>
+    <dimen name="group_item_height">80dp</dimen>
 
     <!-- expand list view -->
     <dimen name="expand_lv_first_height">40dp</dimen>
@@ -30,4 +31,6 @@
 
     <dimen name="w_divider_size">0.5dp</dimen>
     <dimen name="w_divider_size_secondary">0.5dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

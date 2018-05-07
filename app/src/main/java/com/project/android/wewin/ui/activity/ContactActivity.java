@@ -230,7 +230,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
                                 AlertDialog mDialog;
                                 AlertDialog.Builder build = new AlertDialog.Builder(view.getContext());
-                                build.setTitle(R.string.alert_dialog_modify_classname);
+                                //build.setTitle(R.string.alert_dialog_modify_classname);
                                 build.setView(alertView);
                                 build.setPositiveButton(R.string.alert_confirm, new DialogInterface.OnClickListener() {
                                     @Override

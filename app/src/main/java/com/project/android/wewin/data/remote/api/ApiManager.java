@@ -1,5 +1,7 @@
 package com.project.android.wewin.data.remote.api;
 
+import com.project.android.wewin.data.local.db.entity.GroupWithUser;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -18,6 +20,10 @@ public class ApiManager {
     private static ApiClass sApiClass;
 
     private static ApiQiniu sApiQiniu;
+
+    private static ApiMember sApiMember;
+
+    private static ApiUser sApiUser;
 
     private ApiManager() {
     }
@@ -77,4 +83,37 @@ public class ApiManager {
         }
         return sApiQiniu;
     }
+
+    public ApiMember getApiMember() {
+        if (sApiMember == null) {
+            synchronized (ApiManager.class) {
+                if (sApiMember == null) {
+                    sApiMember = new Retrofit.Builder()
+                            .baseUrl(BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                            .create(ApiMember.class);
+                }
+            }
+        }
+        return sApiMember;
+    }
+
+
+    public ApiUser getApiUser() {
+        if (sApiUser == null) {
+            synchronized (ApiManager.class) {
+                if (sApiUser == null) {
+                    sApiUser = new Retrofit.Builder()
+                            .baseUrl(BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                            .create(ApiUser.class);
+                }
+            }
+        }
+        return sApiUser;
+    }
+
+
 }

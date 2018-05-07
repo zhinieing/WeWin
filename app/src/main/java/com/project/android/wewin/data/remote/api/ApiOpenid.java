@@ -1,7 +1,7 @@
 package com.project.android.wewin.data.remote.api;
 
-import com.project.android.wewin.data.remote.model.ClassData;
 import com.project.android.wewin.data.remote.model.OpenidData;
+import com.project.android.wewin.data.remote.model.ResultData;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

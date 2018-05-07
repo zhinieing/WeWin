@@ -51,7 +51,9 @@
                     <ImageView
                         android:id="@+id/class_menu"
                         android:clickable="true"
-                        android:layout_marginTop="4dp"
+                        android:paddingTop="@dimen/padding_small"
+                        android:paddingLeft="@dimen/padding_medium"
+                        android:paddingBottom="@dimen/padding_medium"
                         android:layout_gravity="right"
                         android:src="@drawable/ic_more_vert"
                         android:layout_width="wrap_content"

@@ -1,6 +1,5 @@
 package com.project.android.wewin.ui.activity;
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,11 +18,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
@@ -30,21 +30,23 @@ import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
 import com.project.android.wewin.data.remote.api.ApiClass;
 import com.project.android.wewin.data.remote.api.ApiManager;
-import com.project.android.wewin.data.remote.model.OpenidData;
+import com.project.android.wewin.data.remote.model.ResultData;
 import com.project.android.wewin.databinding.ItemClassListBinding;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
 import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
+import com.project.android.wewin.ui.adapter.ItemDissmissListener;
+import com.project.android.wewin.ui.adapter.SimpleItemTouchHelperCallback;
 import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.ClassViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.bmob.v3.BmobUser;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,7 +54,7 @@ import retrofit2.Response;
 /**
  * @author pengming
  */
-public class ClassActivity extends AppCompatActivity implements ItemClickListener<ClassInfo>, PopupMenu.OnMenuItemClickListener{
+public class ClassActivity extends AppCompatActivity implements ItemClickListener<ClassInfo>, PopupMenu.OnMenuItemClickListener, ItemDissmissListener {
 
     private final static int START_RELEASE_ACTIVITY = 13;
 
@@ -64,12 +66,15 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
     SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.container)
+    CoordinatorLayout container;
 
     private List<ClassInfo> mItems = new ArrayList<>();
     private SingleTypeAdapter<ClassInfo> mAdapter;
     private ClassInfo classInfo;
 
     private ClassViewModel mClassViewModel;
+    private ItemTouchHelper.Callback callback;
 
     private ApiClass mApiClass;
 
@@ -105,11 +110,15 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        mAdapter = new SingleTypeAdapter<>(this, R.layout.item_class_list);
+        mAdapter = new SingleTypeAdapter<>(this, R.layout.item_class_list, true);
         mAdapter.setPresenter(this);
         mAdapter.setDecorator(new ClassAdapterDecorator());
-
         classList.setAdapter(mAdapter);
+
+        callback = new SimpleItemTouchHelperCallback(mAdapter, this);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(classList);
+
 
         subscribeUI();
 
@@ -122,6 +131,14 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
         mClassViewModel.loadClassList();
     }
 
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mItems, fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+    }
 
 
     private class ClassSwipeListener implements SwipeRefreshLayout.OnRefreshListener {
@@ -145,6 +162,7 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
 
                 mItems = classInfos;
                 mAdapter.set(classInfos);
+                ((SimpleItemTouchHelperCallback<ClassInfo>) callback).set(classInfos);
             }
         });
         mClassViewModel.isLoadingClassList().observe(this, new Observer<Boolean>() {
@@ -205,8 +223,11 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
 
     @Override
     public void onItemClick(ClassInfo mClass) {
-        Toast.makeText(ClassActivity.this, "item clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, GroupActivity.class);
+        intent.putExtra("class_info", mClass);
+        startActivity(intent);
     }
+
 
 
     @BindingAdapter({"classImg"})
@@ -226,15 +247,17 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
     }
 
     private void deleteClass() {
+        Log.d("wewein", "deleteClass: " + "cdssdsada");
         mApiClass.deleteClass(classInfo.getClassId())
-                .enqueue(new Callback<OpenidData>() {
+                .enqueue(new Callback<ResultData>() {
                     @Override
-                    public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
+                    public void onResponse(@NonNull Call<ResultData> call, @NonNull Response<ResultData> response) {
                         if (response.isSuccessful() || response.body().state == 0) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(ClassActivity.this, getString(R.string.delete_class_success), Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(container, R.string.delete_class_success, Snackbar.LENGTH_SHORT).show();
+                                    //Toast.makeText(ClassActivity.this, getString(R.string.delete_class_success), Toast.LENGTH_SHORT).show();
                                     updateUI();
                                 }
                             });
@@ -242,12 +265,11 @@ public class ClassActivity extends AppCompatActivity implements ItemClickListene
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<OpenidData> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<ResultData> call, @NonNull Throwable t) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ClassActivity.this, getString(R.string.delete_class_fail), Toast.LENGTH_SHORT).show();
-
+                                Snackbar.make(container, R.string.delete_class_fail, Snackbar.LENGTH_SHORT).show();
                             }
                         });
                     }

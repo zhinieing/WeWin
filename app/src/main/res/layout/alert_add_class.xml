@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/alert_class_name"
         android:layout_width="match_parent"
-        android:hint="@string/alert_class_name"
+        android:hint="@string/alert_add_class"
         android:textColor="@color/textColorPrimary"
         android:layout_height="wrap_content"
         android:background="@null"

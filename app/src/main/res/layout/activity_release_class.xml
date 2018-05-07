@@ -43,7 +43,7 @@
         android:id="@+id/release_homework_title"
         android:layout_margin="@dimen/padding_medium"
         android:paddingLeft="@dimen/padding_small"
-        android:hint="@string/alert_class_name"
+        android:hint="@string/alert_add_class"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
         android:maxLines="1"

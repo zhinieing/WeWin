@@ -18,6 +18,8 @@ public class ClassInfo implements Serializable{
 
     private Integer teacherSize;
 
+    public ClassInfo() {}
+
     public Integer getClassId() {
         return classId;
     }

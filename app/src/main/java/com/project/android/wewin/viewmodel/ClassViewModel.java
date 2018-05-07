@@ -29,7 +29,7 @@ public class ClassViewModel extends AndroidViewModel {
 
     private DataRepository mClassDataRepository;
 
-    public ClassViewModel(Application application, DataRepository homeWorkDataRepository) {
+    private ClassViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mClassDataRepository = homeWorkDataRepository;
         mCreatedClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<ClassInfo>>>() {

@@ -30,7 +30,7 @@ public class ContactViewModel extends AndroidViewModel {
 
     private DataRepository mClassDataRepository = null;
 
-    public ContactViewModel(Application application, DataRepository homeWorkDataRepository) {
+    private ContactViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mClassDataRepository = homeWorkDataRepository;
         /*mClassList = Transformations.switchMap(mRequestIndex, new Function<Integer, LiveData<List<Class>>>() {

@@ -6,6 +6,9 @@ import com.project.android.wewin.data.DataSource;
 import com.project.android.wewin.data.local.db.AppDatabase;
 import com.project.android.wewin.data.local.db.AppDatabaseManager;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
+import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.GroupWithUser;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -71,7 +74,7 @@ public class LocalDataSource implements DataSource {
 
 
     @Override
-    public String getOpenid(String phoneno) {
+    public LiveData<UserInfo> getOpenid(String phoneno) {
         return null;
     }
 
@@ -88,9 +91,36 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public LiveData<List<Class>> getStudentClassList() {
+    public LiveData<List<GroupWithUser>> getGroupWithUser(Integer classId) {
         return null;
     }
+
+    @Override
+    public LiveData<Boolean> isLoadingGroupWithUserList() {
+        return null;
+    }
+
+    @Override
+    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingGroupList() {
+        return null;
+    }
+
+    @Override
+    public LiveData<List<UserInfo>> getMemberList(Integer groupId) {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingMemberList() {
+        return null;
+    }
+
+
 
 
     /*发布作业*/

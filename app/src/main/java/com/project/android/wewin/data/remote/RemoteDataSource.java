@@ -7,18 +7,27 @@ import android.util.Log;
 
 import com.project.android.wewin.data.DataSource;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
+import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.GroupWithUser;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.api.ApiClass;
 import com.project.android.wewin.data.remote.api.ApiManager;
+import com.project.android.wewin.data.remote.api.ApiMember;
 import com.project.android.wewin.data.remote.api.ApiOpenid;
-import com.project.android.wewin.data.remote.api.ApiQiniu;
+import com.project.android.wewin.data.remote.api.ApiUser;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.ClassData;
-import com.project.android.wewin.data.remote.model.GroupInfo;
+import com.project.android.wewin.data.remote.model.GroupData;
+
 import com.project.android.wewin.data.remote.model.GroupMember;
+import com.project.android.wewin.data.remote.model.GroupWithUserData;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.data.remote.model.OpenidData;
+import com.project.android.wewin.data.remote.model.ResultData;
 import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.data.remote.model.UserData;
+import com.project.android.wewin.data.remote.model.UserInfoData;
 import com.project.android.wewin.utils.L;
 
 import java.text.ParseException;
@@ -33,7 +42,6 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.QueryListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,6 +56,10 @@ public class RemoteDataSource implements DataSource {
     private static RemoteDataSource INSTANCE = null;
 
 
+    private final MutableLiveData<UserInfo> mUserInfo = new MutableLiveData<>();
+
+
+
     private final MutableLiveData<Boolean> mIsLoadingHomeWorkList = new MutableLiveData<>();
 
     private final MutableLiveData<List<HomeWork>> mHomeWorkList = new MutableLiveData<>();
@@ -60,11 +72,27 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
 
+
+
+    /*班级*/
+
     private final MutableLiveData<Boolean> mIsLoadingClassList = new MutableLiveData<>();
 
     private final MutableLiveData<List<ClassInfo>> mCreatedClassList = new MutableLiveData<>();
 
     private final MutableLiveData<List<ClassInfo>> mJoinedClassList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingGroupList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<GroupInfo>> mGroupList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingMemberList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<UserInfo>> mMemberList = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> mIsLoadingGroupWithUserList = new MutableLiveData<>();
+
+    private final MutableLiveData<List<GroupWithUser>> mGroupWithUserList = new MutableLiveData<>();
 
 
 
@@ -87,6 +115,10 @@ public class RemoteDataSource implements DataSource {
 
     private final ApiClass mApiClass;
 
+    private final ApiMember mApiMember;
+
+    private final ApiUser mApiUser;
+
 
     private int indexClass;
     private int indexGroup;
@@ -95,6 +127,8 @@ public class RemoteDataSource implements DataSource {
     private RemoteDataSource() {
         mApiOpenid = ApiManager.getInstance().getApiOpenid();
         mApiClass = ApiManager.getInstance().getApiClass();
+        mApiMember = ApiManager.getInstance().getApiMember();
+        mApiUser = ApiManager.getInstance().getApiUser();
     }
 
     public static RemoteDataSource getInstance() {
@@ -110,14 +144,27 @@ public class RemoteDataSource implements DataSource {
 
 
     @Override
-    public String getOpenid(String phoneno) {
+    public LiveData<UserInfo> getOpenid(String phoneno) {
 
         mApiOpenid.getOpenid(phoneno)
                 .enqueue(new Callback<OpenidData>() {
                     @Override
                     public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
                         if (response.isSuccessful() || response.body().state == 0) {
-                            result = response.body().data;
+                            mApiUser.getUser(response.body().data.get(0))
+                                    .enqueue(new Callback<UserInfoData>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<UserInfoData> call, @NonNull Response<UserInfoData> response) {
+                                            if (response.isSuccessful() || response.body().state == 0) {
+                                                mUserInfo.setValue(response.body().data);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call<UserInfoData> call, @NonNull Throwable t) {
+
+                                        }
+                                    });
                         }
                     }
 
@@ -127,7 +174,7 @@ public class RemoteDataSource implements DataSource {
                     }
                 });
 
-        return result;
+        return mUserInfo;
     }
 
 
@@ -407,13 +454,97 @@ public class RemoteDataSource implements DataSource {
     }
 
 
+    @Override
+    public LiveData<List<GroupWithUser>> getGroupWithUser(Integer classId) {
+        mIsLoadingGroupWithUserList.setValue(true);
 
+        mApiMember.getGroupAndMembers(classId)
+                .enqueue(new Callback<GroupWithUserData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<GroupWithUserData> call, @NonNull Response<GroupWithUserData> response) {
+                        mIsLoadingGroupWithUserList.setValue(false);
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            mGroupWithUserList.setValue(response.body().data);
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(@NonNull Call<GroupWithUserData> call, @NonNull Throwable t) {
+                        mIsLoadingGroupWithUserList.setValue(false);
 
+                    }
+                });
+        return mGroupWithUserList;
+    }
 
+    @Override
+    public LiveData<Boolean> isLoadingGroupWithUserList() {
+        return mIsLoadingGroupWithUserList;
+    }
 
 
     @Override
+    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+        mIsLoadingGroupList.setValue(true);
+
+        mApiMember.getGroups(classId)
+                .enqueue(new Callback<GroupData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<GroupData> call, @NonNull Response<GroupData> response) {
+                        mIsLoadingGroupList.setValue(false);
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            mGroupList.setValue(response.body().data);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<GroupData> call, @NonNull Throwable t) {
+                        mIsLoadingGroupList.setValue(false);
+                    }
+                });
+        return mGroupList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingGroupList() {
+        return mIsLoadingGroupList;
+    }
+
+    @Override
+    public LiveData<List<UserInfo>> getMemberList(Integer groupId) {
+        mIsLoadingMemberList.setValue(true);
+
+        mApiMember.getGroupMembers(groupId)
+                .enqueue(new Callback<UserData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
+                        mIsLoadingMemberList.setValue(false);
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            mMemberList.setValue(response.body().data);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable t) {
+                        mIsLoadingMemberList.setValue(false);
+
+                    }
+                });
+
+        return mMemberList;
+    }
+
+    @Override
+    public LiveData<Boolean> isLoadingMemberList() {
+        return mIsLoadingMemberList;
+    }
+
+
+
+
+
+
+    /*@Override
     public LiveData<List<Class>> getStudentClassList() {
         final MyUser user = BmobUser.getCurrentUser(MyUser.class);
 
@@ -478,7 +609,7 @@ public class RemoteDataSource implements DataSource {
         }
 
         return mStudentClassList;
-    }
+    }*/
 
     @Override
     public LiveData<List<Task>> getTaskList(int index) {

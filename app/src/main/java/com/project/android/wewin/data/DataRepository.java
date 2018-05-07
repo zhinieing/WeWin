@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
+import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -138,6 +140,8 @@ public class DataRepository {
         }
     }
 
+
+
     public LiveData<List<ClassInfo>> getCreatedClassList() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getCreatedClassList();
@@ -162,11 +166,44 @@ public class DataRepository {
         }
     }
 
-    public LiveData<List<Class>> getStudentClassList() {
+
+    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getGroupList(classId);
+        } else {
+            return mLocalDataSource.getGroupList(classId);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingGroupList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingGroupList();
+        } else {
+            return mLocalDataSource.isLoadingGroupList();
+        }
+    }
+
+    public LiveData<List<UserInfo>> getMemberList(Integer groupId) {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.getMemberList(groupId);
+        } else {
+            return mLocalDataSource.getMemberList(groupId);
+        }
+    }
+
+    public LiveData<Boolean> isLoadingMemberList() {
+        if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
+            return mRemoteDataSource.isLoadingMemberList();
+        } else {
+            return mLocalDataSource.isLoadingMemberList();
+        }
+    }
+
+    /*public LiveData<List<Class>> getStudentClassList() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getStudentClassList();
         } else {
             return mLocalDataSource.getStudentClassList();
         }
-    }
+    }*/
 }

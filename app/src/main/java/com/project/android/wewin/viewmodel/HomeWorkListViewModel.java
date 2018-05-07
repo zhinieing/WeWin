@@ -51,7 +51,7 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
     private DataRepository mHomeWorkDataRepository = null;
 
-    public HomeWorkListViewModel(Application application, DataRepository homeWorkDataRepository) {
+    private HomeWorkListViewModel(Application application, DataRepository homeWorkDataRepository) {
         super(application);
         mHomeWorkDataRepository = homeWorkDataRepository;
         mHomeWorkList = Transformations.switchMap(mHomeWorkPageIndex, new Function<Integer, LiveData<List<HomeWork>>>() {

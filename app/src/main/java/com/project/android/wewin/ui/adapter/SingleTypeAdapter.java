@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,22 +30,30 @@ import java.util.List;
  *
  * @author markzhai on 16/8/22
  */
-public class SingleTypeAdapter<T> extends BaseViewAdapter<T> {
+public class SingleTypeAdapter<T> extends BaseViewAdapter<T> implements ItemTouchHelperAdapter<T>{
 
     protected int mLayoutRes;
+    protected boolean mEnableTouchHelper;
+
 
     public interface Presenter<T> extends BaseViewAdapter.Presenter {
         void onItemClick(T t);
     }
 
     public SingleTypeAdapter(Context context) {
-        this(context, 0);
+        this(context, 0, false);
     }
 
     public SingleTypeAdapter(Context context, int layoutRes) {
+        this(context, layoutRes, false);
+
+    }
+
+    public SingleTypeAdapter(Context context, int layoutRes, boolean enableTouchHelper) {
         super(context);
         mCollection = new ArrayList<>();
         mLayoutRes = layoutRes;
+        mEnableTouchHelper = enableTouchHelper;
     }
 
     @SuppressWarnings("unchecked")
@@ -59,6 +68,30 @@ public class SingleTypeAdapter<T> extends BaseViewAdapter<T> {
         return mCollection.size();
     }
 
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (mEnableTouchHelper) {
+            Collections.swap(mCollection, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
+    @Override
+    public void onItemDissmiss(int position) {
+        if (mEnableTouchHelper) {
+            remove(position);
+        }
+    }
+
+    @Override
+    public void onItemReset(int position, T t) {
+        if (mEnableTouchHelper) {
+            add(position, t);
+        }
+    }
+
+
     public void add(T viewModel) {
         mCollection.add(viewModel);
         notifyDataSetChanged();
@@ -66,7 +99,7 @@ public class SingleTypeAdapter<T> extends BaseViewAdapter<T> {
 
     public void add(int position, T viewModel) {
         mCollection.add(position, viewModel);
-        notifyDataSetChanged();
+        notifyItemInserted(position);
     }
 
     public void set(List<T> viewModels) {

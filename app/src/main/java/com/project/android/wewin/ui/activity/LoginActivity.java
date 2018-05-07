@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -16,10 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.android.wewin.R;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
+import com.project.android.wewin.data.remote.api.ApiManager;
+import com.project.android.wewin.data.remote.api.ApiOpenid;
+import com.project.android.wewin.data.remote.api.ApiUser;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.MyUser;
+import com.project.android.wewin.data.remote.model.OpenidData;
+import com.project.android.wewin.data.remote.model.UserInfoData;
+import com.project.android.wewin.ui.fragment.MemberFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +45,10 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -75,6 +87,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.to_sign_up)
     TextView toSignUp;
 
+    private ApiOpenid mApiOpenid;
+    private ApiUser mApiUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +101,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         initView();
 
+        mApiOpenid = ApiManager.getInstance().getApiOpenid();
+        mApiUser = ApiManager.getInstance().getApiUser();
     }
 
 
@@ -169,14 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
-
-                        phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
-                                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-
+                        signInSuccess();
                     } else {
                         phoneSignInButton.revertAnimation();
 
@@ -196,14 +205,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void done(MyUser user, BmobException e) {
                     if (e == null) {
-
-                        phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
-                                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-
+                        signInSuccess();
                     } else {
                         phoneSignInButton.revertAnimation();
 
@@ -216,7 +218,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private void signUp(String phone, String password, String code) {
+    private void signInSuccess() {
+        phoneSignInButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
+    private void signUp(final String phone, String password, String code) {
 
         if (!validatePasswordForm() || !validateCodeForm() || !validatePhoneForm()) {
             return;
@@ -231,14 +243,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void done(MyUser user, BmobException e) {
                 if (e == null) {
-
-                    phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
-                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-
+                    getUserInfo(phone, user);
                 } else {
                     phoneSignUpButton.revertAnimation();
 
@@ -248,6 +253,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+    }
+
+    private void signUpSucess() {
+        phoneSignUpButton.doneLoadingAnimation(R.color.colorPrimaryDark,
+                BitmapFactory.decodeResource(getResources(), R.drawable.ic_done_white_48dp));
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 
@@ -296,6 +310,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return valid;
+    }
+
+
+    public void getUserInfo(String phone, final MyUser myUser) {
+        mApiOpenid.getOpenid(phone)
+                .enqueue(new Callback<OpenidData>() {
+                    @Override
+                    public void onResponse(@NonNull Call<OpenidData> call, @NonNull Response<OpenidData> response) {
+                        if (response.isSuccessful() || response.body().state == 0) {
+                            if (response.body().data == null) {
+                                Toast.makeText(LoginActivity.this, "请先在网页端扫码登录", Toast.LENGTH_SHORT).show();
+                            } else {
+                                mApiUser.getUser(response.body().data.get(0))
+                                        .enqueue(new Callback<UserInfoData>() {
+                                            @Override
+                                            public void onResponse(@NonNull Call<UserInfoData> call, @NonNull final Response<UserInfoData> response) {
+                                                if (response.isSuccessful() || response.body().state == 0) {
+                                                    UserInfo userInfo = response.body().data;
+
+                                                    MyUser user = new MyUser();
+                                                    user.setUserPhoto(userInfo.getAvatar());
+                                                    user.setOpenid(userInfo.getOpenid());
+                                                    user.setNickname(userInfo.getNickname());
+                                                    user.setSchool(userInfo.getSchool());
+                                                    user.setStudentno(userInfo.getStudentno());
+                                                    user.setUnionid(userInfo.getUnionid());
+                                                    user.update(myUser.getObjectId(), new UpdateListener() {
+                                                        @Override
+                                                        public void done(BmobException e) {
+                                                            if (e == null) {
+                                                                signUpSucess();
+                                                            }
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(@NonNull Call<UserInfoData> call, @NonNull Throwable t) {
+                                                Log.d("wewein", "onResponse3: "+ t);
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<OpenidData> call, @NonNull Throwable t) {
+
+                    }
+                });
     }
 
 

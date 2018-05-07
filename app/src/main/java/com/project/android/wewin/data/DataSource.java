@@ -3,6 +3,9 @@ package com.project.android.wewin.data;
 import android.arch.lifecycle.LiveData;
 
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
+import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.GroupWithUser;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
@@ -18,7 +21,7 @@ import java.util.List;
 public interface DataSource {
 
 
-    String getOpenid(String phoneno);
+    LiveData<UserInfo> getOpenid(String phoneno);
 
 
     /*主界面*/
@@ -39,11 +42,20 @@ public interface DataSource {
     LiveData<List<ClassInfo>> getJoinedClassList();
     LiveData<Boolean> isLoadingClassList();
 
+    LiveData<List<GroupWithUser>> getGroupWithUser(Integer classId);
+    LiveData<Boolean> isLoadingGroupWithUserList();
+
+
+    LiveData<List<GroupInfo>> getGroupList(Integer classId);
+    LiveData<Boolean> isLoadingGroupList();
+
+    LiveData<List<UserInfo>> getMemberList(Integer groupId);
+    LiveData<Boolean> isLoadingMemberList();
 
 
     /*发布作业*/
 
-    LiveData<List<Class>> getStudentClassList();
+    //LiveData<List<Class>> getStudentClassList();
 
 
     /*发布任务*/
