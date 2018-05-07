@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         user = BmobUser.getCurrentUser(MyUser.class);
         if (user == null) {
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
 
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         if (position == POS_EXIT) {
             MyUser.logOut();
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         slidingRootNav.closeMenu();
@@ -283,6 +283,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
             case POS_CONTACT:
                 startActivity(new Intent(MainActivity.this, ClassActivity.class));
                 break;
+            case POS_HELP:
+                startActivity(new Intent(MainActivity.this, HelpActivity.class));
             default:
 
         }
@@ -296,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 .withSelectedTextTint(color(R.color.colorAccent));
     }
 
-    private PersonItem createPersonItemFor(Uri imageUri, String username){
+    private PersonItem createPersonItemFor(Uri imageUri, String username) {
         return new PersonItem(imageUri, username);
     }
 
@@ -335,28 +337,24 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     /*向双层嵌套Fragment分发onActivityResult*/
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        for(int indext=0;indext<fragmentManager.getFragments().size();indext++)
-        {
-            Fragment fragment=fragmentManager.getFragments().get(indext);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        for (int indext = 0; indext < fragmentManager.getFragments().size(); indext++) {
+            Fragment fragment = fragmentManager.getFragments().get(indext);
             if (fragment != null) {
-                handleResult(fragment,requestCode,resultCode,data);
+                handleResult(fragment, requestCode, resultCode, data);
             }
         }
     }
 
-    private void handleResult(Fragment fragment,int requestCode,int resultCode,Intent data)
-    {
+    private void handleResult(Fragment fragment, int requestCode, int resultCode, Intent data) {
         fragment.onActivityResult(requestCode, resultCode, data);
 
         List<Fragment> childFragment = fragment.getChildFragmentManager().getFragments();
-        if(childFragment!=null) {
-            for(Fragment f:childFragment) {
-                if(f!=null)
-                {
+        if (childFragment != null) {
+            for (Fragment f : childFragment) {
+                if (f != null) {
                     handleResult(f, requestCode, resultCode, data);
                 }
             }
