@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,41 +20,43 @@ import android.widget.Toast;
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
+
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.ui.activity.DetailActivity;
 import com.project.android.wewin.ui.activity.MainActivity;
+import com.project.android.wewin.ui.adapter.BaseViewAdapter;
+import com.project.android.wewin.ui.adapter.BindingViewHolder;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
-import com.project.android.wewin.ui.adapter.OnItemClickListener;
+import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * @author pengming
+ */
 public class HomeworkFragment extends LazyLoadFragment implements ItemClickListener<HomeWork> {
 
     @BindView(R.id.task_list)
-    RecyclerView taskList;
+    RecyclerView homeworkList;
 
     @BindView(R.id.homework_list_spl)
     SwipeRefreshLayout mRefreshLayout;
 
     Unbinder unbinder;
+
+    private List<HomeWork> mHomeWork = new ArrayList<>();
+    private SingleTypeAdapter<HomeWork> mAdapter;
     private HomeWorkListViewModel mHomeWorkListViewModel;
     private Context context;
-
     private boolean nextPage = false;
 
-    private final OnItemClickListener<HomeWork> homeWorkOnItemClickListener =
-            new OnItemClickListener<HomeWork>() {
-                @Override
-                public void onClick(HomeWork homeWork) {
-
-                }
-            };
 
     @Override
     public void onAttach(Context context) {
@@ -64,15 +67,14 @@ public class HomeworkFragment extends LazyLoadFragment implements ItemClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("wewein", "onCreateView: 1");
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        taskList.setLayoutManager(llm);
-        taskList.setItemAnimator(new DefaultItemAnimator());
-        taskList.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        homeworkList.setLayoutManager(llm);
+        homeworkList.setItemAnimator(new DefaultItemAnimator());
+        homeworkList.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
         mRefreshLayout.setColorSchemeResources(
                 R.color.colorAccent,
@@ -82,14 +84,29 @@ public class HomeworkFragment extends LazyLoadFragment implements ItemClickListe
                 android.R.color.holo_red_light);
 
 
-        taskList.addOnScrollListener(new HomeWorkOnScrollListener());
+        homeworkList.addOnScrollListener(new HomeWorkOnScrollListener());
         mRefreshLayout.setOnRefreshListener(new HomeWorkSwipeListener());
 
-//        homeworkRvAdapter = new HomeworkRvAdapter(context, homeWorkOnItemClickListener);
-//        taskList.setAdapter(homeworkRvAdapter);
+        mAdapter = new SingleTypeAdapter<>(context, R.layout.item_homework_list);
+        mAdapter.setPresenter(this);
+        //mAdapter.setDecorator(new HomeWorkAdapterDecorator());
+        homeworkList.setAdapter(mAdapter);
 
         return view;
     }
+
+
+    private class HomeWorkAdapterDecorator implements BaseViewAdapter.Decorator {
+
+        @Override
+        public void decorator(BindingViewHolder holder, final int position, int viewType) {
+
+        }
+    }
+
+
+
+
 
     @Override
     public void onItemClick(HomeWork homeWork) {
@@ -109,20 +126,25 @@ public class HomeworkFragment extends LazyLoadFragment implements ItemClickListe
         }
     }
 
+
     private class HomeWorkOnScrollListener extends RecyclerView.OnScrollListener {
 
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            LinearLayoutManager layoutManager = (LinearLayoutManager)
-                    recyclerView.getLayoutManager();
-            int lastPosition = layoutManager
-                    .findLastVisibleItemPosition();
-//            if (lastPosition == homeworkRvAdapter.getItemCount() - 1) {
-//
-//                nextPage = true;
-//                mHomeWorkListViewModel.loadNextPageHomeWorkList();
-//
-//            }
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy > 0) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager)
+                        recyclerView.getLayoutManager();
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+
+                if (!nextPage && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    nextPage = true;
+                    mHomeWorkListViewModel.loadNextPageHomeWorkList();
+                }
+            }
         }
     }
 
@@ -149,16 +171,14 @@ public class HomeworkFragment extends LazyLoadFragment implements ItemClickListe
                     return;
                 }
 
-
                 if (!nextPage) {
-//                    homeworkRvAdapter.clearHomeWorkList();
+                    mAdapter.clear();
+                    mHomeWork.clear();
                 } else {
-                    /*if (homeWorks.size() == 0) {
-                        Toast.makeText(context, "数据加载完毕", Toast.LENGTH_SHORT).show();
-                    }*/
-                }
 
-//                homeworkRvAdapter.setHomeWorkList(homeWorks);
+                }
+                mHomeWork.addAll(homeWorks);
+                mAdapter.set(homeWorks);
 
             }
         });

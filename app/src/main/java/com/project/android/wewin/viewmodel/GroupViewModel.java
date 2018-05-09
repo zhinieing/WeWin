@@ -10,11 +10,9 @@ import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.project.android.wewin.data.DataRepository;
-import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class GroupViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Integer> mRequestMemberIndex = new MutableLiveData<>();
 
-    private LiveData<List<GroupInfo>> mGroupList;
+    private LiveData<List<Group>> mGroupList;
 
     private LiveData<List<UserInfo>> mMemberList;
 
@@ -39,9 +37,9 @@ public class GroupViewModel extends AndroidViewModel {
 
         mDataRepository = dataRepository;
 
-        mGroupList = Transformations.switchMap(mRequestGroupIndex, new Function<Integer, LiveData<List<GroupInfo>>>() {
+        mGroupList = Transformations.switchMap(mRequestGroupIndex, new Function<Integer, LiveData<List<Group>>>() {
             @Override
-            public LiveData<List<GroupInfo>> apply(Integer input) {
+            public LiveData<List<Group>> apply(Integer input) {
                 return mDataRepository.getGroupList(classId);
             }
         });
@@ -60,7 +58,7 @@ public class GroupViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<GroupInfo>> getGroupList(){
+    public LiveData<List<Group>> getGroupList(){
         return mGroupList;
     }
 

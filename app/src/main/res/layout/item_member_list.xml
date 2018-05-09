@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -30,7 +31,7 @@
         <ImageView
             android:layout_width="@dimen/title_height"
             android:layout_height="@dimen/title_height"
-            android:src="@{item.avatar}"
+            app:imageUrl="@{item.avatar}"
             tools:src="@tools:sample/avatars" />
 
         <LinearLayout

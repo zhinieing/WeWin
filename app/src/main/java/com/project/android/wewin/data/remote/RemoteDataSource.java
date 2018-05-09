@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.project.android.wewin.data.DataSource;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.GroupWithUser;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.api.ApiClass;
@@ -15,16 +15,15 @@ import com.project.android.wewin.data.remote.api.ApiManager;
 import com.project.android.wewin.data.remote.api.ApiMember;
 import com.project.android.wewin.data.remote.api.ApiOpenid;
 import com.project.android.wewin.data.remote.api.ApiUser;
-import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.ClassData;
 import com.project.android.wewin.data.remote.model.GroupData;
-
+import com.project.android.wewin.data.remote.model.Class;
+import com.project.android.wewin.data.remote.model.GroupInfo;
 import com.project.android.wewin.data.remote.model.GroupMember;
 import com.project.android.wewin.data.remote.model.GroupWithUserData;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.data.remote.model.OpenidData;
-import com.project.android.wewin.data.remote.model.ResultData;
 import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.data.remote.model.UserData;
 import com.project.android.wewin.data.remote.model.UserInfoData;
@@ -42,6 +41,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,7 +68,6 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<List<HomeWork>> mPostedHomeWorkList = new MutableLiveData<>();
 
-    private final MutableLiveData<Boolean> mIsClassTeacher = new MutableLiveData<>();
 
     private final MutableLiveData<List<Class>> mStudentClassList = new MutableLiveData<>();
 
@@ -84,7 +83,7 @@ public class RemoteDataSource implements DataSource {
 
     private final MutableLiveData<Boolean> mIsLoadingGroupList = new MutableLiveData<>();
 
-    private final MutableLiveData<List<GroupInfo>> mGroupList = new MutableLiveData<>();
+    private final MutableLiveData<List<Group>> mGroupList = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> mIsLoadingMemberList = new MutableLiveData<>();
 
@@ -208,7 +207,7 @@ public class RemoteDataSource implements DataSource {
                         }
 
                         BmobQuery<HomeWork> query = new BmobQuery<>();
-                        BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
+                        BmobQuery<Group> innerQuery = new BmobQuery<>();
                         innerQuery.addWhereContainedIn("objectId", groupIds);
                         query.addWhereMatchesQuery("groupInfo", "GroupInfo", innerQuery);
                         query.addWhereGreaterThan("homeworkDeadline", new BmobDate(date));
@@ -282,7 +281,7 @@ public class RemoteDataSource implements DataSource {
     }
 
 
-    @Override
+    /*@Override
     public LiveData<Boolean> isClassTeacher() {
         final MyUser user = BmobUser.getCurrentUser(MyUser.class);
 
@@ -313,7 +312,7 @@ public class RemoteDataSource implements DataSource {
             mIsClassTeacher.setValue(false);
         }
         return mIsClassTeacher;
-    }
+    }*/
 
 
     @Override
@@ -484,7 +483,7 @@ public class RemoteDataSource implements DataSource {
 
 
     @Override
-    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+    public LiveData<List<Group>> getGroupList(Integer classId) {
         mIsLoadingGroupList.setValue(true);
 
         mApiMember.getGroups(classId)
@@ -544,7 +543,7 @@ public class RemoteDataSource implements DataSource {
 
 
 
-    /*@Override
+    @Override
     public LiveData<List<Class>> getStudentClassList() {
         final MyUser user = BmobUser.getCurrentUser(MyUser.class);
 
@@ -554,7 +553,7 @@ public class RemoteDataSource implements DataSource {
             BmobQuery<GroupMember> query = new BmobQuery<>();
             query.addWhereEqualTo("memberUser", user);
 
-            BmobQuery<GroupInfo> innerQuery = new BmobQuery<>();
+            BmobQuery<Group> innerQuery = new BmobQuery<>();
             innerQuery.addWhereEqualTo("auth", 1);
 
             query.addWhereMatchesQuery("targetGroupInfo", "GroupInfo", innerQuery);
@@ -609,7 +608,7 @@ public class RemoteDataSource implements DataSource {
         }
 
         return mStudentClassList;
-    }*/
+    }
 
     @Override
     public LiveData<List<Task>> getTaskList(int index) {

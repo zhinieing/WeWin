@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.project.android.wewin.data.local.db.entity.GroupInfo" />
+            type="com.project.android.wewin.data.local.db.entity.Group" />
 
 
         <variable

@@ -7,14 +7,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,20 +22,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
-import com.project.android.wewin.data.remote.api.ApiManager;
-import com.project.android.wewin.data.remote.api.ApiMember;
-import com.project.android.wewin.data.remote.model.MyUser;
-import com.project.android.wewin.data.remote.model.UserData;
-import com.project.android.wewin.databinding.ItemClassListBinding;
 import com.project.android.wewin.databinding.ItemMemberListBinding;
-import com.project.android.wewin.ui.activity.ClassActivity;
 import com.project.android.wewin.ui.activity.GroupActivity;
 import com.project.android.wewin.ui.adapter.BaseViewAdapter;
 import com.project.android.wewin.ui.adapter.BindingViewHolder;
@@ -52,18 +43,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
  * @author pengming
  */
-public class MemberFragment extends Fragment implements ItemClickListener<GroupInfo> {
+public class MemberFragment extends Fragment implements ItemClickListener<UserInfo> {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -85,10 +70,10 @@ public class MemberFragment extends Fragment implements ItemClickListener<GroupI
     private SingleTypeAdapter<UserInfo> mAdapter;
     private GroupViewModel mGroupViewModel;
 
-    private String openid = null;
+    private int index = -1;
 
     private List<UserInfo> mItems = new ArrayList<>();
-    private GroupInfo groupInfo;
+    private Group groupInfo;
     private UserInfo userInfo;
 
     private AlertDialog myDialog;
@@ -99,7 +84,7 @@ public class MemberFragment extends Fragment implements ItemClickListener<GroupI
     public MemberFragment() {
     }
 
-    public static MemberFragment newInstance(GroupInfo groupInfo) {
+    public static MemberFragment newInstance(Group groupInfo) {
         MemberFragment fragment = new MemberFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_SECTION_NUMBER, groupInfo);
@@ -118,22 +103,31 @@ public class MemberFragment extends Fragment implements ItemClickListener<GroupI
         memberList.setLayoutManager(llm);
         memberList.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new SingleTypeAdapter<>(context, R.layout.item_group_list);
+        mAdapter = new SingleTypeAdapter<>(context, R.layout.item_member_list);
         mAdapter.setPresenter(this);
         mAdapter.setDecorator(new MemberAdapterDecorator());
         memberList.setAdapter(mAdapter);
 
-        groupInfo = (GroupInfo) getArguments().getSerializable(ARG_SECTION_NUMBER);
+        groupInfo = (Group) getArguments().getSerializable(ARG_SECTION_NUMBER);
 
         ((AppCompatActivity) context).getSupportActionBar().setTitle(groupInfo.getGroupName());
         fab = ((AppCompatActivity) context).findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (openid == null) {
+                if (index == -1) {
                     addMemberDialog();
                 } else {
-                    ((GroupActivity)context).deleteMember(groupInfo.getGroupId(), openid);
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(fab, "rotation", -135, 20, 0);
+                    animator.setDuration(500);
+                    animator.start();
+
+                    Log.d("wewein", "onClick: "+index);
+                    mAdapter.remove(index);
+                    //((GroupActivity)context).deleteMember(groupInfo.getGroupId(), mItems.get(index).getOpenid());
+
+                    index = -1;
+
                 }
 
             }
@@ -205,21 +199,23 @@ public class MemberFragment extends Fragment implements ItemClickListener<GroupI
                 @Override
                 public boolean onLongClick(View v) {
 
-                    if (mItems.get(position).equals(v.getTag())) {
-                        binding.itemUser.setTranslationZ(-6f);
+                    Log.d("wewein", "onLongClick: "+ position);
+
+                    if (v.getTag() != null) {
+                        binding.itemUser.setElevation(-6f);
                         ObjectAnimator animator = ObjectAnimator.ofFloat(fab, "rotation", -135, 20, 0);
                         animator.setDuration(500);
                         animator.start();
 
-                        openid = null;
+                        index = -1;
                     } else {
-                        v.setTag(mItems.get(position).getOpenid());
-                        binding.itemUser.setTranslationZ(6f);
+                        v.setTag(position);
+                        binding.itemUser.setElevation(6f);
                         ObjectAnimator animator = ObjectAnimator.ofFloat(fab, "rotation", 0, -155, -135);
                         animator.setDuration(500);
                         animator.start();
 
-                        openid = mItems.get(position).getOpenid();
+                        index = position;
                     }
 
                     return true;
@@ -304,7 +300,7 @@ public class MemberFragment extends Fragment implements ItemClickListener<GroupI
     }
 
     @Override
-    public void onItemClick(GroupInfo groupInfo) {
+    public void onItemClick(UserInfo groupInfo) {
 
     }
 

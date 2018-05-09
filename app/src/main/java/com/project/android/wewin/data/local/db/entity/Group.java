@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author pengming
  */
-public class GroupInfo implements Serializable{
+public class Group implements Serializable{
 
     private Integer groupId;
 
@@ -18,7 +18,7 @@ public class GroupInfo implements Serializable{
     private Integer groupAuth;
 
 
-    public GroupInfo() {}
+    public Group() {}
 
     public Integer getGroupId() {
         return groupId;

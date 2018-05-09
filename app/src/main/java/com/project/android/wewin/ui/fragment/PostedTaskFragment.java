@@ -67,6 +67,7 @@ public class PostedTaskFragment extends LazyLoadFragment implements ItemClickLis
     private Context context;
     private Task task;
     private boolean nextPage = false;
+    private ItemTouchHelper.Callback callback;
 
 
     @Override

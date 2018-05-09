@@ -1,67 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/homework_item"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/padding_medium"
-    android:paddingRight="@dimen/padding_medium"
-    android:background="@color/colorPrimary">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/item_submitter_img"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="@dimen/padding_medium"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_person_img" />
+    <data>
+        <variable
+            name="item"
+            type="com.project.android.wewin.data.remote.model.HomeWork" />
 
-    <TextView
-        android:id="@+id/item_submitter_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/padding_medium"
-        android:layout_marginTop="@dimen/padding_medium"
-        android:layout_toRightOf="@id/item_submitter_img"
-        android:text="@string/user_display_name_modify"
-        android:textStyle="bold"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_large" />
+        <import type="com.project.android.wewin.data.remote.model.MyUser" />
 
-    <TextView
-        android:id="@+id/item_submit_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/item_submitter_img"
-        android:layout_below="@id/item_submitter_name"
-        android:layout_marginLeft="@dimen/padding_medium"
-        android:layout_marginTop="2dp"
-        android:text="@string/release_date"
-        android:textColor="@color/textColorSecondary"
-        android:textSize="@dimen/text_size_small" />
+        <import type="cn.bmob.v3.BmobUser" />
 
+        <import type="cn.bmob.v3.BmobObject" />
 
-    <TextView
-        android:id="@+id/item_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_medium" />
+        <variable
+            name="presenter"
+            type="com.project.android.wewin.ui.adapter.ItemClickListener" />
+    </data>
 
-
-    <TextView
-        android:id="@+id/item_submit_title"
+    <RelativeLayout
+        android:id="@+id/homework_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/item_submitter_img"
-        android:layout_marginTop="@dimen/padding_small"
-        android:layout_marginBottom="@dimen/padding_small"
-        android:text="@string/title"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="@dimen/text_size_large" />
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
+        android:onClick="@{() -> presenter.onItemClick(item)}"
+        android:background="@color/colorPrimary">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/item_submitter_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            app:imageUrl="@{item.creatorUser.userPhoto}" />
+
+        <TextView
+            android:id="@+id/item_submitter_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/padding_medium"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:layout_toEndOf="@id/item_submitter_img"
+            android:text="@{item.creatorUser.username}"
+            android:textStyle="bold"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/text_size_large" />
+
+        <TextView
+            android:id="@+id/item_submit_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/item_submitter_img"
+            android:layout_below="@id/item_submitter_name"
+            android:layout_marginLeft="@dimen/padding_medium"
+            android:layout_marginTop="2dp"
+            android:text="@{item.createdAt}"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="@dimen/text_size_small" />
+
+
+        <TextView
+            android:id="@+id/item_submit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/item_submitter_img"
+            android:layout_marginTop="@dimen/padding_small"
+            android:layout_marginBottom="@dimen/padding_small"
+            android:text="@{item.homeworkTitle}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/text_size_large" />
+
+    </RelativeLayout>
+
+</layout>
+

@@ -102,11 +102,7 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
                 public void onClick(View view) {
                     switch (position) {
                         case 0:
-                            if (!isTeacher) {
-                                Toast.makeText(view.getContext(), getString(R.string.is_not_any_class_teacher), Toast.LENGTH_SHORT).show();
-                            } else {
-                                startActivityForResult(new Intent(view.getContext(), ReleaseHomeworkActivity.class), 1);
-                            }
+                            startActivityForResult(new Intent(view.getContext(), ReleaseHomeworkActivity.class), 1);
                             break;
                         case 1:
                             startActivityForResult(new Intent(view.getContext(), ReleaseTaskActivity.class), 2);
@@ -133,13 +129,13 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
         super.onActivityCreated(savedInstanceState);
 
         if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-            subscribeUI();
+            //subscribeUI();
         }
 
     }
 
 
-    private void subscribeUI() {
+    /*private void subscribeUI() {
         if (!isAdded()) {
             return;
         }
@@ -158,7 +154,7 @@ public class MainFragment extends Fragment implements LazyFragmentPagerAdapter.L
             }
         });
 
-    }
+    }*/
 
 
     public static void setIndicator(TabLayout tabLayout, int marginDip) {

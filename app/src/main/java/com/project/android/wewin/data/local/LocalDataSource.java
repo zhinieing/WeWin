@@ -3,10 +3,9 @@ package com.project.android.wewin.data.local;
 import android.arch.lifecycle.LiveData;
 
 import com.project.android.wewin.data.DataSource;
-import com.project.android.wewin.data.local.db.AppDatabase;
 import com.project.android.wewin.data.local.db.AppDatabaseManager;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.GroupWithUser;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.model.Class;
@@ -78,10 +77,6 @@ public class LocalDataSource implements DataSource {
         return null;
     }
 
-    @Override
-    public LiveData<Boolean> isClassTeacher() {
-        return null;
-    }
 
 
 
@@ -101,7 +96,7 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+    public LiveData<List<Group>> getGroupList(Integer classId) {
         return null;
     }
 
@@ -117,6 +112,11 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public LiveData<Boolean> isLoadingMemberList() {
+        return null;
+    }
+
+    @Override
+    public LiveData<List<Class>> getStudentClassList() {
         return null;
     }
 

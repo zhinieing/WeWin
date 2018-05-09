@@ -1,7 +1,7 @@
 package com.project.android.wewin.data.remote.model;
 
 
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ public class GroupData {
 
     public final String message;
 
-    public final List<GroupInfo> data;
+    public final List<Group> data;
 
-    public GroupData(int state, String message, List<GroupInfo> data) {
+    public GroupData(int state, String message, List<Group> data) {
         this.state = state;
         this.message = message;
         this.data = data;

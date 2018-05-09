@@ -43,10 +43,13 @@ import com.project.android.wewin.data.remote.model.MyUser;
 import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.databinding.ActivityDetailBinding;
 import com.project.android.wewin.ui.adapter.FixedTextureVideoView;
+import com.project.android.wewin.utils.L;
+import com.project.android.wewin.utils.OpenFileUtil;
 import com.project.android.wewin.utils.Util;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -107,9 +110,10 @@ public class DetailActivity extends AppCompatActivity {
     private Commit mCommit = new Commit();
     private MyUser user;
 
+    private List<BmobFile> attachments = new ArrayList<>();
+
     private ActivityDetailBinding binding;
     private CountDownTimer countDownTimer;
-    //ImageButton mAttachment;
 
     private TextView mAttachmentWord;
     private LinearLayout mAttachmentMedia;
@@ -139,6 +143,10 @@ public class DetailActivity extends AppCompatActivity {
         mHomeWork = (HomeWork) getIntent().getSerializableExtra("homework_detail");
         binding.setHomework(mHomeWork);
 
+        if (mHomeWork.getAttachmentPath() != null) {
+            attachments = mHomeWork.getAttachmentPath();
+        }
+
         menuIndex = getIntent().getIntExtra("menu_index", 0);
         binding.setDetailActivity(this);
         binding.setDetailActivity(this);
@@ -157,7 +165,76 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             binding.detailReplyWord.setText(getString(R.string.modify));
         }
+
+        mAttachmentFile = findViewById(R.id.detail_attachment_layout);
+        for (BmobFile file : attachments) {
+            mAttachmentFile.addView(initFileView(file));
+        }
     }
+
+
+    private View initFileView(final BmobFile file) {
+        mAttachmentFile.setVisibility(View.VISIBLE);
+        final String path = file.getFileUrl();
+        final String name = file.getFilename();
+
+        int fileIcon = Util.fileIcon(Util.fileType(path.substring(path.lastIndexOf(".") + 1)));
+
+        final View itemFileView = View.inflate(this, R.layout.item_attachment_file, null);
+        ImageView itemFileIcon = itemFileView.findViewById(R.id.item_file_icon);
+        TextView itemFileName = itemFileView.findViewById(R.id.item_file_name);
+        TextView itemFileSize = itemFileView.findViewById(R.id.item_file_size);
+        itemFileView.setTag(path);
+
+        itemFileIcon.setImageResource(fileIcon);
+        itemFileName.setText(name);
+        itemFileSize.setVisibility(View.GONE);
+        itemFileView.findViewById(R.id.item_file_delete).setVisibility(View.GONE);
+
+        itemFileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadFile(file);
+            }
+        });
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, Util.dip2px(this, 8));
+        itemFileView.setLayoutParams(layoutParams);
+
+        return itemFileView;
+    }
+
+
+    private void downloadFile(BmobFile file) {
+        //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
+        final File saveFile = new File(Environment.getExternalStorageDirectory() + "/Wewin/download/homework/" + mHomeWork.getObjectId(), file.getFilename());
+        if (saveFile.exists()) {
+            startActivity(OpenFileUtil.openFile(saveFile.getPath(), DetailActivity.this));
+        } else {
+            BmobFile toDownload = new BmobFile(file.getFilename(), "", file.getFileUrl());
+            L.i(file.getFileUrl());
+            toDownload.download(saveFile, new DownloadFileListener() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Toast.makeText(DetailActivity.this, "下载成功,保存路径:" + s, Toast.LENGTH_SHORT).show();
+                        startActivity(OpenFileUtil.openFile(saveFile.getPath(), DetailActivity.this));
+                    } else {
+                        Toast.makeText(DetailActivity.this, "下载失败：" + e.getErrorCode() + "," + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onProgress(Integer integer, long l) {
+                    Log.i("bmob", "下载进度：" + l);
+
+                }
+            });
+
+        }
+    }
+
 
 
     public static void startDetailActivity(Activity activity, HomeWork homeWork, int index) {
@@ -219,7 +296,6 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onReplyClick(View view) {
         toReply();
-        //addAttachment();
         //replyConfirm();
     }
 
@@ -271,34 +347,6 @@ public class DetailActivity extends AppCompatActivity {
     }*/
 
 
-    private void downloadFile(BmobFile file) {
-        //允许设置下载文件的存储路径，默认下载文件的目录为：context.getApplicationContext().getCacheDir()+"/bmob/"
-        File saveFile = new File(Environment.getExternalStorageDirectory() + "/Wewin/download/", file.getFilename());
-        file.download(saveFile, new DownloadFileListener() {
-
-            @Override
-            public void onStart() {
-                Log.i("download", "onStart: ");
-            }
-
-            @Override
-            public void done(String savePath, BmobException e) {
-                if (e == null) {
-                    Toast.makeText(DetailActivity.this, "下载成功,保存路径:" + savePath, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(DetailActivity.this, "下载失败：" + e.getErrorCode() + "," + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-            @Override
-            public void onProgress(Integer value, long newworkSpeed) {
-                Log.i("bmob", "下载进度：" + value + "," + newworkSpeed);
-            }
-
-        });
-    }
-
 
     private void toReply() {
         final BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -321,6 +369,7 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (getString(R.string.submit).equals(mAttachmentWord.getText())) {
                     dialog.dismiss();
+
                     return;
                 }
 
@@ -370,12 +419,11 @@ public class DetailActivity extends AppCompatActivity {
 
     private boolean isReplyValid() {
         boolean replyValid = false;
-        //todo 判断回复是否有效，content和attachment
-        /*if (mAttachmentLayout.getChildCount() > 0) {
+        if (mAttachmentFile.getChildCount() > 0 || mAttachmentMedia.getChildCount() > 0) {
             replyValid = true;
         } else {
             Toast.makeText(DetailActivity.this, "回复不能为空", Toast.LENGTH_SHORT).show();
-        }*/
+        }
         return replyValid;
     }
 

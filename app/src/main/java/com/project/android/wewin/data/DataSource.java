@@ -3,7 +3,7 @@ package com.project.android.wewin.data;
 import android.arch.lifecycle.LiveData;
 
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.GroupWithUser;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.model.Class;
@@ -26,8 +26,6 @@ public interface DataSource {
 
     /*主界面*/
 
-    LiveData<Boolean> isClassTeacher();
-
     LiveData<List<HomeWork>> getHomeWorkList(int index);
     LiveData<Boolean> isLoadingHomeWorkList();
 
@@ -46,7 +44,7 @@ public interface DataSource {
     LiveData<Boolean> isLoadingGroupWithUserList();
 
 
-    LiveData<List<GroupInfo>> getGroupList(Integer classId);
+    LiveData<List<Group>> getGroupList(Integer classId);
     LiveData<Boolean> isLoadingGroupList();
 
     LiveData<List<UserInfo>> getMemberList(Integer groupId);
@@ -55,7 +53,7 @@ public interface DataSource {
 
     /*发布作业*/
 
-    //LiveData<List<Class>> getStudentClassList();
+    LiveData<List<Class>> getStudentClassList();
 
 
     /*发布任务*/

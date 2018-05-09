@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+    android:paddingTop="@dimen/padding_medium"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.MemberFragment">
@@ -11,12 +12,13 @@
         android:id="@+id/member_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         tools:listitem="@layout/item_member_list" />
 
     <ImageView
         android:id="@+id/return_back"
         android:clickable="true"
-        android:background="@drawable/layout_ripple_bottom"
+        android:background="@drawable/layout_ripple_default"
         android:padding="@dimen/padding_medium"
         android:src="@drawable/ic_icon_back"
         android:layout_width="wrap_content"

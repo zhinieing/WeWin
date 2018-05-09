@@ -232,22 +232,28 @@ public class ReleaseHomeworkActivity extends AppCompatActivity implements View.O
                 }
             });
         } else {
+
             final String[] filePaths = new String[attachments.size()];
+            final String[] fileNames = new String[attachments.size()];
             for (int i = 0; i < attachments.size(); i++) {
                 filePaths[i] = attachments.get(i);
+                fileNames[i] = filePaths[i].substring(filePaths[i].lastIndexOf("/") + 1);
             }
-            L.i(filePaths[0]);
+
             BmobFile.uploadBatch(filePaths, new UploadBatchListener() {
                 @Override
                 public void onSuccess(List<BmobFile> list, List<String> list1) {
                     if (list1.size() == filePaths.length) {
-                        L.i(list1.toString());
+                        List<BmobFile> bmobFiles = new ArrayList<>();
+                        for (int i = 0; i < list1.size(); i++) {
+                            bmobFiles.add(new BmobFile(fileNames[i], "", list1.get(i)));
+                        }
 
-                        mHomeWork.setAttachmentPath(list1);
+                        mHomeWork.setAttachmentPath(bmobFiles);
                         mHomeWork.save(new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {
-                                Toast.makeText(ReleaseHomeworkActivity.this, "Task上传成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ReleaseHomeworkActivity.this, "作业上传成功", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                                 finish();
                             }

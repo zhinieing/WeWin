@@ -6,12 +6,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 
-import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

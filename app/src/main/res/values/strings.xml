@@ -54,7 +54,7 @@
     <string name="toast_update_user_fail">更新用户信息失败</string>
 
     <string name="side_person">个人中心</string>
-    <string name="side_contact">通讯录</string>
+    <string name="side_contact">班级</string>
     <string name="side_like">我的收藏</string>
     <string name="side_set">设置</string>
     <string name="side_help">帮助与反馈</string>

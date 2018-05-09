@@ -22,6 +22,7 @@ import com.project.android.wewin.data.remote.model.Task;
 import com.project.android.wewin.ui.activity.MainActivity;
 import com.project.android.wewin.ui.activity.TaskDetailActivity;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
+import com.project.android.wewin.ui.adapter.OnItemClickListener;
 import com.project.android.wewin.ui.adapter.SingleTypeAdapter;
 import com.project.android.wewin.utils.Util;
 import com.project.android.wewin.viewmodel.HomeWorkListViewModel;

@@ -136,9 +136,9 @@ public class HomeWorkListViewModel extends AndroidViewModel {
 
     /*MainFragment*/
 
-    public LiveData<Boolean> isClassTeacher() {
+    /*public LiveData<Boolean> isClassTeacher() {
         return mHomeWorkDataRepository.isClassTeacher();
-    }
+    }*/
 
     /*TaskFragment*/
 

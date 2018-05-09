@@ -10,7 +10,7 @@ import retrofit2.http.Query;
 
 public interface ApiUser {
 
-    @GET("showuserinfo")
+    @GET("show_userinfo")
     Call<UserInfoData> getUser(@Query("openid") String openid);
 
     @PUT("edituserinfo")

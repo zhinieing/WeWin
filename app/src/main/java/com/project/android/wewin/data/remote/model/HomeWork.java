@@ -8,6 +8,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  * HomeWork class
@@ -22,7 +23,7 @@ public class HomeWork extends BmobObject {
     private BmobDate homeworkDeadline;
     private MyUser creatorUser;
     private GroupInfo groupInfo;
-    private List<String> attachmentPath;
+    private List<BmobFile> attachmentPath;
 
     public HomeWork() {
     }
@@ -68,52 +69,13 @@ public class HomeWork extends BmobObject {
         this.groupInfo = groupInfo;
     }
 
-    public List<String> getAttachmentPath() {
+    public List<BmobFile> getAttachmentPath() {
         return attachmentPath;
     }
 
-    public void setAttachmentPath(List<String> attachmentPath) {
+    public void setAttachmentPath(List<BmobFile> attachmentPath) {
         this.attachmentPath = attachmentPath;
     }
 
-/*
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(homeworkTitle);
-        parcel.writeString(homeworkContent);
-        parcel.writeString(homeworkDeadline);
-        parcel.writeParcelable(creatorUser, i);
-        //parcel.writeParcelable(groupInfo, i);
-        parcel.writeStringList(attachmentPath);
-    }
-
-    public static final Parcelable.Creator<HomeWork> CREATOR = new Parcelable.Creator<HomeWork>() {
-
-        @Override
-        public HomeWork createFromParcel(Parcel parcel) {
-            HomeWork homeWork = new HomeWork();
-            homeWork.homeworkTitle = parcel.readString();
-            homeWork.homeworkContent = parcel.readString();
-            homeWork.homeworkDeadline = parcel.readString();
-            homeWork.creatorUser = parcel.readParcelable(MyUser.class.getClassLoader());
-            //homeWork.groupInfo = parcel.readParcelable(GroupInfo.class.getClassLoader());
-            homeWork.attachmentPath = new ArrayList<String>();
-            parcel.readStringList(homeWork.attachmentPath);
-            return homeWork;
-        }
-
-        @Override
-        public HomeWork[] newArray(int i) {
-            return new HomeWork[i];
-        }
-    };
-
-    public static Creator<HomeWork> getCREATOR() {
-        return CREATOR;
-    }*/
 }

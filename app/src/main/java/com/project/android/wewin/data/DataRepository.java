@@ -3,14 +3,13 @@ package com.project.android.wewin.data;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.data.local.db.entity.UserInfo;
-import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.data.remote.model.HomeWork;
 import com.project.android.wewin.data.remote.model.Task;
+import com.project.android.wewin.data.remote.model.Class;
 import com.project.android.wewin.utils.Util;
 
 import java.util.List;
@@ -132,13 +131,13 @@ public class DataRepository {
     }
 
 
-    public LiveData<Boolean> isClassTeacher() {
+    /*public LiveData<Boolean> isClassTeacher() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.isClassTeacher();
         } else {
             return mLocalDataSource.isClassTeacher();
         }
-    }
+    }*/
 
 
 
@@ -167,7 +166,7 @@ public class DataRepository {
     }
 
 
-    public LiveData<List<GroupInfo>> getGroupList(Integer classId) {
+    public LiveData<List<Group>> getGroupList(Integer classId) {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getGroupList(classId);
         } else {
@@ -199,11 +198,11 @@ public class DataRepository {
         }
     }
 
-    /*public LiveData<List<Class>> getStudentClassList() {
+    public LiveData<List<Class>> getStudentClassList() {
         if (Util.isNetworkConnected(sApplication.getApplicationContext())) {
             return mRemoteDataSource.getStudentClassList();
         } else {
             return mLocalDataSource.getStudentClassList();
         }
-    }*/
+    }
 }

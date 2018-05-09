@@ -15,7 +15,8 @@ import android.widget.ImageView;
 
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
+import com.project.android.wewin.data.local.db.entity.UserInfo;
 import com.project.android.wewin.data.remote.api.ApiManager;
 import com.project.android.wewin.data.remote.api.ApiMember;
 import com.project.android.wewin.data.remote.api.ApiOpenid;
@@ -27,6 +28,9 @@ import com.project.android.wewin.data.remote.model.UserInfoData;
 import com.project.android.wewin.ui.fragment.GroupFragment;
 import com.project.android.wewin.ui.fragment.MemberFragment;
 import com.project.android.wewin.utils.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,7 +115,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.On
 
 
     @Override
-    public void onFragmentInteraction(GroupInfo g) {
+    public void onFragmentInteraction(Group g) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.hide(groupFragment);
@@ -188,7 +192,30 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.On
 
     public void loadMembers(Integer groupId) {
 
-        mApiMember.getGroupMembers(groupId)
+        List<UserInfo> list = new ArrayList<UserInfo>();
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setOpenid("oiooR1kiOuI242pqm0N9TIFLugeg");
+        userInfo.setNickname("攻与萌");
+        userInfo.setSchool("中国柯基大学");
+        userInfo.setStudentno("SA17225091");
+        userInfo.setPhoneno("1888888888");
+        userInfo.setAvatar("http://bmob-cdn-15990.b0.upaiyun.com/2018/03/05/2c110298a4ce45429da7771d3376a4e1.jpg");
+
+        UserInfo ui = new UserInfo();
+        ui.setOpenid("oiooR1kiOuI242pqm0N9TIFLugeg");
+        ui.setAvatar("http://bmob-cdn-15990.b0.upaiyun.com/2018/03/09/58cb26b5783348119c973668330a7fd7.jpg");
+        ui.setNickname("但愿人长久的路小舟");
+        ui.setSchool("中国柯基大学");
+        ui.setStudentno("SA17225268");
+        ui.setPhoneno("1888888888");
+
+        list.add(userInfo);
+        list.add(ui);
+        ((MemberFragment)fragmentManager.findFragmentById(R.id.fragment)).setUI(list);
+
+
+        /*mApiMember.getGroupMembers(groupId)
                 .enqueue(new Callback<UserData>() {
                     @Override
                     public void onResponse(@NonNull Call<UserData> call, @NonNull final Response<UserData> response) {
@@ -209,7 +236,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.On
                         Log.d("wewein", "onResponse: " + t);
 
                     }
-                });
+                });*/
 
     }
 

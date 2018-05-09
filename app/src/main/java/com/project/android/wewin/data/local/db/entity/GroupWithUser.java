@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author pengming
  */
-public class GroupWithUser extends GroupInfo {
+public class GroupWithUser extends Group {
 
     private List<UserInfo> users;
 

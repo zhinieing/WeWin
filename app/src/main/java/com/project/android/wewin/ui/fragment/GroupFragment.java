@@ -24,7 +24,7 @@ import com.project.android.wewin.MyApplication;
 import com.project.android.wewin.R;
 import com.project.android.wewin.data.Injection;
 import com.project.android.wewin.data.local.db.entity.ClassInfo;
-import com.project.android.wewin.data.local.db.entity.GroupInfo;
+import com.project.android.wewin.data.local.db.entity.Group;
 import com.project.android.wewin.ui.activity.GroupActivity;
 import com.project.android.wewin.ui.adapter.ItemClickListener;
 import com.project.android.wewin.ui.adapter.ItemDissmissListener;
@@ -43,7 +43,7 @@ import butterknife.Unbinder;
 /**
  * @author pengming
  */
-public class GroupFragment extends Fragment implements ItemClickListener<GroupInfo>, ItemDissmissListener {
+public class GroupFragment extends Fragment implements ItemClickListener<Group>, ItemDissmissListener {
 
     @BindView(R.id.group_list)
     RecyclerView groupList;
@@ -55,9 +55,9 @@ public class GroupFragment extends Fragment implements ItemClickListener<GroupIn
     private Context context;
 
     private ClassInfo classInfo;
-    private List<GroupInfo> mItems = new ArrayList<>();
+    private List<Group> mItems = new ArrayList<>();
 
-    private SingleTypeAdapter<GroupInfo> mAdapter;
+    private SingleTypeAdapter<Group> mAdapter;
     private GroupViewModel mGroupViewModel;
     private ItemTouchHelper.Callback callback;
 
@@ -106,16 +106,16 @@ public class GroupFragment extends Fragment implements ItemClickListener<GroupIn
         GroupViewModel.Factory factory = new GroupViewModel.Factory(MyApplication.getInstance(),
                 Injection.getDataRepository(MyApplication.getInstance()), classInfo.getClassId(), 0);
         mGroupViewModel = ViewModelProviders.of(this, factory).get(GroupViewModel.class);
-        mGroupViewModel.getGroupList().observe(this, new Observer<List<GroupInfo>>() {
+        mGroupViewModel.getGroupList().observe(this, new Observer<List<Group>>() {
             @Override
-            public void onChanged(@Nullable List<GroupInfo> groupInfos) {
+            public void onChanged(@Nullable List<Group> groupInfos) {
                 if (groupInfos == null || groupInfos.size() == 0) {
                     return;
                 }
 
                 mItems = groupInfos;
                 mAdapter.set(groupInfos);
-                ((SimpleItemTouchHelperCallback<GroupInfo>)callback).set(groupInfos);
+                ((SimpleItemTouchHelperCallback<Group>)callback).set(groupInfos);
             }
         });
         mGroupViewModel.isLoadingGroupList().observe(this, new Observer<Boolean>() {
@@ -164,7 +164,7 @@ public class GroupFragment extends Fragment implements ItemClickListener<GroupIn
     }
 
     @Override
-    public void onItemClick(GroupInfo groupInfo) {
+    public void onItemClick(Group groupInfo) {
         if (mListener != null) {
             mListener.onFragmentInteraction(groupInfo);
         }
@@ -222,7 +222,7 @@ public class GroupFragment extends Fragment implements ItemClickListener<GroupIn
 
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(GroupInfo groupInfo);
+        void onFragmentInteraction(Group groupInfo);
     }
 
 
